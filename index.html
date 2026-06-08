@@ -108,7 +108,7 @@ header { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 17,
 main { margin-top: 112px; min-height: calc(100vh - 112px - 300px); }
 
 /* Hero */
-.hero { position: relative; padding: 120px 0 100px; background: linear-gradient(to bottom, rgba(15, 17, 21, 0.88), var(--c-dark-main)), url('/assets/hero-loja.jpeg') center/cover; text-align: center; border-bottom: 1px solid var(--c-border); }
+.hero { position: relative; padding: 120px 0 100px; background: linear-gradient(to bottom, rgba(15, 17, 21, 0.88), var(--c-dark-main)), url('/assets/hero-loja.jpg') center/cover; text-align: center; border-bottom: 1px solid var(--c-border); }
 .hero h1 { font-size: 3.5rem; margin-bottom: 20px; color: var(--c-yellow); letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
 .hero-sub { font-size: 1.25rem; color: var(--c-white); margin: 0 auto 35px; max-width: 850px; font-weight: 500; line-height: 1.6; }
 
@@ -545,19 +545,19 @@ async function submitProductRequest(){
 }
 
 const REF = {
-    hero: '/assets/hero-loja.jpeg',
-    img1: '/assets/galeria-1.jpeg',
-    img2: '/assets/galeria-2.jpeg',
-    img3: '/assets/galeria-3.jpeg',
-    img4: '/assets/galeria-4.jpeg',
-    img5: '/assets/galeria-5.jpeg',
+    hero: '/assets/hero-loja.jpg',
+    img1: '/assets/galeria-1.jpg',
+    img2: '/assets/galeria-2.jpg',
+    img3: '/assets/galeria-3.jpg',
+    img4: '/assets/galeria-4.jpg',
+    img5: '/assets/galeria-5.jpg',
     logoJ: '/assets/logo-juninho.png',
     logoC: '/assets/logo-cao.png',
     logoA: '/assets/logo-aspiron.png',
     logoFull: '/assets/logo-pipas-store.png',
-    evento: '/assets/evento-porto-velho.jpeg',
-    eventUsina: '/assets/evento-usina.jpeg',
-    loja: '/assets/loja-juninho.jpeg'
+    evento: '/assets/evento-porto-velho.jpg',
+    eventUsina: '/assets/evento-usina.jpg',
+    loja: '/assets/loja-juninho.jpg'
 };
 
 const getWaLink = (phone, text) => `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
