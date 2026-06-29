@@ -362,8 +362,8 @@ const MARKETPLACE_STORES = [
         paymentMode: 'manual',
         pixKey: '',
         cardIntegration: 'manual',
-        login: __PSB_STORE_OVERRIDE.login || '',
-        password: __PSB_STORE_OVERRIDE.password || ''
+        login: __PSB_STORE_OVERRIDE.login || 'juninho',
+        password: __PSB_STORE_OVERRIDE.password || 'juninho0713'
     }
 ];
 const DEFAULT_SELLER_ID = 'juninho-pipas';
@@ -385,7 +385,7 @@ const STORE_ACCESS_STORAGE_KEY = 'psb_store_access_23';
 const STORE_SESSION_STORAGE_KEY = 'psb_store_session_23';
 const ADMIN_SESSION_STORAGE_KEY = 'psb_admin_session_23';
 // Acesso administrativo (controlado por configuração interna)
-const ADMIN_ACCESS_PIN = __PSB_CFG.adminPin || window.__PSB_ADMIN_PIN__ || '8080';
+const ADMIN_ACCESS_PIN = __PSB_CFG.adminPin || window.__PSB_ADMIN_PIN__ || '0713';
 const slugify = value => (value || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 const readJSON = (key, fallback = []) => {
     try {
