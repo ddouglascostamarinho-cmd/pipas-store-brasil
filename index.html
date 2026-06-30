@@ -223,6 +223,183 @@ footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); p
 @media(max-width: 576px) {
     .grid-4 { grid-template-columns: 1fr; }
 }
+
+
+/* ==========================================================================
+   FASE 1.3 — POLIMENTO MOBILE
+   Ajustes exclusivamente visuais/responsivos. Não altera Supabase, CSV, login,
+   carrinho, checkout ou fluxo de WhatsApp.
+   ========================================================================== */
+@media(max-width: 768px) {
+    html { font-size: 15px; }
+    body { line-height: 1.5; }
+    .container { padding: 0 14px; }
+    .section { padding: 34px 0; }
+    .section-sm { padding: 26px 0; }
+    h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 12px; }
+    h2 { font-size: 1.45rem; margin-bottom: 10px; }
+    h3 { font-size: 1.05rem; margin-bottom: 10px; }
+    p, .text-gray { font-size: 0.92rem; }
+    .tag-badge { font-size: 0.62rem; padding: 3px 7px; margin-bottom: 8px; }
+
+    header { height: 72px; }
+    main { margin-top: 72px; min-height: calc(100vh - 72px); }
+    .nav-container { padding: 0 14px; }
+    .logo-img { height: 44px; max-width: 138px; }
+    .nav-actions { gap: 10px; }
+    .cart-icon { width: 40px; height: 40px; }
+    .cart-count { width: 18px; height: 18px; font-size: 0.68rem; top: -2px; right: -2px; }
+    .menu-toggle { font-size: 1.45rem; line-height: 1; }
+    .nav-links {
+        top: 72px;
+        left: auto;
+        right: -86vw;
+        width: 82vw;
+        max-width: 320px;
+        height: calc(100vh - 72px);
+        padding: 18px;
+        gap: 6px;
+        border-right: none;
+        border-left: 1px solid var(--c-border);
+        box-shadow: -12px 0 30px rgba(0,0,0,0.55);
+        align-items: stretch;
+    }
+    .nav-links.active-menu { left: auto; right: 0; }
+    .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 12px 10px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid transparent;
+        font-size: 0.82rem;
+    }
+    .nav-links a.active, .nav-links a:hover {
+        border-color: rgba(255,212,0,0.32);
+        background: rgba(255,212,0,0.08);
+    }
+
+    .hero { padding: 46px 0 36px; text-align: left; }
+    .hero h1 { font-size: 1.85rem; line-height: 1.08; margin-bottom: 12px; }
+    .hero-sub { font-size: 0.96rem; margin-bottom: 18px; line-height: 1.45; }
+    .hero .btn, .btn { min-height: 42px; padding: 11px 14px; font-size: 0.78rem; border-radius: 9px; }
+    .btn-secondary { border-width: 1px; }
+
+    .grid-2, .grid-3, .grid-4 { gap: 14px; }
+    .card { border-radius: 13px; }
+    .card[style*="padding:24px"], .card[style*="padding:28px"], .card[style*="padding:30px"], .card[style*="padding:22px"] { padding: 16px !important; }
+    .product-img { height: 175px; border-radius: 12px; }
+    .product-info { padding: 15px; }
+    .product-title { font-size: 1rem; line-height: 1.25; margin-bottom: 5px; }
+    .product-cat, .product-vars { font-size: 0.7rem; }
+    .product-price { font-size: 1.05rem; margin-bottom: 10px; }
+    .product-tag { font-size: 0.62rem; padding: 4px 8px; top: 8px; left: 8px; }
+
+    .shop-layout, .shop-layout[style] { grid-template-columns: 1fr !important; gap: 16px; }
+    .filters-sidebar { padding: 14px; border-radius: 13px; top: 72px; }
+    .filter-block { margin-bottom: 14px; padding-bottom: 12px; }
+    .marketplace-note { padding: 12px; font-size: 0.88rem; }
+    .form-group { margin-bottom: 14px; }
+    .form-label { font-size: 0.8rem; margin-bottom: 6px; }
+    .form-control { padding: 12px; font-size: 0.95rem; }
+    textarea.form-control { min-height: 88px; }
+
+    .product-detail-grid { gap: 18px; }
+    .gallery-main { height: auto; max-height: 360px; }
+    .gallery-main img { aspect-ratio: 1 / 1; object-fit: contain; background: #111; }
+    .gallery-thumbs { gap: 8px; margin-top: 10px; }
+    .gallery-thumb { width: 58px; height: 58px; }
+    .pd-title { font-size: 1.55rem; }
+    .pd-price { font-size: 1.9rem; margin: 12px 0; }
+    .qty-btn { width: 42px; height: 44px; }
+    .qty-input { height: 44px; }
+
+    /* Carrinho mobile em blocos verticais */
+    .cart-table { display: block; margin-bottom: 14px; }
+    .cart-table tbody { display: grid; gap: 12px; }
+    .cart-table tr {
+        display: grid;
+        gap: 8px;
+        padding: 14px;
+        margin: 0;
+        border: 1px solid var(--c-border);
+        border-radius: 13px;
+        background: var(--c-dark-sec);
+    }
+    .cart-table td {
+        display: grid;
+        grid-template-columns: 82px 1fr;
+        gap: 10px;
+        align-items: center;
+        padding: 0;
+        text-align: left;
+        border: none;
+    }
+    .cart-table td::before {
+        float: none;
+        content: attr(data-label);
+        color: var(--c-gray);
+        font-weight: 700;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+    }
+    .cart-item-info { flex-direction: row; justify-content: flex-start; text-align: left; gap: 10px; min-width: 0; }
+    .cart-item-img { width: 58px; height: 58px; flex: 0 0 58px; }
+    .cart-item-info strong { font-size: 0.92rem; line-height: 1.2; display: block; }
+    .cart-item-info .text-gray { font-size: 0.76rem !important; line-height: 1.25; }
+    .cart-table td[data-label="Qtd"] > div { justify-content: flex-start; }
+    .cart-table .qty-btn { width: 30px !important; height: 30px !important; min-height: 30px; padding: 0; }
+    .summary-box { position: static; top: auto; padding: 16px; border-radius: 13px; }
+    .summary-box h3 { font-size: 1.05rem; }
+
+    /* Portal do lojista compacto */
+    .accordion-item { margin-bottom: 10px; border-radius: 12px; }
+    .accordion-header { padding: 13px 14px; font-size: 0.84rem; gap: 10px; align-items: flex-start; }
+    .accordion-body { font-size: 0.88rem; }
+    .accordion-item.active .accordion-body { padding: 0 14px 14px !important; max-height: none; }
+    .accordion-body p { margin-bottom: 8px; }
+    .accordion-body .text-gray { font-size: 0.83rem; }
+    .accordion-body div[style*="display:flex"] { gap: 7px !important; }
+    .accordion-body .btn { flex: 1 1 calc(50% - 7px); padding: 9px 8px; min-height: 36px; font-size: 0.68rem; }
+    .step-item { padding: 12px; }
+    .empty-state { padding: 32px 16px; }
+
+    /* Blog e galerias */
+    #app .grid-3 article.card .product-img { height: 150px; }
+    #app .grid-3 article.card .product-info p.text-gray {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.8em;
+    }
+    #app .grid-4 > a.card.product-img { height: auto; min-height: 0; }
+    #app .grid-4 > a.card.product-img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+
+    /* Rodapé mobile mais enxuto */
+    footer { margin-top: 28px; padding: 34px 0 18px; }
+    .footer-grid { gap: 22px; margin-bottom: 24px; }
+    footer img { max-width: 110px !important; }
+    footer h3 { font-size: 0.95rem; margin-bottom: 8px; }
+    .footer-links li { margin-bottom: 7px; }
+    .footer-links a, footer p, footer li, footer .text-gray { font-size: 0.82rem; line-height: 1.45; }
+    footer .btn { min-height: 38px; }
+
+    .toast { left: 12px; right: 12px; bottom: 14px; padding: 13px 16px; font-size: 0.88rem; border-radius: 10px; }
+    .toast.show { right: 12px; }
+    .wa-fab { left: 16px; bottom: 18px; width: 50px; height: 50px; font-size: 25px; }
+}
+
+@media(max-width: 420px) {
+    .container { padding: 0 12px; }
+    h1 { font-size: 1.55rem; }
+    .hero h1 { font-size: 1.62rem; }
+    .product-img { height: 158px; }
+    .cart-table td { grid-template-columns: 72px 1fr; }
+    .accordion-body .btn { flex-basis: 100%; }
+    .summary-box { padding: 14px; }
+}
+
 </style>
 </head>
 <body>
@@ -1071,8 +1248,8 @@ Status inicial: aguardando confirmação da loja.`), '_blank', 'noopener,norefer
 function renderCao(){ return `<section class="section"><div class="container"><div class="grid-2" style="align-items:center;"><div><img src="${REF.logoC}" alt="Cão de Caça" style="max-width:360px; margin-bottom:20px;" loading="lazy"><span class="tag-badge">Linha parceira premium</span><h1>Linha de Competição Cão de Caça</h1><p class="text-gray">Presença de marca, qualidade e posicionamento premium para quem busca linha parceira com identidade forte e conexão com a comunidade.</p><p class="text-gray">Responsável Rondônia: Juninho Pipas. Instagram: ${STORE.instagram}.</p><div class="marketplace-note" style="margin:18px 0;"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Regra comercial vigente</strong>A Linha Cão de Caça é de venda exclusiva da <strong style="color:var(--c-white);">Juninho Pipas</strong> dentro da estrutura do marketplace.</div><div style="display:flex; gap:12px; flex-wrap:wrap;"><button class="btn btn-primary" onclick="openWhatsApp('cao-de-caca','Olá! Quero saber mais sobre a Linha de Competição Cão de Caça.')">Falar no WhatsApp</button><a class="btn btn-secondary" href="#/loja">Ver catálogo</a></div></div><div class="card" style="padding:30px;"><h3>Diferenciais</h3><ul class="text-gray" style="padding-left:18px;"><li>Foco em qualidade e performance.</li><li>Tipos de linhas em evidência: Vera Cruz, Círculo, Ultra e Boldline.</li><li>Complementos de marca como camisas e bandeiras.</li><li>Comunicação premium e alinhada à identidade visual do ecossistema.</li></ul></div></div></div></section>`; }
 function renderAspiron(){ return `<section class="section"><div class="container"><div class="grid-2" style="align-items:center; margin-bottom:34px;"><div><img src="${REF.logoA}" alt="ASPIRON" style="max-width:200px; margin-bottom:16px;" loading="lazy"><span class="tag-badge">Institucional</span><h1>ASPIRON: esporte, cultura, lazer e responsabilidade</h1><p class="text-gray">A ASPIRON – Associação dos Pipeiros do Estado de Rondônia atua para valorizar, organizar e representar a comunidade pipeira, promovendo orientação, festivais, campeonatos e diálogo institucional.</p><p class="text-gray">Fundada em 2022 por Juninho Pipas, a associação reforça uma pauta de responsabilidade, pertencimento e desenvolvimento da prática em ambientes adequados.</p><a class="btn btn-success" href="https://wa.me/5569999412054" target="_blank" rel="noopener noreferrer">Falar com a ASPIRON</a></div><div class="card" style="padding:28px;"><h3>Base legal e responsabilidade</h3><p class="text-gray">A comercialização, posse e uso de determinados tipos de linha seguem regras específicas e devem observar cadastro, autorização, locais apropriados e legislação vigente.</p><ul class="text-gray" style="padding-left:18px;"><li><a href="https://www.portovelho.ro.gov.br/artigo/44911/" target="_blank" rel="noopener noreferrer">Decreto Municipal nº 20.041/2024</a> — regula a prática de soltar pipas no município e estabelece o Dia do Pipeiro em <strong>17 de julho</strong>.</li><li><a href="https://leismunicipais.com.br/a/ro/p/porto-velho/lei-ordinaria/2025/331/3306/" target="_blank" rel="noopener noreferrer">Lei Municipal nº 3.306/2025</a> — política municipal para lazer seguro com pipas, em vigor a partir de 18/09/2025.</li><li><a href="https://sapl.al.ro.leg.br/norma/9302" target="_blank" rel="noopener noreferrer">Lei Estadual nº 4.726/2020</a>, alterada pela Lei nº 5.445/2022 — regras específicas sobre comercialização, posse e uso de determinados tipos de linha em áreas autorizadas e nos termos da legislação aplicável.</li></ul></div></div><div class="grid-3"><div class="card" style="padding:24px;"><h3>História</h3><p class="text-gray">A associação nasce da necessidade de organização, representação e fortalecimento de uma cultura que movimenta lazer, eventos e comunidade em Rondônia.</p></div><div class="card" style="padding:24px;"><h3>Missão e atuação</h3><p class="text-gray">Orientar, apoiar festivais e campeonatos, promover boas práticas, ampliar diálogo institucional e valorizar a cultura pipeira com responsabilidade.</p></div><div class="card" style="padding:24px;"><h3>Pipódromo e próximos passos</h3><p class="text-gray">A construção do futuro pipódromo está sendo acompanhada de perto, com foco em estrutura adequada, segurança e fortalecimento da prática organizada.</p></div></div><div style="margin-top:40px;"><h2>Boas práticas</h2><div class="grid-3"><div class="card" style="padding:22px;">Praticar em locais apropriados</div><div class="card" style="padding:22px;">Respeitar o espaço público</div><div class="card" style="padding:22px;">Observar a legislação vigente</div><div class="card" style="padding:22px;">Buscar orientação da ASPIRON</div><div class="card" style="padding:22px;">Valorizar a comunidade</div><div class="card" style="padding:22px;">Participar de eventos organizados</div></div></div><div class="card" style="padding:28px; margin-top:40px;"><h2>Festival de Pipas de Porto Velho</h2><p class="text-gray">Evento em destaque da agenda, nos dias <strong>18 e 19/07/2026</strong>, no Murão, Zona Leste, em Porto Velho/RO, organizado pela ASPIRON com apoio municipal e expectativa de público de 5.000 pessoas.</p></div></div></section>`; }
 function renderEvents(){ return `<section class="section"><div class="container"><span class="tag-badge">Agenda</span><h1>Próximos eventos</h1><p class="text-gray" style="max-width:860px; margin-bottom:28px;">A agenda oficial já conta com eventos relevantes em Porto Velho. A página agora destaca os materiais reais enviados pelo cliente para reforçar prova social e tração da comunidade.</p><div class="grid-2" style="align-items:start;"><div class="card" style="overflow:hidden;"><img src="${REF.evento}" alt="Festival de Pipas em Porto Velho" style="width:100%; border-radius:0;" loading="lazy"><div style="padding:24px;"><span class="tag-badge">18 e 19 de julho</span><h2 style="font-size:1.6rem;">Festival de Pipas em Porto Velho</h2><p class="text-gray">Murão, Zona Leste, Porto Velho/RO. Evento com forte presença de patrocinadores, apoio institucional e ativação da comunidade pipeira no estado.</p><div style="display:flex; gap:12px; flex-wrap:wrap;"><button class="btn btn-success" onclick="openWhatsApp('eventos-murao','Olá! Quero informações sobre o Festival de Pipas em Porto Velho, no Murão.')">Quero informações</button><a class="btn btn-secondary" href="#/aspiron">Ver ASPIRON</a></div></div></div><div class="card" style="overflow:hidden;"><img src="${REF.eventUsina}" alt="Mega Festival de Pipas na Usina" style="width:100%; border-radius:0;" loading="lazy"><div style="padding:24px;"><span class="tag-badge">21 de junho</span><h2 style="font-size:1.6rem;">Mega Festival de Pipas na Usina</h2><p class="text-gray">Usina, Bairro Nacional. Programação divulgada com início às <strong>9h</strong> e encerramento às <strong>19h30</strong>, com mensagem aberta para todos os pipeiros.</p><div style="display:flex; gap:12px; flex-wrap:wrap;"><button class="btn btn-success" onclick="openWhatsApp('eventos-usina','Olá! Quero informações sobre o Mega Festival de Pipas na Usina, Bairro Nacional.')">Quero informações</button><a class="btn btn-secondary" href="#/aspiron">Ver ASPIRON</a></div></div></div></div></div></section>`; }
-function renderGallery(){ return `<section class="section"><div class="container"><h1>Galeria</h1><p class="text-gray">Seleção visual da loja, produtos, comunidade e eventos.</p><div class="grid-4">${galleryImgs.map(img=>`<a class="card product-img" onclick="openLightbox('${img}')"><img src="${img}" alt="Galeria Pipas Store Brasil" loading="lazy"></a>`).join('')}</div></div></section>`; }
-function renderBlog(){ return `<section class="section"><div class="container"><span class="tag-badge">Conteúdo estratégico</span><h1>Blog</h1><p class="text-gray">História da marca, guias de compra e cultura pipeira com responsabilidade, em uma área separada da loja para complementar a operação comercial.</p><div class="grid-3">${blogPosts.map(p=>`<article class="card"><a class="product-img" href="#/blog/${p.slug}"><img src="${p.img}" alt="${p.title}" loading="lazy"></a><div class="product-info"><div class="product-cat">${p.cat}</div><h3 class="product-title">${p.title}</h3><p class="text-gray">${p.summary}</p><a class="btn btn-secondary btn-block" href="#/blog/${p.slug}">Ler artigo</a></div></article>`).join('')}</div></div></section>`; }
+function renderGallery(){ return `<section class="section"><div class="container"><h1>Galeria</h1><p class="text-gray">Seleção visual da loja, produtos, comunidade e eventos.</p><div class="grid-4">${galleryImgs.map(img=>`<a class="card product-img" onclick="openLightbox('${img}')"><img src="${img}" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="this.closest('a')?.remove()"></a>`).join('')}</div></div></section>`; }
+function renderBlog(){ return `<section class="section"><div class="container"><span class="tag-badge">Conteúdo estratégico</span><h1>Blog</h1><p class="text-gray">História da marca, guias de compra e cultura pipeira com responsabilidade, em uma área separada da loja para complementar a operação comercial.</p><div class="grid-3">${blogPosts.map(p=>`<article class="card"><a class="product-img" href="#/blog/${p.slug}"><img src="${p.img}" alt="${p.title}" loading="lazy" onerror="this.src=REF.blogPlaceholder"></a><div class="product-info"><div class="product-cat">${p.cat}</div><h3 class="product-title">${p.title}</h3><p class="text-gray">${p.summary}</p><a class="btn btn-secondary btn-block" href="#/blog/${p.slug}">Ler artigo</a></div></article>`).join('')}</div></div></section>`; }
 function renderArticle(slug){ const post=blogPosts.find(p=>p.slug===slug); if(!post) return renderNotFound(); const paragraphs = articleText[post.cat] || articleText.cultura; return `<section class="section"><div class="container" style="max-width:900px;"><a href="#/blog" class="text-yellow">← Voltar para o blog</a><div style="margin-top:18px;"><img src="${post.img}" alt="${post.title}" style="width:100%; max-height:420px; object-fit:cover; border-radius:16px; border:1px solid var(--c-border);" loading="lazy"></div><div style="margin-top:24px;"><span class="tag-badge">${post.cat}</span><h1>${post.title}</h1><p class="text-gray" style="font-size:1.05rem;">${post.summary}</p>${paragraphs.map(t=>`<p class="text-gray">${t}</p>`).join('')}</div></div></section>`; }
 function renderContact(){ return `<section class="section"><div class="container"><span class="tag-badge">Contato e retirada</span><h1>Contato</h1><div class="grid-2" style="align-items:start;"><div class="card" style="padding:28px;"><h3>Loja física</h3><p class="text-gray"><strong style="color:var(--c-white);">Endereço:</strong><br>${STORE.endereco}, ${STORE.bairro}<br>${STORE.cidade} - ${STORE.uf}</p><p class="text-gray"><strong style="color:var(--c-white);">Horários:</strong><br>${STORE.horarios}</p><p class="text-gray"><strong style="color:var(--c-white);">WhatsApp:</strong> +55 69 99222-3519<br><strong style="color:var(--c-white);">Instagram:</strong> ${STORE.instagram}<br><strong style="color:var(--c-white);">Email:</strong> ${STORE.email}</p><p class="text-gray">Compra online com confirmação via WhatsApp, retirada local disponível e envio nacional com frete confirmado no atendimento.</p><div style="display:flex; gap:12px; flex-wrap:wrap;"><button class="btn btn-primary" onclick="openMap()">Abrir no Google Maps</button><button class="btn btn-success" onclick="openWhatsApp('contato','Olá! Quero falar com a Pipas Store Brasil.')">Chamar no WhatsApp</button></div></div><div><img src="${REF.fachada}" alt="Fachada da loja Juninho Pipas" style="border-radius:16px; border:1px solid var(--c-border);" loading="lazy"><p class="text-gray" style="margin-top:12px; font-size:0.92rem;">Fachada real da loja física em Porto Velho/RO, reforçando presença local e credibilidade operacional.</p></div></div></div></section>`; }
 function renderFaq(){ const faqs=[['Como funciona a compra?','Você escolhe os produtos no site, envia o pedido e a loja confirma a disponibilidade antes da etapa de pagamento.'],['Quais formas de pagamento existem?','Pix com comprovante via WhatsApp, link de pagamento enviado manualmente, transferência sob validação manual, cartão presencial e dinheiro na retirada.'],['Tem retirada local?','Sim. A retirada na loja é grátis em Porto Velho.'],['Como funciona a entrega local?','A entrega local pode ser feita conforme triagem do pedido, com taxa a consultar no atendimento.'],['Tem envio nacional?','Sim. O envio nacional está disponível e o frete é calculado no atendimento após a confirmação do pedido.'],['Como entram novos lojistas?','A loja interessada envia cadastro público, entra como pendente, passa por homologação manual e só recebe credenciais após aprovação.']]; return `<section class="section"><div class="container"><h1>Perguntas frequentes</h1>${faqs.map(([q,a])=>`<div class="accordion-item"><div class="accordion-header" onclick="toggleAccordion(this)">${q}<span>+</span></div><div class="accordion-body"><p>${a}</p></div></div>`).join('')}</div></section>`; }
