@@ -20,3 +20,5 @@ Thumbs.db
 *.mp4
 docs
 docs/
+supabase
+supabase/
