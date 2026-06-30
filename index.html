@@ -867,6 +867,21 @@ const MARKETPLACE_STORES = [
         cardIntegration: 'manual',
         login: __PSB_STORE_OVERRIDE.login || 'juninho',
         password: __PSB_STORE_OVERRIDE.password || 'juninho0713'
+    },
+    {
+        id: 'pipas-store-brasil',
+        nome: 'Pipas Store Brasil',
+        label: 'Loja parceira homologada',
+        phone: STORE.waParceiro,
+        cidade: 'Porto Velho/RO',
+        destaque: false,
+        status: 'approved',
+        paymentMode: 'manual',
+        pixKey: '',
+        cardIntegration: 'manual',
+        login: 'lojista-pipas-store-brasil',
+        password: '770654',
+        catalogScope: ['rabiolas']
     }
 ];
 const DEFAULT_SELLER_ID = 'juninho-pipas';
@@ -878,6 +893,14 @@ const PRODUCT_RULES = {
         requires_stock_confirmation: true,
         catalog_status: 'ativo',
         note: 'Venda exclusiva da Juninho Pipas.'
+    },
+    'rabiola-500m': {
+        sell_mode: 'restricted',
+        allowed_sellers: ['juninho-pipas', 'pipas-store-brasil'],
+        default_seller: 'juninho-pipas',
+        requires_stock_confirmation: true,
+        catalog_status: 'ativo',
+        note: 'Produto disponível em mais de uma loja homologada. Escolha a loja antes de adicionar ao carrinho.'
     }
 };
 const PARTNER_STORE_STORAGE_KEY = 'psb_partner_stores_23';
@@ -1037,14 +1060,20 @@ const loadProductRequests = () => readJSON(PRODUCT_REQUESTS_STORAGE_KEY, []);
 const saveProductRequests = requests => writeJSON(PRODUCT_REQUESTS_STORAGE_KEY, requests);
 const allStores = () => {
     const access = loadStoreAccess();
-    return [...MARKETPLACE_STORES, ...loadPartnerStores()].map(store => ({ ...store, ...(access[store.id] || {}) }));
+    const map = new Map();
+    [...MARKETPLACE_STORES, ...loadPartnerStores()].forEach(store => {
+        if(!store || !store.id) return;
+        const current = map.get(store.id) || {};
+        map.set(store.id, { ...current, ...store, ...(access[store.id] || {}) });
+    });
+    return Array.from(map.values());
 };
 const approvedStores = () => allStores().filter(store => store.status === 'approved');
 const pendingPartnerStores = () => loadPendingPartnerStores();
 const getStoreById = id => allStores().find(store => store.id === id) || MARKETPLACE_STORES[0];
 const getProductRule = slug => ({
-    sell_mode: 'open',
-    allowed_sellers: allStores().map(store => store.id),
+    sell_mode: 'restricted',
+    allowed_sellers: [DEFAULT_SELLER_ID],
     default_seller: DEFAULT_SELLER_ID,
     requires_stock_confirmation: true,
     catalog_status: 'ativo',
@@ -1057,7 +1086,8 @@ const sellersForProduct = slug => {
 };
 const productSellerNote = slug => {
     const rule = getProductRule(slug);
-    if(rule.sell_mode === 'exclusive') return rule.note || 'Venda exclusiva da Juninho Pipas.';
+    if(rule.note) return rule.note;
+    if(rule.sell_mode === 'exclusive') return 'Venda exclusiva da Juninho Pipas.';
     if(rule.sell_mode === 'restricted') return 'Produto disponível apenas para lojas homologadas nesta regra comercial.';
     return 'Se nenhuma loja for escolhida, o pedido segue por padrão para a Juninho Pipas.';
 };
@@ -1532,7 +1562,7 @@ function setCategoryFilter(slug){ const category=document.getElementById('catego
 function productSearchText(p){ return normalizeText([p.nome, p.desc, catName(p.categoria), p.categoria, ...(p.variacoes||[]).map(v=>v.label), ...(p.tags||[])].join(' ')); }
 function shopTrustRail(){ return `<div class="trust-rail"><div class="trust-pill"><strong>Loja homologada</strong>Juninho Pipas oficial</div><div class="trust-pill"><strong>Pedido registrado</strong>Histórico no sistema</div><div class="trust-pill"><strong>Pagamento seguro</strong>Só após confirmação</div><div class="trust-pill"><strong>Atendimento humano</strong>Fechamento via WhatsApp</div></div>`; }
 function updatePrice(){ const p = bySlug((location.hash.split('/')[2]||'')); const sel=document.getElementById('variationSelect'); const price=document.getElementById('pdPrice'); const sticky=document.getElementById('pdStickyPrice'); if(!p||!sel||!price) return; const v=p.variacoes.find(x=>x.label===sel.value) || p.variacoes[0]; price.textContent = money(v.preco); if(sticky) sticky.textContent = money(v.preco); trackEvent('select_variation',{slug:p.slug,variacao:v.label,preco:v.preco}); }
-function productCard(p){ const mainImage = getProductMainImage(p.slug); const variationLabel = p.variacoes.length > 1 ? `${p.variacoes.length} variações` : (p.variacoes[0]?.label || 'variação única'); return `<article class="card product-card premium-product-card"><a class="product-img" href="#/produto/${p.slug}" aria-label="Ver ${p.nome}"><span class="product-tag">${isPremium(p)?'Premium':'Catálogo real'}</span><img src="${mainImage}" alt="${p.nome}" loading="lazy" onerror="productImageFallback(this)"></a><div class="product-info"><div class="product-cat">${catName(p.categoria)}</div><h3 class="product-title">${p.nome}</h3><div class="product-meta-line"><span>${variationLabel}</span><span>Pedido assistido</span></div><div class="product-price">A partir de ${moneyFrom(p)}</div><a class="btn btn-primary btn-block" href="#/produto/${p.slug}">Ver produto</a></div></article>`; }
+function productCard(p){ const mainImage = getProductMainImage(p.slug); const variationLabel = p.variacoes.length > 1 ? `${p.variacoes.length} variações` : (p.variacoes[0]?.label || 'variação única'); const sellerCount = sellersForProduct(p.slug).length; const sellerBadge = sellerCount > 1 ? `${sellerCount} lojas` : 'Pedido assistido'; return `<article class="card product-card premium-product-card"><a class="product-img" href="#/produto/${p.slug}" aria-label="Ver ${p.nome}"><span class="product-tag">${isPremium(p)?'Premium':'Catálogo real'}</span><img src="${mainImage}" alt="${p.nome}" loading="lazy" onerror="productImageFallback(this)"></a><div class="product-info"><div class="product-cat">${catName(p.categoria)}</div><h3 class="product-title">${p.nome}</h3><div class="product-meta-line"><span>${variationLabel}</span><span>${sellerBadge}</span></div><div class="product-price">A partir de ${moneyFrom(p)}</div><a class="btn btn-primary btn-block" href="#/produto/${p.slug}">Ver produto</a></div></article>`; }
 function fillFamilyOptions(){ const familySel=document.getElementById('familyFilter'); if(!familySel) return; const currentValue = familySel.value || 'all'; const cat=document.getElementById('categoryFilter')?.value || 'all'; const base = cat==='all' ? products : products.filter(p=>p.categoria===cat); const familyOptions = [...new Set(base.map(p=>p.nome))].sort((a,b)=>a.localeCompare(b,'pt-BR')); familySel.innerHTML = `<option value="all">Todas as famílias</option>` + familyOptions.map(n=>`<option value="${n}">${n}</option>`).join(''); familySel.value = familyOptions.includes(currentValue) ? currentValue : 'all'; }
 function applyFilters(){ const c=document.getElementById('categoryFilter')?.value || 'all'; const f=document.getElementById('familyFilter')?.value || 'all'; const price=document.getElementById('priceFilter')?.value || 'all'; const premium=document.getElementById('premiumFilter')?.checked; const sort=document.getElementById('sortFilter')?.value || 'relevancia'; const q=normalizeText(document.getElementById('searchFilter')?.value || ''); let list=[...products].filter(p => (c==='all'||p.categoria===c) && (f==='all'||p.nome===f) && (!premium || isPremium(p)) && (!q || productSearchText(p).includes(q)) && (price==='all' || (price==='ate20' && priceFrom(p)<=20) || (price==='20a50' && priceFrom(p)>20 && priceFrom(p)<=50) || (price==='50a100' && priceFrom(p)>50 && priceFrom(p)<=100) || (price==='acima100' && priceFrom(p)>100))); if(sort==='relevancia') list.sort((a,b)=>relevanceScore(b)-relevanceScore(a) || a.nome.localeCompare(b.nome,'pt-BR')); if(sort==='menor') list.sort((a,b)=>priceFrom(a)-priceFrom(b)); if(sort==='maior') list.sort((a,b)=>priceFrom(b)-priceFrom(a)); if(sort==='az') list.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')); const grid=document.getElementById('productGrid'); const count=document.getElementById('filterCount'); document.querySelectorAll('[data-cat-chip]').forEach(btn=>btn.classList.toggle('active', btn.dataset.catChip===c)); if(grid){ grid.innerHTML=list.length?list.map(productCard).join(''):`<div class="empty-state premium-empty-state"><h3>Nenhum produto encontrado</h3><p class="text-gray">Ajuste a busca ou filtros para visualizar o catálogo.</p><div style="margin-top:16px;"><button class="btn btn-secondary" onclick="clearFilters()">Limpar filtros</button></div></div>`; } if(count) count.textContent=`${list.length} produto(s) encontrado(s)`; trackEvent('apply_filters',{categoria:c,familia:f,faixa:price,premium,ordenacao:sort,busca:q,resultado:list.length}); }
 function setIntent(){ return; }
@@ -1559,7 +1589,7 @@ function renderProduct(slug){
     }).join('');
 
     const sellerHtml = sellers.length > 1
-        ? `<div class="form-group product-seller-select"><label class="form-label">Escolha a loja</label><select id="sellerSelect" class="form-control">${sellers.map(store=>`<option value="${store.id}" ${store.id === defaultSeller.id ? 'selected' : ''}>${store.nome} — ${store.label}</option>`).join('')}</select></div><p class="text-gray product-seller-note">${productSellerNote(p.slug)}</p>`
+        ? `<div class="form-group product-seller-select"><label class="form-label">Escolha a loja vendedora</label><select id="sellerSelect" class="form-control">${sellers.map(store=>`<option value="${store.id}" ${store.id === defaultSeller.id ? 'selected' : ''}>${store.nome} — ${store.label}</option>`).join('')}</select></div><p class="text-gray product-seller-note">${productSellerNote(p.slug)}</p>`
         : `<p class="text-gray product-seller-note"><strong style="color:var(--c-white);">${defaultSeller.nome}</strong> — ${defaultSeller.label}. ${productSellerNote(p.slug)}</p><p class="text-gray seller-expansion-note">Marketplace em expansão: a seleção de outras lojas será habilitada conforme novas homologações.</p>`;
 
     return `<section class="section product-section"><div class="container">
