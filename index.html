@@ -467,13 +467,14 @@ async function saveOrderToBackend(order){
         order_payload: order,
         source: 'site'
     };
-    const res = await fetch(`${supabaseRestBase()}/psb_orders?on_conflict=order_number`, {
+    const res = await fetch(`${supabaseRestBase()}/psb_orders`, {
         method: 'POST',
-        headers: supabaseHeaders('resolution=merge-duplicates,return=representation'),
-        body: JSON.stringify([row])
+        headers: supabaseHeaders('return=representation'),
+        body: JSON.stringify(row)
     });
     if(!res.ok){
         const detail = await res.text().catch(()=> '');
+        console.error('Falha ao registrar pedido no Supabase.', { status: res.status, detail, row });
         throw new Error(`Falha ao registrar pedido no Supabase: ${res.status} ${detail}`);
     }
     return { ok:true, data: await res.json().catch(()=>[]) };
