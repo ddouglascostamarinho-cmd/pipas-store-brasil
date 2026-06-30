@@ -695,6 +695,16 @@ footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); p
     .shop-premium-title h1 { font-size: 1.36rem; }
 }
 
+
+/* Fase 1.4.1 - Remove duplicidade de filtros no mobile.
+   No celular, a loja usa apenas busca + chips premium horizontais.
+   O painel lateral completo permanece disponível no desktop. */
+@media(max-width: 768px) {
+    .shop-layout { display:block !important; }
+    .filters-sidebar { display:none !important; }
+    .shop-results-line { margin-top: 0; }
+}
+
 </style>
 </head>
 <body>
