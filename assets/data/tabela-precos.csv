@@ -1,0 +1,290 @@
+﻿categoria;produto;slug_produto;variacao;tipo_venda;label_site;unidade_preco;quantidade_pacote;preco;ativo;observacao
+Linhas;Linha Chilena;linha-chilena;100jds;linha_jardas;100jds;unidade;;10,00;sim;
+Linhas;Linha Chilena;linha-chilena;200jds;linha_jardas;200jds;unidade;;15,00;sim;
+Linhas;Linha Chilena;linha-chilena;500jds;linha_jardas;500jds;unidade;;25,00;sim;
+Linhas;Linha Chilena;linha-chilena;1000jds;linha_jardas;1000jds;unidade;;50,00;sim;
+Linhas;Linha Chilena;linha-chilena;2000jds;linha_jardas;2000jds;unidade;;85,00;sim;
+Linhas;Linha Chilena;linha-chilena;3000jds;linha_jardas;3000jds;unidade;;130,00;sim;
+Linhas;Linha Chilena;linha-chilena;6000jds;linha_jardas;6000jds;unidade;;200,00;sim;
+Linhas;Linha Chilena;linha-chilena;12000jds;linha_jardas;12000jds;unidade;;350,00;sim;
+Linhas;Linha Indonésia;linha-indonesia;1000jds;linha_jardas;1000jds;unidade;;80,00;sim;
+Linhas;Linha Indonésia;linha-indonesia;2000jds;linha_jardas;2000jds;unidade;;150,00;sim;
+Linhas;Linha Indonésia;linha-indonesia;3000jds;linha_jardas;3000jds;unidade;;300,00;sim;
+Linhas;Linha Indonésia;linha-indonesia;6000jds;linha_jardas;6000jds;unidade;;450,00;sim;
+Linhas;Linha Vera Cruz;linha-vera-cruz;500jds;linha_jardas;500jds;unidade;;12,00;sim;
+Linhas;Linha Vera Cruz;linha-vera-cruz;1000jds;linha_jardas;1000jds;unidade;;20,00;sim;
+Linhas;Linha Vera Cruz;linha-vera-cruz;3000jds;linha_jardas;3000jds;unidade;;65,00;sim;
+Linhas;Linha Vera Cruz;linha-vera-cruz;6000jds;linha_jardas;6000jds;unidade;;100,00;sim;
+Linhas;Linha Vera Cruz;linha-vera-cruz;12000jds;linha_jardas;12000jds;unidade;;150,00;sim;
+Linhas;Linha Ultra;linha-ultra;500jds;linha_jardas;500jds;unidade;;10,00;sim;
+Linhas;Linha Ultra;linha-ultra;1000jds;linha_jardas;1000jds;unidade;;20,00;sim;
+Linhas;Linha Ultra;linha-ultra;6000jds;linha_jardas;6000jds;unidade;;85,00;sim;
+Linhas;Linha Ultra;linha-ultra;12000jds;linha_jardas;12000jds;unidade;;130,00;sim;
+Linhas;Linha Bold;linha-bold;500jds;linha_jardas;500jds;unidade;;10,00;sim;
+Linhas;Linha Bold;linha-bold;1000jds;linha_jardas;1000jds;unidade;;20,00;sim;
+Linhas;Linha Bold;linha-bold;6000jds;linha_jardas;6000jds;unidade;;85,00;sim;
+Linhas;Linha Bold;linha-bold;12000jds;linha_jardas;12000jds;unidade;;130,00;sim;
+Linhas;Linha Circulo;linha-circulo;500jds;linha_jardas;500jds;unidade;;10,00;sim;
+Linhas;Linha Circulo;linha-circulo;1000jds;linha_jardas;1000jds;unidade;;20,00;sim;
+Linhas;Linha Circulo;linha-circulo;6000jds;linha_jardas;6000jds;unidade;;85,00;sim;
+Linhas;Linha Circulo;linha-circulo;12000jds;linha_jardas;12000jds;unidade;;130,00;sim;
+Linhas;Linha Pro Combate;linha-pro-combate;500jds;linha_jardas;500jds;unidade;;10,00;sim;
+Linhas;Linha Pro Combate;linha-pro-combate;1000jds;linha_jardas;1000jds;unidade;;20,00;sim;
+Linhas;Linha Pro Combate;linha-pro-combate;6000jds;linha_jardas;6000jds;unidade;;85,00;sim;
+Linhas;Linha Pro Combate;linha-pro-combate;12000jds;linha_jardas;12000jds;unidade;;130,00;sim;
+Pipas;Mucha;mucha;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha;mucha;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Mucha;mucha;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Mucha;mucha;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha;mucha;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Mucha;mucha;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Mucha;mucha;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha;mucha;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Mucha;mucha;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Mucha;mucha;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha;mucha;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Mucha;mucha;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Mucha;mucha;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha;mucha;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Mucha;mucha;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Mucha;mucha;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Mucha;mucha;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Mucha;mucha;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha Mucha;mucha-mucha;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha Mucha;mucha-mucha;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha Mucha;mucha-mucha;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha Mucha;mucha-mucha;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Mucha Mucha;mucha-mucha;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Mucha Mucha;mucha-mucha;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Mucha Mucha;mucha-mucha;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Charuto;charuto;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Charuto;charuto;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Charuto;charuto;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Charuto;charuto;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Charuto;charuto;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Charuto;charuto;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Charuto;charuto;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Charuto;charuto;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Charuto;charuto;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Charuto;charuto;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Charuto;charuto;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Charuto;charuto;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Charuto;charuto;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Charuto;charuto;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Charuto;charuto;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Charuto;charuto;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Charuto;charuto;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Charuto;charuto;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Cachorro Louco;cachorro-louco;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Cachorro Louco;cachorro-louco;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Cachorro Louco;cachorro-louco;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Cachorro Louco;cachorro-louco;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Cachorro Louco;cachorro-louco;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Cachorro Louco;cachorro-louco;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Cachorro Louco;cachorro-louco;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Vanda;vanda;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Vanda;vanda;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Vanda;vanda;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Vanda;vanda;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Vanda;vanda;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Vanda;vanda;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Vanda;vanda;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Vanda;vanda;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Vanda;vanda;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Vanda;vanda;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Vanda;vanda;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Vanda;vanda;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Vanda;vanda;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Vanda;vanda;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Vanda;vanda;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Vanda;vanda;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Vanda;vanda;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Vanda;vanda;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;GT;gt;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;GT;gt;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;GT;gt;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;GT;gt;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;GT;gt;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;GT;gt;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;GT;gt;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;GT;gt;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;GT;gt;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;GT;gt;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;GT;gt;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;GT;gt;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;GT;gt;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;GT;gt;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;GT;gt;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;GT;gt;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;GT;gt;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;GT;gt;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Come Rato;come-rato;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Come Rato;come-rato;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Come Rato;come-rato;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Come Rato;come-rato;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Come Rato;come-rato;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Come Rato;come-rato;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Come Rato;come-rato;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Come Rato;come-rato;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Come Rato;come-rato;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Come Rato;come-rato;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Come Rato;come-rato;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Come Rato;come-rato;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Come Rato;come-rato;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Come Rato;come-rato;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Come Rato;come-rato;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Come Rato;come-rato;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Come Rato;come-rato;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Come Rato;come-rato;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Britt;briti;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Britt;briti;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Britt;briti;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Britt;briti;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Britt;briti;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Britt;briti;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Britt;briti;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Britt;briti;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Britt;briti;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Britt;briti;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Britt;briti;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Britt;briti;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Britt;briti;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Britt;briti;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Britt;briti;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Britt;briti;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Britt;briti;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Britt;briti;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Latão;latao;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Latão;latao;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Latão;latao;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Latão;latao;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Latão;latao;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Latão;latao;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Latão;latao;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Latão;latao;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Latão;latao;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Latão;latao;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Latão;latao;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Latão;latao;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Latão;latao;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Latão;latao;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Latão;latao;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Latão;latao;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Latão;latao;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Latão;latao;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Pipas;Carrapeto;carrapeto;50cm;varejo_unitario;50cm - Unidade;unidade;1;2,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Carrapeto;carrapeto;50cm;pacote_25_sem_rabiola;50cm - Pacote 25un sem rabiola;pacote;25;40,00;sim;
+Pipas;Carrapeto;carrapeto;50cm;pacote_25_com_rabiola;50cm - Pacote 25un com rabiola;pacote;25;60,00;sim;
+Pipas;Carrapeto;carrapeto;55cm;varejo_unitario;55cm - Unidade;unidade;1;3,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Carrapeto;carrapeto;55cm;pacote_25_sem_rabiola;55cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Carrapeto;carrapeto;55cm;pacote_25_com_rabiola;55cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Carrapeto;carrapeto;57cm;varejo_unitario;57cm - Unidade;unidade;1;3,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Carrapeto;carrapeto;57cm;pacote_25_sem_rabiola;57cm - Pacote 25un sem rabiola;pacote;25;45,00;sim;
+Pipas;Carrapeto;carrapeto;57cm;pacote_25_com_rabiola;57cm - Pacote 25un com rabiola;pacote;25;70,00;sim;
+Pipas;Carrapeto;carrapeto;60cm;varejo_unitario;60cm - Unidade;unidade;1;4,00;sim;Pipa com rabiola no varejo: sim
+Pipas;Carrapeto;carrapeto;60cm;pacote_25_sem_rabiola;60cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Carrapeto;carrapeto;60cm;pacote_25_com_rabiola;60cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Carrapeto;carrapeto;62cm;varejo_unitario;62cm - Unidade;unidade;1;4,50;sim;Pipa com rabiola no varejo: sim
+Pipas;Carrapeto;carrapeto;62cm;pacote_25_sem_rabiola;62cm - Pacote 25un sem rabiola;pacote;25;50,00;sim;
+Pipas;Carrapeto;carrapeto;62cm;pacote_25_com_rabiola;62cm - Pacote 25un com rabiola;pacote;25;80,00;sim;
+Pipas;Carrapeto;carrapeto;72cm;varejo_unitario;72cm - Unidade;unidade;1;7,00;sim;Pipa com rabiola no varejo: Não
+Pipas;Carrapeto;carrapeto;72cm;pacote_25_sem_rabiola;72cm - Pacote 25un sem rabiola;pacote;25;90,00;sim;
+Pipas;Carrapeto;carrapeto;72cm;pacote_25_com_rabiola;72cm - Pacote 25un com rabiola;pacote;25;120,00;sim;
+Acessórios;Carretilhas Madeira;carretilhas-madeira;10 polegadas;varejo_unitario;10 polegadas;unidade;;110,00;sim;
+Acessórios;Carretilhas Madeira;carretilhas-madeira;11 polegadas;varejo_unitario;11 polegadas;unidade;;120,00;sim;
+Acessórios;Carretilhas Madeira;carretilhas-madeira;12 polegadas;varejo_unitario;12 polegadas;unidade;;150,00;sim;
+Acessórios;Carretilhas Madeira;carretilhas-madeira;14 polegadas;varejo_unitario;14 polegadas;unidade;;170,00;sim;
+Acessórios;Carretilhas Madeira;carretilhas-madeira;20 polegadas;varejo_unitario;20 polegadas;unidade;;295,00;sim;
+Acessórios;Carretilhas Plástico;carretilhas-plastico;Pequena;varejo_unitario;Pequena;unidade;;20,00;sim;
+Acessórios;Carretilhas Plástico;carretilhas-plastico;Média;varejo_unitario;Média;unidade;;35,00;sim;
+Acessórios;Carretilhas Plástico;carretilhas-plastico;Grande;varejo_unitario;Grande;unidade;;45,00;sim;
+Acessórios;Latas;latas;Padrão;varejo_unitario;Padrão;unidade;;6,00;sim;
+Folhas;Folhas de cores;folhas-de-cores;45x45 pct100und;varejo_unitario;45x45 pct100und;unidade;;24,00;sim;
+Folhas;Folhas de cores;folhas-de-cores;50x50 pct100und;varejo_unitario;50x50 pct100und;unidade;;24,00;sim;
+Folhas;Folhas de cores;folhas-de-cores;45x70 pct100und;varejo_unitario;45x70 pct100und;unidade;;24,00;sim;
+Folhas;Folhas desenhadas;folhas-desenhadas;45x45 pct100und;varejo_unitario;45x45 pct100und;unidade;;24,00;sim;
+Folhas;Folhas desenhadas;folhas-desenhadas;50x50 pct100und;varejo_unitario;50x50 pct100und;unidade;;28,00;sim;
+Folhas;Folhas desenhadas;folhas-desenhadas;45x70 pct100und;varejo_unitario;45x70 pct100und;unidade;;40,00;sim;
+Folhas;Folhas Corte e Recorte;folhas-corte-e-recorte;45x45 pct100und;varejo_unitario;45x45 pct100und;unidade;;65,00;sim;
+Folhas;Folhas Corte e Recorte;folhas-corte-e-recorte;50x50 pct100und;varejo_unitario;50x50 pct100und;unidade;;80,00;sim;
+Folhas;Folhas Corte e Recorte;folhas-corte-e-recorte;45x70 pct100und;varejo_unitario;45x70 pct100und;unidade;;80,00;sim;
+Folhas;Folhas laminadas;folhas-laminadas;45x45 pct100und;varejo_unitario;45x45 pct100und;unidade;;65,00;sim;
+Folhas;Folhas laminadas;folhas-laminadas;50x50 pct100und;varejo_unitario;50x50 pct100und;unidade;;80,00;sim;
+Folhas;Folhas laminadas;folhas-laminadas;45x70 pct100und;varejo_unitario;45x70 pct100und;unidade;;80,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 1.4;varejo_unitario;42cm - Espessura 1.4 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 1.6;varejo_unitario;42cm - Espessura 1.6 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 1.8;varejo_unitario;42cm - Espessura 1.8 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 2.0;varejo_unitario;42cm - Espessura 2.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 2.2;varejo_unitario;42cm - Espessura 2.2 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 2.5;varejo_unitario;42cm - Espessura 2.5 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 2.7;varejo_unitario;42cm - Espessura 2.7 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;42cm - Espessura 3.0;varejo_unitario;42cm - Espessura 3.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 1.4;varejo_unitario;45cm - Espessura 1.4 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 1.6;varejo_unitario;45cm - Espessura 1.6 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 1.8;varejo_unitario;45cm - Espessura 1.8 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 2.0;varejo_unitario;45cm - Espessura 2.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 2.2;varejo_unitario;45cm - Espessura 2.2 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 2.5;varejo_unitario;45cm - Espessura 2.5 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 2.7;varejo_unitario;45cm - Espessura 2.7 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;45cm - Espessura 3.0;varejo_unitario;45cm - Espessura 3.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 1.4;varejo_unitario;50cm - Espessura 1.4 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 1.6;varejo_unitario;50cm - Espessura 1.6 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 1.8;varejo_unitario;50cm - Espessura 1.8 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 2.0;varejo_unitario;50cm - Espessura 2.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 2.2;varejo_unitario;50cm - Espessura 2.2 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 2.5;varejo_unitario;50cm - Espessura 2.5 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 2.7;varejo_unitario;50cm - Espessura 2.7 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;50cm - Espessura 3.0;varejo_unitario;50cm - Espessura 3.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 1.4;varejo_unitario;100cm - Espessura 1.4 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 1.6;varejo_unitario;100cm - Espessura 1.6 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 1.8;varejo_unitario;100cm - Espessura 1.8 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 2.0;varejo_unitario;100cm - Espessura 2.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 2.2;varejo_unitario;100cm - Espessura 2.2 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 2.5;varejo_unitario;100cm - Espessura 2.5 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 2.7;varejo_unitario;100cm - Espessura 2.7 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;100cm - Espessura 3.0;varejo_unitario;100cm - Espessura 3.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 1.4;varejo_unitario;205cm - Espessura 1.4 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 1.6;varejo_unitario;205cm - Espessura 1.6 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 1.8;varejo_unitario;205cm - Espessura 1.8 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 2.0;varejo_unitario;205cm - Espessura 2.0 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 2.2;varejo_unitario;205cm - Espessura 2.2 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 2.5;varejo_unitario;205cm - Espessura 2.5 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 2.7;varejo_unitario;205cm - Espessura 2.7 - R$ por kg;kg;;35,00;sim;
+Fibras;Fibra;fibra;205cm - Espessura 3.0;varejo_unitario;205cm - Espessura 3.0 - R$ por kg;kg;;35,00;sim;
+Bambu;Bambu;bambu;52cm;varejo_unitario;52cm;pacote;;90,00;sim;
+Bambu;Bambu;bambu;55cm;varejo_unitario;55cm;pacote;;130,00;sim;
+Bambu;Bambu;bambu;57cm;varejo_unitario;57cm;pacote;;140,00;sim;
+Bambu;Bambu;bambu;60cm;varejo_unitario;60cm;pacote;;160,00;sim;
+Bambu;Bambu;bambu;62cm;varejo_unitario;62cm;pacote;;180,00;sim;
+Bambu;Bambu;bambu;70cm;varejo_unitario;70cm;pacote;;200,00;sim;
+Bambu;Bambu;bambu;72cm;varejo_unitario;72cm;pacote;;200,00;sim;
+Ferramentas;Forma para Fabricar Pipas;forma-fabricar;50cm;varejo_unitario;50cm;unidade;;70,00;sim;
+Ferramentas;Forma para Fabricar Pipas;forma-fabricar;55cm;varejo_unitario;55cm;unidade;;85,00;sim;
+Ferramentas;Forma para Fabricar Pipas;forma-fabricar;60cm;varejo_unitario;60cm;unidade;;70,00;sim;
+Ferramentas;Forma para Fabricar Pipas;forma-fabricar;70cm;varejo_unitario;70cm;unidade;;90,00;sim;
+Insumos;Cola;cola;1lt;varejo_unitario;1lt;unidade;;35,00;sim;
+Insumos;Cola;cola;5lt;varejo_unitario;5lt;unidade;;130,00;sim;
+Rabiolas;Pacote Rabiola;rabiola-500m;Folhete 10cm;varejo_unitario;Folhete 10cm;pacote;;40,00;sim;
+Rabiolas;Pacote Rabiola;rabiola-500m;Folhete 25cm;varejo_unitario;Folhete 25cm;pacote;;40,00;sim;

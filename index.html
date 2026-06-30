@@ -608,6 +608,93 @@ function galleryThumbLoaded(img){ if(img) img.style.display = 'block'; }
 function galleryThumbError(img){ if(img) img.remove(); }
 function setProductMainImage(src, thumb){ const main = document.querySelector('[data-product-main-image]'); if(!main) return; main.src = src; document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active')); if(thumb) thumb.classList.add('active'); }
 
+const PRICE_TABLE_URL = '/assets/data/tabela-precos.csv';
+function splitCsvLine(line, delimiter = ';'){
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for(let i = 0; i < line.length; i++){
+        const char = line[i];
+        const next = line[i + 1];
+        if(char === '"' && inQuotes && next === '"'){
+            current += '"';
+            i++;
+            continue;
+        }
+        if(char === '"'){
+            inQuotes = !inQuotes;
+            continue;
+        }
+        if(char === delimiter && !inQuotes){
+            result.push(current.trim());
+            current = '';
+            continue;
+        }
+        current += char;
+    }
+    result.push(current.trim());
+    return result;
+}
+function parsePriceValue(value){
+    const normalized = String(value || '').replace(/\s/g, '').replace(/R\$/gi, '').replace(/\./g, '').replace(',', '.');
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : null;
+}
+function parsePriceCsv(text){
+    const cleaned = String(text || '').replace(/^\uFEFF/, '');
+    const lines = cleaned.split(/\r?\n/).filter(line => line.trim());
+    if(lines.length < 2) return [];
+    const headers = splitCsvLine(lines[0]).map(header => header.replace(/^\uFEFF/, '').trim());
+    return lines.slice(1).map(line => {
+        const values = splitCsvLine(line);
+        return headers.reduce((row, header, index) => {
+            row[header] = (values[index] || '').trim();
+            return row;
+        }, {});
+    });
+}
+function applyPriceTable(rows){
+    const grouped = rows.reduce((acc, row) => {
+        const active = String(row.ativo || '').trim().toLowerCase();
+        if(active && !['sim','s','yes','1','true','ativo'].includes(active)) return acc;
+        const slug = (row.slug_produto || '').trim();
+        const preco = parsePriceValue(row.preco);
+        if(!slug || preco === null) return acc;
+        if(!acc[slug]) acc[slug] = [];
+        acc[slug].push({ ...row, precoNumber: preco });
+        return acc;
+    }, {});
+    products.forEach(product => {
+        const rowsForProduct = grouped[product.slug];
+        if(!rowsForProduct || !rowsForProduct.length) return;
+        product.nome = rowsForProduct[0].produto || product.nome;
+        product.subtipo = product.nome;
+        product.resumo = `Produto oficial ${STORE.nome}.`;
+        product.variacoes = rowsForProduct.map(row => ({
+            label: row.label_site || row.variacao || 'Padrão',
+            preco: row.precoNumber,
+            variacao: row.variacao || '',
+            tipoVenda: row.tipo_venda || '',
+            unidadePreco: row.unidade_preco || '',
+            quantidadePacote: row.quantidade_pacote || '',
+            observacao: row.observacao || ''
+        }));
+    });
+}
+async function loadPriceTable(){
+    try {
+        const response = await fetch(PRICE_TABLE_URL, { cache: 'no-store' });
+        if(!response.ok) throw new Error(`HTTP ${response.status}`);
+        const csvText = await response.text();
+        applyPriceTable(parsePriceCsv(csvText));
+        window.__PSB_PRICE_TABLE_LOADED__ = true;
+    } catch(error){
+        console.warn('Não foi possível carregar /assets/data/tabela-precos.csv. O site usará os preços internos do index.html.', error);
+        window.__PSB_PRICE_TABLE_LOADED__ = false;
+    }
+}
+
+
 /* ==========================================================================
    2. CATALOG DATA (FAMÍLIA + VARIAÇÕES)
    ========================================================================== */
@@ -679,7 +766,7 @@ const products = [
     createProduct('vanda', 'Vanda', 'pipas', ['competicao'], REF.img1, pipasVars2),
     createProduct('gt', 'GT', 'pipas', ['competicao'], REF.img1, pipasVars2),
     createProduct('come-rato', 'Come Rato', 'pipas', ['iniciante'], REF.img1, pipasVars2),
-    createProduct('briti', 'Briti', 'pipas', ['competicao'], REF.img1, pipasVars2),
+    createProduct('briti', 'Britt', 'pipas', ['competicao'], REF.img1, pipasVars2),
     createProduct('latao', 'Latão', 'pipas', ['iniciante'], REF.img1, pipasVars2),
     createProduct('carrapeto', 'Carrapeto', 'pipas', ['iniciante'], REF.img1, pipasVars2),
 
@@ -725,18 +812,18 @@ const products = [
     ]),
 
     // Rabiolas
-    createProduct('rabiola-500m', 'Rabiola para 100 Pipas', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [
-        {label: 'Folhete 10cm', preco: 45}, {label: 'Folhete 25cm', preco: 45}
-    ], 'Pacote de rabiola com rendimento aproximado para montar até 100 pipas de 55 cm. A metragem estimada é de cerca de 385 metros e pode variar conforme o modelo da pipa, padrão de montagem e sobra de corte.')
+    createProduct('rabiola-500m', 'Pacote Rabiola', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [
+        {label: 'Folhete 10cm', preco: 40}, {label: 'Folhete 25cm', preco: 40}
+    ], 'Pacote de rabiola com rendimento aproximado para montar até 100 pipas de 55 cm. Produto indicado para complementar a montagem de pipas e facilitar a produção em volume.')
 ];
 
 const blogPosts = [
     { slug: 'historia-juninho-pipas', cat: 'marca', title: 'Como nasceu a Juninho Pipas', summary: 'Da varanda de casa até a loja física em Porto Velho, conheça a trajetória guiada por amor e paixão pela arte de soltar pipas.', img: REF.blogPlaceholder },
     { slug: 'trajetoria-loja-fisica', cat: 'marca', title: 'Da varanda de casa à loja física', summary: 'O crescimento orgânico, o atendimento humano e a construção de um ecossistema pipeiro de credibilidade.', img: REF.blogPlaceholder },
     { slug: 'trajetoria-porto-velho', cat: 'marca', title: 'A trajetória da Juninho Pipas em Porto Velho', summary: 'Como a loja se consolidou e hoje atende todo o Brasil com variedade e confiança.', img: REF.blogPlaceholder },
-    { slug: 'escolher-linha', cat: 'produto', title: 'Como escolher a linha ideal', summary: 'Diferenças entre linhas Chilena, Indonésia e Vera Cruz, e como a variação afeta a sua performance.', img: REF.blogPlaceholder },
+    { slug: 'escolher-linha', cat: 'produto', title: 'Como escolher a linha ideal', summary: 'Diferenças entre modelos de linha, variações e critérios de compra responsável.', img: REF.blogPlaceholder },
     { slug: 'escolher-pipa', cat: 'produto', title: 'Como escolher a pipa certa para o seu perfil', summary: 'Modelos Mucha, Charuto ou GT: descubra qual se adapta melhor ao seu estilo e vento local.', img: REF.blogPlaceholder },
-    { slug: 'montar-kit', cat: 'produto', title: 'Como montar um kit eficiente', summary: 'As combinações ideais entre pipa, carretilha e rabiola para competições ou lazer.', img: REF.blogPlaceholder },
+    { slug: 'montar-kit', cat: 'produto', title: 'Como montar um kit eficiente', summary: 'As combinações ideais entre pipa, carretilha e rabiola para lazer, eventos e prática organizada.', img: REF.blogPlaceholder },
     { slug: 'pratica-responsavel', cat: 'cultura', title: 'A prática de soltar pipas com responsabilidade', summary: 'Por que é fundamental escolher locais apropriados, longe da rede elétrica, respeitando o espaço público.', img: REF.blogPlaceholder },
     { slug: 'papel-aspiron', cat: 'cultura', title: 'O papel da ASPIRON na valorização da cultura pipeira', summary: 'A Associação dos Pipeiros do Estado de Rondônia e sua luta por organização e reconhecimento.', img: REF.blogPlaceholder },
     { slug: 'boas-praticas', cat: 'cultura', title: 'Boas práticas e segurança nos locais apropriados', summary: 'Regras de ouro para aproveitar o festival e os pipódromos sem colocar ninguém em risco.', img: REF.blogPlaceholder }
@@ -836,7 +923,7 @@ function renderAdminPortal(){ const pending = pendingPartnerStores(); const appr
 function renderNotFound(){ return `<section class="section"><div class="container"><div class="empty-state"><h1>Página não encontrada</h1><p class="text-gray">A rota solicitada não existe ou ainda não está disponível.</p><a href="#/home" class="btn btn-primary">Voltar para Home</a></div></div></section>`; }
 function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'especificacao-marketplace': renderMarketplaceSpec, 'portal-lojista': renderStorePortal, 'painel-marketplace': renderAdminPortal }; app.innerHTML = (routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); applyFilters(); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
 window.addEventListener('hashchange', router);
-window.addEventListener('load', ()=>{ if(!location.hash){ location.hash='#/home'; return; } router(); });
+window.addEventListener('load', async ()=>{ await loadPriceTable(); if(!location.hash){ location.hash='#/home'; return; } router(); });
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 
