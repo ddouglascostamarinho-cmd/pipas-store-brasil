@@ -724,6 +724,22 @@ footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); p
   .partner-benefit { font-size: .88rem; }
 }
 
+
+/* Fase 1.5 - Gestão de produtos por lojista */
+.admin-seller-control { margin-top: 14px; border: 1px solid var(--c-border); border-radius: 14px; overflow: hidden; background: rgba(10,12,16,.28); }
+.admin-seller-control > summary { cursor: pointer; list-style: none; padding: 13px 14px; font-family: var(--font-headings); font-weight: 800; text-transform: uppercase; color: var(--c-white); display:flex; justify-content:space-between; gap:12px; align-items:center; }
+.admin-seller-control > summary::-webkit-details-marker { display:none; }
+.admin-seller-control > summary::after { content:'+'; color: var(--c-yellow); font-size:1.2rem; }
+.admin-seller-control[open] > summary::after { content:'−'; }
+.admin-catalog-body { padding: 0 14px 16px; }
+.permission-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px; margin: 10px 0 14px; }
+.permission-card { display:flex; align-items:center; gap:8px; padding:10px; border:1px solid var(--c-border); border-radius:12px; background: rgba(255,255,255,.025); color:var(--c-gray); font-size:.9rem; }
+.permission-card input { accent-color: var(--c-yellow); transform: scale(1.05); }
+.product-permission-list { max-height: 280px; overflow:auto; padding-right:4px; display:grid; gap:8px; }
+.product-permission-list .permission-card { justify-content:flex-start; }
+.admin-control-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+@media (max-width: 768px){ .permission-grid { grid-template-columns: 1fr; } .admin-seller-control > summary { font-size:.82rem; } .admin-catalog-body { padding:0 10px 12px; } .product-permission-list { max-height:240px; } }
+
 </style>
 </head>
 <body>
@@ -907,6 +923,8 @@ const PARTNER_STORE_STORAGE_KEY = 'psb_partner_stores_23';
 const PENDING_PARTNER_STORE_STORAGE_KEY = 'psb_pending_partner_stores_23';
 const ORDERS_STORAGE_KEY = 'psb_marketplace_orders_23';
 const PRODUCT_REQUESTS_STORAGE_KEY = 'psb_product_requests_23';
+const SELLER_OFFERS_STORAGE_KEY = 'psb_seller_offers_23';
+const SELLERS_BACKEND_SYNC_KEY = 'psb_sellers_backend_last_sync_23';
 const STORE_ACCESS_STORAGE_KEY = 'psb_store_access_23';
 const STORE_SESSION_STORAGE_KEY = 'psb_store_session_23';
 const ADMIN_SESSION_STORAGE_KEY = 'psb_admin_session_23';
@@ -1058,6 +1076,168 @@ const backendStatusLabel = () => isOrdersBackendEnabled() ? 'Registro central at
 
 const loadProductRequests = () => readJSON(PRODUCT_REQUESTS_STORAGE_KEY, []);
 const saveProductRequests = requests => writeJSON(PRODUCT_REQUESTS_STORAGE_KEY, requests);
+
+const DEFAULT_SELLER_OFFERS = [
+    { offerKey:'juninho-pipas::all', sellerId:'juninho-pipas', sellerName:'Juninho Pipas', scope:'all', productSlug:'', categorySlug:'', active:true, useCatalogPrice:true },
+    { offerKey:'pipas-store-brasil::cat::rabiolas', sellerId:'pipas-store-brasil', sellerName:'Pipas Store Brasil', scope:'category', productSlug:'', categorySlug:'rabiolas', active:true, useCatalogPrice:true }
+];
+const makeOfferKey = (sellerId, scope, value='') => {
+    if(scope === 'all') return `${sellerId}::all`;
+    if(scope === 'category') return `${sellerId}::cat::${value}`;
+    return `${sellerId}::prod::${value}`;
+};
+const normalizeSellerOffer = offer => ({
+    offerKey: offer.offerKey || offer.offer_key || makeOfferKey(offer.sellerId || offer.seller_id, offer.scope || 'product', offer.productSlug || offer.product_slug || offer.categorySlug || offer.category_slug || ''),
+    sellerId: offer.sellerId || offer.seller_id,
+    sellerName: offer.sellerName || offer.seller_name || '',
+    scope: offer.scope || 'product',
+    productSlug: offer.productSlug || offer.product_slug || '',
+    categorySlug: offer.categorySlug || offer.category_slug || '',
+    active: offer.active !== false,
+    useCatalogPrice: offer.useCatalogPrice ?? offer.use_catalog_price ?? true,
+    priceOverride: offer.priceOverride ?? offer.price_override ?? null,
+    updatedAt: offer.updatedAt || offer.updated_at || new Date().toISOString()
+});
+const mergeSellerOffers = (...groups) => {
+    const map = new Map();
+    groups.flat().filter(Boolean).map(normalizeSellerOffer).forEach(offer => {
+        if(offer.offerKey && offer.sellerId) map.set(offer.offerKey, offer);
+    });
+    return Array.from(map.values());
+};
+const loadSellerOffers = () => mergeSellerOffers(DEFAULT_SELLER_OFFERS, readJSON(SELLER_OFFERS_STORAGE_KEY, []));
+const saveSellerOffers = offers => writeJSON(SELLER_OFFERS_STORAGE_KEY, mergeSellerOffers(offers));
+const normalizeRemoteSeller = row => ({
+    id: row.seller_id || row.id,
+    nome: row.seller_name || row.name || row.seller_payload?.nome || 'Loja parceira',
+    label: row.label || row.seller_payload?.label || 'Loja parceira homologada',
+    phone: row.phone || row.seller_payload?.phone || STORE.waParceiro,
+    cidade: row.city || row.cidade || row.seller_payload?.cidade || 'Porto Velho/RO',
+    status: row.status || 'approved',
+    login: row.login || row.seller_payload?.login || '',
+    password: row.password || row.seller_payload?.password || '',
+    paymentMode: row.payment_mode || row.seller_payload?.paymentMode || 'manual',
+    cardIntegration: row.card_integration || row.seller_payload?.cardIntegration || 'manual',
+    pixKey: row.pix_key || row.seller_payload?.pixKey || '',
+    destaque: !!(row.seller_payload?.destaque)
+});
+async function upsertSellerToBackend(store){
+    if(!isOrdersBackendEnabled() || !store?.id) return { ok:false, disabled:true };
+    const row = {
+        seller_id: store.id,
+        seller_name: store.nome,
+        label: store.label || 'Loja parceira homologada',
+        phone: store.phone || STORE.waParceiro,
+        city: store.cidade || '',
+        status: store.status || 'approved',
+        login: store.login || '',
+        password: store.password || '',
+        payment_mode: store.paymentMode || 'manual',
+        card_integration: store.cardIntegration || 'manual',
+        pix_key: store.pixKey || '',
+        updated_at: new Date().toISOString(),
+        seller_payload: store
+    };
+    const res = await fetch(`${supabaseRestBase()}/psb_sellers?on_conflict=seller_id`, {
+        method: 'POST',
+        headers: supabaseHeaders('resolution=merge-duplicates,return=representation'),
+        body: JSON.stringify(row)
+    });
+    if(!res.ok){
+        const detail = await res.text().catch(()=> '');
+        console.warn('Não foi possível salvar loja no Supabase.', res.status, detail);
+        return { ok:false, status:res.status, detail };
+    }
+    return { ok:true, data: await res.json().catch(()=>[]) };
+}
+async function upsertSellerOfferToBackend(offer){
+    if(!isOrdersBackendEnabled() || !offer?.sellerId) return { ok:false, disabled:true };
+    const item = normalizeSellerOffer(offer);
+    const row = {
+        offer_key: item.offerKey,
+        seller_id: item.sellerId,
+        seller_name: item.sellerName || getStoreById(item.sellerId)?.nome || item.sellerId,
+        scope: item.scope,
+        product_slug: item.productSlug || null,
+        category_slug: item.categorySlug || null,
+        active: !!item.active,
+        use_catalog_price: item.useCatalogPrice !== false,
+        price_override: item.priceOverride === '' ? null : item.priceOverride,
+        updated_at: new Date().toISOString(),
+        offer_payload: item
+    };
+    const res = await fetch(`${supabaseRestBase()}/psb_seller_offers?on_conflict=offer_key`, {
+        method: 'POST',
+        headers: supabaseHeaders('resolution=merge-duplicates,return=representation'),
+        body: JSON.stringify(row)
+    });
+    if(!res.ok){
+        const detail = await res.text().catch(()=> '');
+        console.warn('Não foi possível salvar permissão de venda no Supabase.', res.status, detail);
+        return { ok:false, status:res.status, detail };
+    }
+    return { ok:true, data: await res.json().catch(()=>[]) };
+}
+let __psbSyncingCatalog = false;
+async function syncMarketplaceCatalogFromBackend({ rerender = false } = {}){
+    if(!isOrdersBackendEnabled() || __psbSyncingCatalog) return;
+    __psbSyncingCatalog = true;
+    const beforeOffers = localStorage.getItem(SELLER_OFFERS_STORAGE_KEY) || '[]';
+    const beforeStores = localStorage.getItem(PARTNER_STORE_STORAGE_KEY) || '[]';
+    try{
+        const [sellerRes, offerRes] = await Promise.all([
+            fetch(`${supabaseRestBase()}/psb_sellers?select=*&order=created_at.asc`, { headers: supabaseHeaders() }).catch(()=>null),
+            fetch(`${supabaseRestBase()}/psb_seller_offers?select=*&order=updated_at.desc`, { headers: supabaseHeaders() }).catch(()=>null)
+        ]);
+        if(sellerRes?.ok){
+            const rows = await sellerRes.json();
+            const baseIds = new Set(MARKETPLACE_STORES.map(store => store.id));
+            const remoteStores = (Array.isArray(rows) ? rows : []).map(normalizeRemoteSeller).filter(store => store.id && store.status === 'approved' && !baseIds.has(store.id));
+            const map = new Map(loadPartnerStores().map(store => [store.id, store]));
+            remoteStores.forEach(store => map.set(store.id, { ...(map.get(store.id) || {}), ...store }));
+            savePartnerStores(Array.from(map.values()));
+        }
+        if(offerRes?.ok){
+            const rows = await offerRes.json();
+            const remoteOffers = Array.isArray(rows) ? rows.map(normalizeSellerOffer) : [];
+            saveSellerOffers(mergeSellerOffers(DEFAULT_SELLER_OFFERS, remoteOffers));
+        }
+        localStorage.setItem(SELLERS_BACKEND_SYNC_KEY, new Date().toISOString());
+        const afterOffers = localStorage.getItem(SELLER_OFFERS_STORAGE_KEY) || '[]';
+        const afterStores = localStorage.getItem(PARTNER_STORE_STORAGE_KEY) || '[]';
+        if(rerender && (beforeOffers !== afterOffers || beforeStores !== afterStores)) router();
+    }catch(error){
+        console.warn('Não foi possível sincronizar lojas/ofertas do Supabase.', error);
+    }finally{
+        __psbSyncingCatalog = false;
+    }
+}
+const offerMatchesProduct = (offer, product) => {
+    if(!offer?.active || !product) return false;
+    if(offer.scope === 'all') return true;
+    if(offer.scope === 'category') return offer.categorySlug === product.categoria;
+    if(offer.scope === 'product') return offer.productSlug === product.slug;
+    return false;
+};
+const sellerCanSellProduct = (store, product, offers = loadSellerOffers()) => {
+    if(!store?.id || !product) return false;
+    const sellerOffers = offers.filter(offer => offer.sellerId === store.id);
+    if(store.id === DEFAULT_SELLER_ID && !sellerOffers.length) return true;
+    return sellerOffers.some(offer => offerMatchesProduct(offer, product));
+};
+const buildSellerOffer = (store, scope, value, active) => normalizeSellerOffer({
+    offerKey: makeOfferKey(store.id, scope, value),
+    sellerId: store.id,
+    sellerName: store.nome,
+    scope,
+    productSlug: scope === 'product' ? value : '',
+    categorySlug: scope === 'category' ? value : '',
+    active: !!active,
+    useCatalogPrice: true,
+    updatedAt: new Date().toISOString()
+});
+const isExplicitOfferActive = (storeId, scope, value='') => loadSellerOffers().some(offer => offer.sellerId === storeId && offer.scope === scope && ((scope === 'all') || (scope === 'category' && offer.categorySlug === value) || (scope === 'product' && offer.productSlug === value)) && offer.active);
+
 const allStores = () => {
     const access = loadStoreAccess();
     const map = new Map();
@@ -1080,11 +1260,19 @@ const getProductRule = slug => ({
     ...(PRODUCT_RULES[slug] || {})
 });
 const sellersForProduct = slug => {
+    const product = bySlug(slug);
+    if(!product) return [MARKETPLACE_STORES[0]];
+    const stores = approvedStores();
+    const offers = loadSellerOffers();
+    const sellers = stores.filter(store => sellerCanSellProduct(store, product, offers));
+    if(sellers.length) return sellers;
     const rule = getProductRule(slug);
-    const sellers = allStores().filter(store => rule.sell_mode === 'open' || rule.allowed_sellers.includes(store.id));
-    return sellers.length ? sellers : [MARKETPLACE_STORES[0]];
+    const fallback = stores.filter(store => rule.sell_mode === 'open' || rule.allowed_sellers.includes(store.id));
+    return fallback.length ? fallback : [MARKETPLACE_STORES[0]];
 };
 const productSellerNote = slug => {
+    const count = sellersForProduct(slug).length;
+    if(count > 1) return 'Produto disponível em mais de uma loja homologada. Escolha a loja antes de adicionar ao carrinho.';
     const rule = getProductRule(slug);
     if(rule.note) return rule.note;
     if(rule.sell_mode === 'exclusive') return 'Venda exclusiva da Juninho Pipas.';
@@ -1693,10 +1881,67 @@ function renderStorePortal(){
     return `<section class="section portal-page"><div class="container"><div class="portal-header"><div><span class="tag-badge">Portal do lojista</span><h1>${store.nome}</h1><p class="text-gray">Pedidos centralizados, confirmação de estoque e solicitações de catálogo.</p></div><div class="portal-header-actions"><a class="btn btn-secondary" href="#/loja">Ver catálogo</a><button class="btn btn-primary" onclick="logoutStorePortal()">Sair</button></div></div><div class="portal-stats"><div class="card"><strong>Pedidos</strong><span>${orders.length}</span></div><div class="card"><strong>Aguardando</strong><span>${waitingOrders.length}</span></div><div class="card"><strong>Abertos</strong><span>${openOrders.length}</span></div></div><div class="portal-layout"><div class="card portal-orders-box"><div class="portal-section-title"><h3>Pedidos da loja</h3><span class="text-gray">${orders.length} registro(s)</span></div>${orders.length ? orders.map(orderCard).join('') : `<div class="empty-state"><h3>Nenhum pedido recebido</h3><p class="text-gray">Assim que um cliente criar pedidos para esta loja, eles aparecerão aqui.</p></div>`}</div><details class="card portal-request-panel"><summary>Solicitar inclusão/ajuste de produto</summary><div class="portal-request-body"><p class="text-gray">Use este formulário para pedir cadastro de novas linhas, ajustes de mix ou atualização de materiais visuais.</p><div class="form-group"><label class="form-label">Produto / linha</label><input id="requestProductName" class="form-control" placeholder="Ex.: Linha Vera Cruz 3000jds"></div><div class="form-group"><label class="form-label">Tipo de solicitação</label><select id="requestType" class="form-control"><option value="cadastro">Cadastrar nova linha</option><option value="ativacao">Ativar produto para minha loja</option><option value="ajuste">Solicitar ajuste comercial</option><option value="imagem">Enviar atualização visual</option></select></div><div class="form-group"><label class="form-label">Foto do produto</label><input id="requestPhoto" class="form-control" type="file" accept="image/*"><p class="text-gray" style="margin-top:8px; font-size:0.88rem;">Envie JPG, PNG ou WEBP com até 2MB.</p></div><div class="form-group"><label class="form-label">Justificativa</label><textarea id="requestDetails" class="form-control" placeholder="Detalhe o que precisa ser ajustado e por quê."></textarea></div><button class="btn btn-primary btn-block" onclick="submitProductRequest()">Enviar solicitação</button>${requests.length ? `<div style="margin-top:18px;"><h4 style="font-size:1rem; color:var(--c-white);">Histórico recente</h4>${requests.slice(0,5).map(request=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${request.productName}</strong><p class="text-gray" style="margin:8px 0 0;">${request.requestType} • ${request.status}</p><p class="text-gray" style="margin:8px 0 0;">Foto enviada: ${request.photoName || 'não informada'}</p></div>`).join('')}</div>` : ''}</div></details></div></div></section>`;
 }
 function renderAdminPortal(){ const pending = pendingPartnerStores(); const approved = approvedStores(); const orders = loadOrders(); const requests = loadProductRequests(); if(!isAdminSessionActive()){ return `<section class="section"><div class="container"><span class="tag-badge">Área administrativa</span><h1>Painel do marketplace</h1><div class="card" style="padding:28px; max-width:520px;"><h3>Acesso administrativo</h3><p class="text-gray">Acesso restrito à operação central para homologar lojas, gerar acessos de lojista e acompanhar o fluxo operacional.</p><div class="form-group"><label class="form-label">PIN administrativo</label><input id="adminPin" class="form-control" placeholder="PIN de acesso administrativo"></div><button class="btn btn-primary btn-block" onclick="loginAdminPortal()">Entrar no painel</button></div></div></section>`; } return `<section class="section"><div class="container"><div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;"><div><span class="tag-badge">Área administrativa</span><h1>Governança do marketplace</h1><p class="text-gray">Homologação de lojas, geração de acessos, pedidos em andamento e solicitações de catálogo em um único ponto de controle.</p></div><button class="btn btn-primary" onclick="logoutAdminPortal()">Sair</button></div><div class="grid-4" style="margin-top:28px;"><div class="card" style="padding:22px;"><h3>Pendências</h3><p class="text-gray">${pending.length} loja(s) aguardando análise.</p></div><div class="card" style="padding:22px;"><h3>Homologadas</h3><p class="text-gray">${approved.length} loja(s) ativas/homologadas no marketplace.</p></div><div class="card" style="padding:22px;"><h3>Pedidos abertos</h3><p class="text-gray">${orders.filter(order => !['concluido','reprovado','cancelado'].includes(order.status)).length} pedido(s) ativos.</p></div><div class="card" style="padding:22px;"><h3>Solicitações</h3><p class="text-gray">${requests.filter(request => request.status === 'pendente').length} solicitações pendentes.</p></div></div><div class="grid-2" style="align-items:start; margin-top:34px;"><div class="card" style="padding:28px;"><h3>Cadastros pendentes</h3>${pending.length ? pending.map(store=>`<div class="accordion-item active"><div class="accordion-header">${store.nome}<span style="font-size:0.8rem; color:var(--c-gray);">${store.cidade}</span></div><div class="accordion-body" style="padding:0 20px 20px; max-height:none; opacity:1;"><p><strong style="color:var(--c-white);">Responsável:</strong> ${store.responsavel}</p><p><strong style="color:var(--c-white);">CPF/CNPJ:</strong> ${store.cpfCnpj || 'Não informado'}</p><p><strong style="color:var(--c-white);">WhatsApp:</strong> ${store.phone}</p><p><strong style="color:var(--c-white);">Instagram:</strong> ${store.instagram || 'Não informado'}</p><p><strong style="color:var(--c-white);">Endereço comercial:</strong> ${store.enderecoComercial || 'Não informado'}</p><p><strong style="color:var(--c-white);">Pagamento:</strong> ${store.paymentMode} • ${store.cardIntegration}</p><p><strong style="color:var(--c-white);">Categorias:</strong> ${store.categoriesRequested || 'A informar'}</p><p><strong style="color:var(--c-white);">Operação:</strong> ${store.operationDescription || 'A informar'}</p><p class="text-gray">${store.observacoes || 'Sem observações adicionais.'}</p><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;"><button class="btn btn-primary" onclick="approvePartnerStoreAction('${store.id}')">Homologar loja</button><button class="btn btn-secondary" onclick="rejectPartnerStoreAction('${store.id}')">Rejeitar</button></div></div></div>`).join('') : `<div class="empty-state"><h3>Fila vazia</h3><p class="text-gray">Nenhum cadastro aguardando aprovação.</p></div>`}</div><div class="card" style="padding:28px;"><h3>Lojas homologadas e acessos</h3>${approved.length ? approved.map(store=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${store.nome}</strong><p class="text-gray" style="margin:8px 0 0;">${store.cidade} • ${store.label}</p><p class="text-gray" style="margin:8px 0 0;">Status: <strong style="color:var(--c-white);">${store.id === DEFAULT_SELLER_ID ? 'Loja principal ativa' : 'Homologada'}</strong></p><p class="text-gray" style="margin:8px 0 0;">Login: <strong style="color:var(--c-white);">${store.login || 'não gerado'}</strong><br>Senha temporária: <strong style="color:var(--c-white);">${store.password || 'não gerada'}</strong></p><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;"><button class="btn btn-secondary btn-sm" onclick="provisionStoreAccessAction('${store.id}')">Gerar ou regerar acesso</button></div></div>`).join('') : `<div class="empty-state"><h3>Nenhuma loja homologada</h3><p class="text-gray">A homologação gera o acesso do lojista sob controle administrativo.</p></div>`}<div style="margin-top:22px;"><h4 style="font-size:1rem; color:var(--c-white);">Solicitações de catálogo</h4>${requests.length ? requests.slice(0,8).map(request=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${request.storeName}</strong><p class="text-gray" style="margin:8px 0 0;">${request.productName} • ${request.requestType}</p><p class="text-gray" style="margin:8px 0 0;">${request.details}</p><p class="text-gray" style="margin:8px 0 0;">Foto enviada: <strong style="color:var(--c-white);">${request.photoName || 'não informada'}</strong></p>${request.photoData ? `<div style="margin-top:12px;"><img src="${request.photoData}" alt="${request.productName}" style="width:100%; max-width:180px; border-radius:12px; border:1px solid var(--c-border); object-fit:cover;"></div>` : ''}</div>`).join('') : `<p class="text-gray" style="margin-top:10px;">Nenhuma solicitação recebida até agora.</p>`}</div></div></div></div></section>`; }
+
+async function approvePartnerStoreAction(id){
+    const approved = approvePartnerStore(id);
+    if(!approved){ showToast('Loja pendente não encontrada.'); return; }
+    await upsertSellerToBackend(approved);
+    showToast(`Loja ${approved.nome} homologada com sucesso.`);
+    router();
+}
+async function provisionStoreAccessAction(id){
+    const creds = generateStoreAccess(id);
+    const store = getStoreById(id);
+    if(!creds || !store){ showToast('Não foi possível gerar acesso para a loja.'); return; }
+    await upsertSellerToBackend(store);
+    showToast(`Acesso do lojista atualizado para ${store.nome}.`);
+    router();
+}
+function renderSellerCatalogControls(store){
+    const allChecked = isExplicitOfferActive(store.id, 'all');
+    const categoryHtml = categories.map(cat => `<label class="permission-card"><input type="checkbox" id="perm_${store.id}_cat_${cat.slug}" ${allChecked || isExplicitOfferActive(store.id,'category',cat.slug) ? 'checked' : ''}>${cat.name}</label>`).join('');
+    const productHtml = products.map(product => `<label class="permission-card"><input type="checkbox" id="perm_${store.id}_prod_${product.slug}" ${isExplicitOfferActive(store.id,'product',product.slug) ? 'checked' : ''}><span><strong style="color:var(--c-white);">${product.nome}</strong><br><small>${catName(product.categoria)} • ${moneyFrom(product)}</small></span></label>`).join('');
+    return `<details class="admin-seller-control"><summary>Configurar produtos da loja</summary><div class="admin-catalog-body"><p class="text-gray">Marque as categorias que esta loja pode vender. Use produtos específicos apenas como exceção fora da categoria liberada.</p><label class="permission-card" style="margin:10px 0;"><input type="checkbox" id="perm_${store.id}_all" ${allChecked ? 'checked' : ''}>Liberar todo o catálogo para esta loja</label><h4 style="color:var(--c-white); margin:14px 0 8px;">Categorias permitidas</h4><div class="permission-grid">${categoryHtml}</div><details><summary style="cursor:pointer; color:var(--c-yellow); font-weight:800; text-transform:uppercase;">Produtos específicos +</summary><div class="product-permission-list" style="margin-top:10px;">${productHtml}</div></details><div class="admin-control-actions"><button class="btn btn-primary" onclick="saveSellerPermissionsAction('${store.id}')">Salvar permissões</button><button class="btn btn-secondary" onclick="syncMarketplaceCatalogFromBackend({rerender:true})">Sincronizar</button></div></div></details>`;
+}
+async function saveSellerPermissionsAction(storeId){
+    const store = getStoreById(storeId);
+    if(!store){ showToast('Loja não encontrada.'); return; }
+    const allChecked = !!document.getElementById(`perm_${storeId}_all`)?.checked;
+    const next = [buildSellerOffer(store, 'all', '', allChecked)];
+    categories.forEach(cat => next.push(buildSellerOffer(store, 'category', cat.slug, !!document.getElementById(`perm_${storeId}_cat_${cat.slug}`)?.checked)));
+    products.forEach(product => next.push(buildSellerOffer(store, 'product', product.slug, !!document.getElementById(`perm_${storeId}_prod_${product.slug}`)?.checked)));
+    const others = loadSellerOffers().filter(offer => offer.sellerId !== storeId);
+    saveSellerOffers([...others, ...next]);
+    showToast('Permissões salvas localmente. Sincronizando com o Supabase...');
+    try{
+        await upsertSellerToBackend(store);
+        const results = await Promise.all(next.map(upsertSellerOfferToBackend));
+        const failed = results.filter(result => result && result.ok === false && !result.disabled);
+        showToast(failed.length ? 'Permissões salvas no navegador. Verifique se o SQL da Fase 1.5 foi executado.' : `Permissões de ${store.nome} atualizadas.`);
+    }catch(error){
+        console.warn(error);
+        showToast('Permissões salvas localmente, mas não sincronizaram com o banco.');
+    }
+    router();
+}
+function renderAdminPortal(){
+    const pending = pendingPartnerStores();
+    const approved = approvedStores();
+    const orders = loadOrders();
+    const requests = loadProductRequests();
+    if(!isAdminSessionActive()){
+        return `<section class="section"><div class="container"><span class="tag-badge">Área administrativa</span><h1>Painel do marketplace</h1><div class="card" style="padding:28px; max-width:520px;"><h3>Acesso administrativo</h3><p class="text-gray">Acesso restrito à operação central para homologar lojas, gerar acessos de lojista e acompanhar o fluxo operacional.</p><div class="form-group"><label class="form-label">PIN administrativo</label><input id="adminPin" class="form-control" placeholder="PIN de acesso administrativo"></div><button class="btn btn-primary btn-block" onclick="loginAdminPortal()">Entrar no painel</button></div></div></section>`;
+    }
+    const pendingHtml = pending.length ? pending.map(store=>`<div class="accordion-item active"><div class="accordion-header">${store.nome}<span style="font-size:0.8rem; color:var(--c-gray);">${store.cidade}</span></div><div class="accordion-body" style="padding:0 20px 20px; max-height:none; opacity:1;"><p><strong style="color:var(--c-white);">Responsável:</strong> ${store.responsavel}</p><p><strong style="color:var(--c-white);">CPF/CNPJ:</strong> ${store.cpfCnpj || 'Não informado'}</p><p><strong style="color:var(--c-white);">WhatsApp:</strong> ${store.phone}</p><p><strong style="color:var(--c-white);">Instagram:</strong> ${store.instagram || 'Não informado'}</p><p><strong style="color:var(--c-white);">Endereço comercial:</strong> ${store.enderecoComercial || 'Não informado'}</p><p><strong style="color:var(--c-white);">Categorias:</strong> ${store.categoriesRequested || 'A informar'}</p><p class="text-gray">${store.observacoes || 'Sem observações adicionais.'}</p><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;"><button class="btn btn-primary" onclick="approvePartnerStoreAction('${store.id}')">Homologar loja</button><button class="btn btn-secondary" onclick="rejectPartnerStoreAction('${store.id}')">Rejeitar</button></div></div></div>`).join('') : `<div class="empty-state"><h3>Fila vazia</h3><p class="text-gray">Nenhum cadastro aguardando aprovação.</p></div>`;
+    const approvedHtml = approved.length ? approved.map(store=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${store.nome}</strong><p class="text-gray" style="margin:8px 0 0;">${store.cidade} • ${store.label}</p><p class="text-gray" style="margin:8px 0 0;">Status: <strong style="color:var(--c-white);">${store.id === DEFAULT_SELLER_ID ? 'Loja principal ativa' : 'Homologada'}</strong></p><p class="text-gray" style="margin:8px 0 0;">Login: <strong style="color:var(--c-white);">${store.login || 'não gerado'}</strong><br>Senha temporária: <strong style="color:var(--c-white);">${store.password || 'não gerada'}</strong></p><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;"><button class="btn btn-secondary btn-sm" onclick="provisionStoreAccessAction('${store.id}')">Gerar ou regerar acesso</button></div>${renderSellerCatalogControls(store)}</div>`).join('') : `<div class="empty-state"><h3>Nenhuma loja homologada</h3><p class="text-gray">A homologação gera o acesso do lojista sob controle administrativo.</p></div>`;
+    const requestHtml = requests.length ? requests.slice(0,8).map(request=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${request.storeName}</strong><p class="text-gray" style="margin:8px 0 0;">${request.productName} • ${request.requestType}</p><p class="text-gray" style="margin:8px 0 0;">${request.details}</p><p class="text-gray" style="margin:8px 0 0;">Foto enviada: <strong style="color:var(--c-white);">${request.photoName || 'não informada'}</strong></p>${request.photoData ? `<div style="margin-top:12px;"><img src="${request.photoData}" alt="${request.productName}" style="width:100%; max-width:180px; border-radius:12px; border:1px solid var(--c-border); object-fit:cover;"></div>` : ''}</div>`).join('') : `<p class="text-gray" style="margin-top:10px;">Nenhuma solicitação recebida até agora.</p>`;
+    return `<section class="section"><div class="container"><div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;"><div><span class="tag-badge">Área administrativa</span><h1>Governança do marketplace</h1><p class="text-gray">Homologação de lojas, acessos e permissões de venda por categoria/produto.</p></div><button class="btn btn-primary" onclick="logoutAdminPortal()">Sair</button></div><div class="grid-4" style="margin-top:28px;"><div class="card" style="padding:22px;"><h3>Pendências</h3><p class="text-gray">${pending.length} loja(s) aguardando análise.</p></div><div class="card" style="padding:22px;"><h3>Homologadas</h3><p class="text-gray">${approved.length} loja(s) ativas/homologadas.</p></div><div class="card" style="padding:22px;"><h3>Pedidos abertos</h3><p class="text-gray">${orders.filter(order => !['concluido','reprovado','cancelado'].includes(order.status)).length} pedido(s) ativos.</p></div><div class="card" style="padding:22px;"><h3>Catálogo</h3><p class="text-gray">Permissões por lojista via Supabase.</p></div></div><div class="grid-2" style="align-items:start; margin-top:34px;"><div class="card" style="padding:28px;"><h3>Cadastros pendentes</h3>${pendingHtml}</div><div class="card" style="padding:28px;"><h3>Lojas homologadas e permissões</h3>${approvedHtml}<div style="margin-top:22px;"><h4 style="font-size:1rem; color:var(--c-white);">Solicitações de catálogo</h4>${requestHtml}</div></div></div></div></section>`;
+}
+
 function renderNotFound(){ return `<section class="section"><div class="container"><div class="empty-state"><h1>Página não encontrada</h1><p class="text-gray">A rota solicitada não existe ou ainda não está disponível.</p><a href="#/home" class="btn btn-primary">Voltar para Home</a></div></div></section>`; }
-function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'especificacao-marketplace': renderMarketplaceSpec, 'portal-lojista': renderStorePortal, 'painel-marketplace': renderAdminPortal }; app.innerHTML = (routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); applyFilters(); } if(['portal-lojista','painel-marketplace'].includes(page)){ syncOrdersFromBackend({ rerender:true }); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
+function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'especificacao-marketplace': renderMarketplaceSpec, 'portal-lojista': renderStorePortal, 'painel-marketplace': renderAdminPortal }; app.innerHTML = (routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); applyFilters(); } if(['loja','produto','portal-lojista','painel-marketplace'].includes(page)){ syncMarketplaceCatalogFromBackend({ rerender:['loja','produto','painel-marketplace'].includes(page) }); } if(['portal-lojista','painel-marketplace'].includes(page)){ syncOrdersFromBackend({ rerender:true }); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
 window.addEventListener('hashchange', router);
-window.addEventListener('load', async ()=>{ await loadPriceTable(); await syncOrdersFromBackend(); if(!location.hash){ location.hash='#/home'; return; } router(); });
+window.addEventListener('load', async ()=>{ await loadPriceTable(); await syncMarketplaceCatalogFromBackend(); await syncOrdersFromBackend(); if(!location.hash){ location.hash='#/home'; return; } router(); });
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 
