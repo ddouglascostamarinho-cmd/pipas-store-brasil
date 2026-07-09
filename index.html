@@ -742,6 +742,29 @@ footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); p
 .admin-control-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
 @media (max-width: 768px){ .permission-grid { grid-template-columns: 1fr; } .admin-seller-control > summary { font-size:.82rem; } .admin-catalog-body { padding:0 10px 12px; } .product-permission-list { max-height:240px; } }
 
+
+/* Fase 1.6.1 - CEP e regras de envio externo */
+.shipping-cep-card { padding: 20px; margin: 18px 0 24px; border-color: rgba(255,212,0,.22); }
+.shipping-cep-title { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
+.shipping-cep-title h3 { margin:6px 0 0; color:var(--c-white); font-size:1.08rem; }
+.shipping-status { border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:7px 10px; color:var(--c-gray); font-size:.82rem; background:rgba(255,255,255,.03); }
+.shipping-status.local { color:var(--c-green); border-color:rgba(0,214,99,.35); }
+.shipping-status.external { color:var(--c-yellow); border-color:rgba(255,212,0,.35); }
+.shipping-cep-grid { display:grid; grid-template-columns: minmax(150px, 220px) auto auto; gap:10px; align-items:center; margin:12px 0 8px; }
+.marketplace-note.warning-note { border-color:rgba(255,212,0,.35); background:rgba(255,212,0,.06); margin: 0 0 18px; }
+.marketplace-note.success-note { border-color:rgba(0,214,99,.30); background:rgba(0,214,99,.05); margin: 0 0 18px; }
+.shipping-admin-card { padding:28px; border-color:rgba(255,212,0,.18); }
+.shipping-rule-list { display:grid; gap:8px; margin-top:12px; }
+.shipping-rule-row { display:grid; grid-template-columns: 1fr minmax(160px, 220px); gap:10px; align-items:center; padding:10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.025); }
+.shipping-rule-row strong { display:block; color:var(--c-white); }
+.shipping-rule-row small { display:block; margin-top:2px; }
+.btn[disabled], button[disabled] { opacity:.55; cursor:not-allowed; filter:grayscale(.15); }
+@media (max-width: 768px){
+  .shipping-cep-grid, .shipping-rule-row { grid-template-columns:1fr; }
+  .shipping-cep-card { padding:15px; margin:14px 0 18px; }
+  .shipping-status { width:100%; text-align:center; }
+}
+
 </style>
 </head>
 <body>
@@ -2013,6 +2036,549 @@ function router(){ const raw=(location.hash || '#/home').replace('#/',''); const
 window.addEventListener('hashchange', router);
 window.addEventListener('load', async ()=>{ await loadPriceTable(); await syncMarketplaceCatalogFromBackend(); await syncOrdersFromBackend(); if(!location.hash){ location.hash='#/home'; return; } router(); });
 </script>
+<script>
+/* ========================================================================
+   FASE 1.6.2/1.6.3 - CEP, bloqueio de produtos e portal de envio externo
+   - Cliente informa CEP e o site identifica Porto Velho x envio externo.
+   - Produtos não permitidos para envio externo são bloqueados/ocultados.
+   - Pedido mínimo externo por loja é validado no carrinho/checkout.
+   - Portal do lojista edita configuração de envio externo, categorias e exceções por produto.
+   ======================================================================== */
+var PSB_DESTINATION_STORAGE_KEY = 'psb_customer_destination_16';
+var PSB_SHIPPING_SETTINGS_STORAGE_KEY = 'psb_seller_shipping_settings_16';
+var PSB_SHIPPING_RULES_STORAGE_KEY = 'psb_seller_shipping_rules_16';
+var PSB_EXTERNAL_DEFAULT_MIN_ORDER = 90;
+var PSB_DEFAULT_SHIPPING_SETTINGS = [
+    { sellerId:'juninho-pipas', sellerName:'Juninho Pipas', originCep:'76820-680', originCity:'Porto Velho', originUf:'RO', localCity:'Porto Velho', localUf:'RO', allowExternalShipping:true, externalMinOrder:90, localDeliveryMessage:'Retirada local em Porto Velho ou entrega local combinada no atendimento.', externalShippingMessage:'Envio para fora de Porto Velho disponível a partir de R$ 90,00 em produtos.' },
+    { sellerId:'pipas-store-brasil', sellerName:'Pipas Store Brasil', originCep:'76820-680', originCity:'Porto Velho', originUf:'RO', localCity:'Porto Velho', localUf:'RO', allowExternalShipping:true, externalMinOrder:90, localDeliveryMessage:'Retirada local em Porto Velho ou entrega local combinada no atendimento.', externalShippingMessage:'Envio para fora de Porto Velho disponível a partir de R$ 90,00 em produtos.' }
+];
+var PSB_SHIPPING_CATEGORY_DEFAULTS = {
+    linhas: 'normal',
+    rabiolas: 'normal',
+    carretilhas: 'normal',
+    folhas: 'normal',
+    colas: 'normal',
+    pipas: 'package_only',
+    fibras: 'quote_only',
+    bambu: 'quote_only',
+    formas: 'quote_only'
+};
+function psbDefaultShippingRules(){
+    var sellers = PSB_DEFAULT_SHIPPING_SETTINGS;
+    var rules = [];
+    sellers.forEach(function(seller){
+        rules.push({ ruleKey:seller.sellerId + '::all', sellerId:seller.sellerId, sellerName:seller.sellerName, scope:'all', categorySlug:'', productSlug:'', allowLocalSale:true, allowExternalSale:false, externalSaleMode:'blocked', externalMinQty:1, externalMinOrder:90, externalMessage:'Venda local liberada. Envio externo depende das categorias/produtos habilitados pela loja.', priority:100, active:true });
+        Object.keys(PSB_SHIPPING_CATEGORY_DEFAULTS).forEach(function(cat){
+            var mode = PSB_SHIPPING_CATEGORY_DEFAULTS[cat];
+            rules.push({ ruleKey:seller.sellerId + '::cat::' + cat, sellerId:seller.sellerId, sellerName:seller.sellerName, scope:'category', categorySlug:cat, productSlug:'', allowLocalSale:true, allowExternalSale:mode !== 'blocked', externalSaleMode:mode, externalMinQty:1, externalMinOrder:90, externalMessage:psbModeMessage(mode, cat), priority:20, active:true });
+        });
+    });
+    return rules;
+}
+function psbRead(key, fallback){
+    try{
+        var raw = localStorage.getItem(key);
+        if(!raw) return fallback;
+        var parsed = JSON.parse(raw);
+        return parsed || fallback;
+    }catch(error){
+        console.warn('Falha ao carregar ' + key, error);
+        return fallback;
+    }
+}
+function psbWrite(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+function psbNormalizeBool(value, fallback){
+    if(typeof value === 'boolean') return value;
+    if(value === 'true' || value === 'sim' || value === '1' || value === 1) return true;
+    if(value === 'false' || value === 'nao' || value === 'não' || value === '0' || value === 0) return false;
+    return fallback;
+}
+function psbNormalizeShippingSetting(row){
+    return {
+        sellerId: row.sellerId || row.seller_id || '',
+        sellerName: row.sellerName || row.seller_name || '',
+        originCep: row.originCep || row.origin_cep || '',
+        originCity: row.originCity || row.origin_city || 'Porto Velho',
+        originUf: row.originUf || row.origin_uf || 'RO',
+        localCity: row.localCity || row.local_city || 'Porto Velho',
+        localUf: row.localUf || row.local_uf || 'RO',
+        allowExternalShipping: psbNormalizeBool(row.allowExternalShipping ?? row.allow_external_shipping, true),
+        externalMinOrder: Number(row.externalMinOrder ?? row.external_min_order ?? PSB_EXTERNAL_DEFAULT_MIN_ORDER) || PSB_EXTERNAL_DEFAULT_MIN_ORDER,
+        localDeliveryMessage: row.localDeliveryMessage || row.local_delivery_message || 'Retirada local em Porto Velho ou entrega local combinada no atendimento.',
+        externalShippingMessage: row.externalShippingMessage || row.external_shipping_message || 'Envio para fora de Porto Velho disponível conforme regra da loja.',
+        active: row.active !== false
+    };
+}
+function psbNormalizeShippingRule(row){
+    return {
+        ruleKey: row.ruleKey || row.rule_key || '',
+        sellerId: row.sellerId || row.seller_id || '',
+        sellerName: row.sellerName || row.seller_name || '',
+        scope: row.scope || 'all',
+        categorySlug: row.categorySlug || row.category_slug || '',
+        productSlug: row.productSlug || row.product_slug || '',
+        allowLocalSale: psbNormalizeBool(row.allowLocalSale ?? row.allow_local_sale, true),
+        allowExternalSale: psbNormalizeBool(row.allowExternalSale ?? row.allow_external_sale, false),
+        externalSaleMode: row.externalSaleMode || row.external_sale_mode || 'blocked',
+        externalMinQty: Number(row.externalMinQty ?? row.external_min_qty ?? 1) || 1,
+        externalMinOrder: Number(row.externalMinOrder ?? row.external_min_order ?? PSB_EXTERNAL_DEFAULT_MIN_ORDER) || PSB_EXTERNAL_DEFAULT_MIN_ORDER,
+        externalMessage: row.externalMessage || row.external_message || '',
+        priority: Number(row.priority ?? 100) || 100,
+        active: row.active !== false
+    };
+}
+function psbLoadShippingSettings(){
+    var data = psbRead(PSB_SHIPPING_SETTINGS_STORAGE_KEY, PSB_DEFAULT_SHIPPING_SETTINGS);
+    if(!Array.isArray(data) || !data.length) data = PSB_DEFAULT_SHIPPING_SETTINGS;
+    return data.map(psbNormalizeShippingSetting).filter(function(item){ return item.sellerId && item.active !== false; });
+}
+function psbSaveShippingSettings(items){ psbWrite(PSB_SHIPPING_SETTINGS_STORAGE_KEY, (items || []).map(psbNormalizeShippingSetting)); }
+function psbLoadShippingRules(){
+    var data = psbRead(PSB_SHIPPING_RULES_STORAGE_KEY, psbDefaultShippingRules());
+    if(!Array.isArray(data) || !data.length) data = psbDefaultShippingRules();
+    return data.map(psbNormalizeShippingRule).filter(function(item){ return item.sellerId && item.active !== false; });
+}
+function psbSaveShippingRules(items){ psbWrite(PSB_SHIPPING_RULES_STORAGE_KEY, (items || []).map(psbNormalizeShippingRule)); }
+function psbGetShippingSetting(sellerId){
+    return psbLoadShippingSettings().find(function(item){ return item.sellerId === sellerId; }) || psbNormalizeShippingSetting({ sellerId:sellerId, sellerName:getStoreById(sellerId)?.nome || sellerId });
+}
+function psbRuleSpecificity(rule){
+    if(rule.scope === 'product') return 1;
+    if(rule.scope === 'category') return 2;
+    return 3;
+}
+function psbGetShippingRule(sellerId, product){
+    var rules = psbLoadShippingRules().filter(function(rule){ return rule.sellerId === sellerId && rule.active !== false; });
+    var candidates = rules.filter(function(rule){
+        if(rule.scope === 'product') return rule.productSlug === product.slug;
+        if(rule.scope === 'category') return rule.categorySlug === product.categoria;
+        return rule.scope === 'all';
+    });
+    candidates.sort(function(a,b){ return psbRuleSpecificity(a) - psbRuleSpecificity(b) || (a.priority || 100) - (b.priority || 100); });
+    return candidates[0] || psbNormalizeShippingRule({ sellerId:sellerId, scope:'all', allowLocalSale:true, allowExternalSale:false, externalSaleMode:'blocked', externalMinOrder:PSB_EXTERNAL_DEFAULT_MIN_ORDER });
+}
+function psbNormalizeCep(value){ return String(value || '').replace(/\D/g,'').slice(0,8); }
+function psbFormatCep(value){ var cep = psbNormalizeCep(value); return cep.length === 8 ? cep.slice(0,5) + '-' + cep.slice(5) : cep; }
+function psbDestination(){ return psbRead(PSB_DESTINATION_STORAGE_KEY, null); }
+function psbSaveDestination(destination){ psbWrite(PSB_DESTINATION_STORAGE_KEY, destination); }
+function psbClearDestination(){ localStorage.removeItem(PSB_DESTINATION_STORAGE_KEY); router(); }
+function psbDestinationKnown(){ var d = psbDestination(); return !!(d && psbNormalizeCep(d.cep).length === 8 && d.city && d.uf); }
+function psbDestinationType(){
+    var d = psbDestination();
+    if(!d || !d.city || !d.uf) return 'unknown';
+    var city = normalizeText(d.city);
+    var uf = String(d.uf || '').trim().toUpperCase();
+    return city === 'porto velho' && uf === 'RO' ? 'local' : 'external';
+}
+function psbDestinationLabel(){
+    var d = psbDestination();
+    if(!d || !d.city || !d.uf) return 'CEP ainda não informado';
+    return psbFormatCep(d.cep) + ' • ' + d.city + '/' + String(d.uf).toUpperCase();
+}
+function psbDestinationStatusHtml(){
+    var type = psbDestinationType();
+    if(type === 'local') return '<strong>Porto Velho/RO identificado.</strong> Compra local liberada com retirada ou entrega combinada.';
+    if(type === 'external') return '<strong>Envio externo identificado.</strong> O site aplica pedido mínimo de R$ 90,00 por loja e exibe somente produtos permitidos para envio.';
+    return '<strong>Informe o CEP.</strong> Assim o site libera compra local ou aplica as regras de envio externo.';
+}
+function psbDestinationPanel(context){
+    context = context || 'loja';
+    var d = psbDestination() || {};
+    var cep = psbFormatCep(d.cep || '');
+    return `<div id="psbDestinationCard" class="card shipping-cep-card">
+        <div class="shipping-cep-title">
+            <div><span class="tag-badge">Disponibilidade por CEP</span><h3>Digite seu CEP para ver produtos disponíveis</h3></div>
+            <span class="shipping-status ${psbDestinationType()}">${psbDestinationLabel()}</span>
+        </div>
+        <p class="text-gray">${psbDestinationStatusHtml()}</p>
+        <div class="shipping-cep-grid">
+            <input id="psbCep_${context}" class="form-control" placeholder="00000-000" value="${cep}" maxlength="9" oninput="psbMaskCepInput(this)" onkeydown="if(event.key==='Enter'){psbVerifyCep('${context}')}">
+            <button class="btn btn-primary" onclick="psbVerifyCep('${context}')">Verificar CEP</button>
+            ${psbDestinationKnown()?`<button class="btn btn-secondary" onclick="psbClearDestination()">Alterar CEP</button>`:''}
+        </div>
+        <small class="text-gray">Fase 1.6.2/1.6.3: o CEP controla disponibilidade, pedido mínimo e regras definidas pelo lojista. A cotação exata dos Correios entra na próxima etapa de API.</small>
+    </div>`;
+}
+function psbMaskCepInput(input){
+    var cep = psbNormalizeCep(input.value);
+    input.value = psbFormatCep(cep);
+}
+async function psbVerifyCep(context){
+    var input = document.getElementById('psbCep_' + context) || document.getElementById('ckCep');
+    var cep = psbNormalizeCep(input?.value || '');
+    if(cep.length !== 8){ showToast('Informe um CEP válido com 8 números.'); return; }
+    try{
+        showToast('Consultando CEP...');
+        var res = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
+        if(!res.ok) throw new Error('CEP indisponível');
+        var data = await res.json();
+        if(data.erro) throw new Error('CEP não encontrado');
+        var destination = {
+            cep: cep,
+            city: data.localidade || '',
+            uf: String(data.uf || '').toUpperCase(),
+            street: data.logradouro || '',
+            district: data.bairro || '',
+            complement: data.complemento || '',
+            checkedAt: new Date().toISOString()
+        };
+        psbSaveDestination(destination);
+        showToast(psbDestinationType() === 'local' ? 'CEP de Porto Velho identificado.' : 'CEP externo identificado. Regras de envio aplicadas.');
+        router();
+    }catch(error){
+        console.warn('Falha ao consultar CEP.', error);
+        showToast('Não consegui consultar esse CEP agora. Confira o número e tente novamente.');
+    }
+}
+function psbModeLabel(mode){
+    return ({ normal:'Envio externo liberado', package_only:'Fora da cidade somente pacote', quote_only:'Envio sob confirmação', blocked:'Somente local' })[mode] || 'Regra não definida';
+}
+function psbModeMessage(mode, categorySlug){
+    if(mode === 'normal') return 'Envio externo liberado, respeitando o pedido mínimo da loja.';
+    if(mode === 'package_only') return 'Fora de Porto Velho, venda somente por pacote quando houver essa opção cadastrada.';
+    if(mode === 'quote_only') return 'Produto com embalagem maior. Envio externo sob confirmação operacional da loja.';
+    return 'Disponível somente para venda local/retirada.';
+}
+function psbProductHasPackageOption(product){
+    if(!product) return false;
+    if(product.categoria !== 'pipas') return true;
+    var text = normalizeText([product.nome, product.subtipo, product.desc, ...(product.variacoes || []).map(function(v){ return v.label; })].join(' '));
+    return text.includes('pacote') || text.includes('kit') || /\b\d+\s*pipas\b/.test(text);
+}
+function psbSellerProductAvailability(sellerId, product){
+    var type = psbDestinationType();
+    var setting = psbGetShippingSetting(sellerId);
+    var rule = psbGetShippingRule(sellerId, product);
+    if(type === 'unknown') return { ok:true, pendingCep:true, mode:'unknown', rule:rule, setting:setting, reason:'Informe o CEP para validar envio.' };
+    if(type === 'local'){
+        if(rule.allowLocalSale === false) return { ok:false, mode:'blocked', rule:rule, setting:setting, reason:'Produto indisponível para venda local nesta loja.' };
+        return { ok:true, mode:'local', rule:rule, setting:setting, reason:'Compra local liberada.' };
+    }
+    if(!setting.allowExternalShipping) return { ok:false, mode:'blocked', rule:rule, setting:setting, reason:'Esta loja não aceita envio para fora de Porto Velho.' };
+    if(!rule.allowExternalSale || rule.externalSaleMode === 'blocked') return { ok:false, mode:'blocked', rule:rule, setting:setting, reason:rule.externalMessage || 'Produto disponível somente para Porto Velho.' };
+    if(rule.externalSaleMode === 'package_only' && !psbProductHasPackageOption(product)) return { ok:false, mode:'package_only', rule:rule, setting:setting, reason:rule.externalMessage || 'Fora de Porto Velho, este produto é vendido somente por pacote.' };
+    return { ok:true, mode:rule.externalSaleMode || 'normal', rule:rule, setting:setting, reason:rule.externalMessage || psbModeMessage(rule.externalSaleMode, product.categoria) };
+}
+function psbAvailableSellersForProduct(product){
+    var sellers = sellersForProduct(product.slug);
+    var type = psbDestinationType();
+    if(type === 'unknown') return sellers;
+    return sellers.filter(function(store){ return psbSellerProductAvailability(store.id, product).ok; });
+}
+function psbProductAvailabilityBadge(product){
+    var type = psbDestinationType();
+    if(type === 'unknown') return 'Informe CEP';
+    var sellers = psbAvailableSellersForProduct(product);
+    if(!sellers.length) return 'Somente local';
+    if(type === 'local') return 'Disponível em Porto Velho';
+    var modes = sellers.map(function(store){ return psbSellerProductAvailability(store.id, product).mode; });
+    if(modes.includes('quote_only')) return 'Envio sob confirmação';
+    if(modes.includes('package_only')) return 'Somente pacote';
+    return 'Disponível para envio';
+}
+function psbCartIssuesForSeller(sellerId){
+    var issues = [];
+    var destinationType = psbDestinationType();
+    var group = groupCartBySeller()[sellerId];
+    if(!group) return issues;
+    if(!psbDestinationKnown()){
+        issues.push('Informe o CEP para validar a disponibilidade de envio.');
+        return issues;
+    }
+    group.items.forEach(function(item){
+        var product = bySlug(item.slug);
+        var availability = psbSellerProductAvailability(sellerId, product);
+        if(!availability.ok) issues.push(item.nome + ': ' + availability.reason);
+    });
+    if(destinationType === 'external'){
+        var setting = psbGetShippingSetting(sellerId);
+        var min = Number(setting.externalMinOrder || PSB_EXTERNAL_DEFAULT_MIN_ORDER);
+        if(sellerTotals(sellerId) < min) issues.push('Pedido mínimo para envio externo em ' + group.seller.nome + ': ' + money(min) + '.');
+    }
+    return issues;
+}
+function psbCartValidation(){
+    var groups = Object.keys(groupCartBySeller());
+    var issues = [];
+    groups.forEach(function(sellerId){ issues = issues.concat(psbCartIssuesForSeller(sellerId)); });
+    return { ok: issues.length === 0, issues: issues };
+}
+function psbGoCheckout(){
+    var validation = psbCartValidation();
+    if(!validation.ok){ showToast(validation.issues[0]); return; }
+    location.hash = '#/checkout';
+}
+function psbShippingSummaryLine(sellerId){
+    var type = psbDestinationType();
+    if(type === 'local') return 'Retirada local ou entrega em Porto Velho combinada no atendimento.';
+    if(type === 'external') return 'Envio externo com pedido mínimo de ' + money(psbGetShippingSetting(sellerId).externalMinOrder || PSB_EXTERNAL_DEFAULT_MIN_ORDER) + ' em produtos. Frete exato entra na etapa de API.';
+    return 'Informe o CEP para validar a disponibilidade.';
+}
+async function syncShippingFromBackend(options){
+    options = options || {};
+    if(!isOrdersBackendEnabled()) return;
+    try{
+        var beforeSettings = localStorage.getItem(PSB_SHIPPING_SETTINGS_STORAGE_KEY) || '';
+        var beforeRules = localStorage.getItem(PSB_SHIPPING_RULES_STORAGE_KEY) || '';
+        var settingsRes = await fetch(supabaseRestBase() + '/psb_seller_shipping_settings?select=*&active=eq.true&order=seller_id.asc', { headers:supabaseHeaders() }).catch(function(){ return null; });
+        var rulesRes = await fetch(supabaseRestBase() + '/psb_seller_shipping_rules?select=*&active=eq.true&order=seller_id.asc,priority.asc', { headers:supabaseHeaders() }).catch(function(){ return null; });
+        if(settingsRes && settingsRes.ok){ psbSaveShippingSettings(await settingsRes.json()); }
+        if(rulesRes && rulesRes.ok){ psbSaveShippingRules(await rulesRes.json()); }
+        var afterSettings = localStorage.getItem(PSB_SHIPPING_SETTINGS_STORAGE_KEY) || '';
+        var afterRules = localStorage.getItem(PSB_SHIPPING_RULES_STORAGE_KEY) || '';
+        if(options.rerender && (beforeSettings !== afterSettings || beforeRules !== afterRules)) router();
+    }catch(error){
+        console.warn('Não foi possível sincronizar regras de envio externo.', error);
+    }
+}
+function productCard(p){
+    const mainImage = getProductMainImage(p.slug);
+    const variationLabel = p.variacoes.length > 1 ? `${p.variacoes.length} variações` : (p.variacoes[0]?.label || 'variação única');
+    const availableSellers = psbAvailableSellersForProduct(p);
+    const sellerCount = availableSellers.length || sellersForProduct(p.slug).length;
+    const sellerBadge = sellerCount > 1 ? `${sellerCount} lojas` : psbProductAvailabilityBadge(p);
+    return `<article class="card product-card premium-product-card">
+<a class="product-img" href="#/produto/${p.slug}" aria-label="Ver ${p.nome}"><span class="product-tag">${isPremium(p)?'Premium':'Catálogo real'}</span><img src="${mainImage}" alt="${p.nome}" loading="lazy" onerror="productImageFallback(this)"></a>
+<div class="product-info"><div class="product-cat">${catName(p.categoria)}</div><h3 class="product-title">${p.nome}</h3><div class="product-meta-line"><span>${variationLabel}</span><span>${sellerBadge}</span></div><div class="product-price">${productPriceLabel(p)}</div><a class="btn btn-primary btn-block" href="#/produto/${p.slug}">Ver produto</a></div>
+</article>`;
+}
+function applyFilters(){
+    const c=document.getElementById('categoryFilter')?.value || 'all';
+    const f=document.getElementById('familyFilter')?.value || 'all';
+    const price=document.getElementById('priceFilter')?.value || 'all';
+    const premium=document.getElementById('premiumFilter')?.checked;
+    const sort=document.getElementById('sortFilter')?.value || 'relevancia';
+    const q=normalizeText(document.getElementById('searchFilter')?.value || '');
+    const destinationType = psbDestinationType();
+    let list=[...products].filter(p => (c==='all'||p.categoria===c) && (f==='all'||p.nome===f) && (!premium || isPremium(p)) && (!q || productSearchText(p).includes(q)) && (destinationType !== 'external' || psbAvailableSellersForProduct(p).length > 0) && (price==='all' || (price==='ate20' && priceFrom(p)<=20) || (price==='20a50' && priceFrom(p)>20 && priceFrom(p)<=50) || (price==='50a100' && priceFrom(p)>50 && priceFrom(p)<=100) || (price==='acima100' && priceFrom(p)>100)));
+    if(sort==='relevancia') list.sort((a,b)=>relevanceScore(b)-relevanceScore(a) || a.nome.localeCompare(b.nome,'pt-BR'));
+    if(sort==='menor') list.sort((a,b)=>priceFrom(a)-priceFrom(b));
+    if(sort==='maior') list.sort((a,b)=>priceFrom(b)-priceFrom(a));
+    if(sort==='az') list.sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
+    const grid=document.getElementById('productGrid');
+    const count=document.getElementById('filterCount');
+    document.querySelectorAll('[data-cat-chip]').forEach(btn=>btn.classList.toggle('active', btn.dataset.catChip===c));
+    if(grid){ grid.innerHTML=list.length?list.map(productCard).join(''):`<div class="empty-state premium-empty-state"><h3>Nenhum produto disponível para o CEP informado</h3><p class="text-gray">Altere o CEP, ajuste os filtros ou fale no WhatsApp para confirmar uma condição especial de envio.</p><div style="margin-top:16px;"><button class="btn btn-secondary" onclick="clearFilters()">Limpar filtros</button></div></div>`; }
+    if(count) count.textContent=`${list.length} produto(s) encontrado(s)`;
+    trackEvent('apply_filters',{categoria:c,familia:f,faixa:price,premium,ordenacao:sort,busca:q,resultado:list.length, destino:destinationType});
+}
+function renderShop(){
+    const chipButtons = `<button type="button" class="category-chip active" data-cat-chip="all" onclick="setCategoryFilter('all')">Todos</button>` + categories.map(c=>`<button type="button" class="category-chip" data-cat-chip="${c.slug}" onclick="setCategoryFilter('${c.slug}')">${c.name}</button>`).join('');
+    return `<section class="section"><div class="container"><div class="shop-premium-head"><div class="shop-premium-kicker"><span class="tag-badge">Compra assistida premium</span><span class="tag-badge">Loja oficial</span></div><div class="shop-premium-title"><h1>Loja Pipas Store</h1><p class="text-gray">Encontre rápido pipas, linhas, carretilhas, rabiolas e materiais de apoio. Informe seu CEP para visualizar a disponibilidade de venda local ou envio externo.</p></div>${shopTrustRail()}</div>${psbDestinationPanel('loja')}<div id="shopControlPanel" class="shop-control-panel"><div class="shop-search-row"><div class="search-wrap"><input id="searchFilter" class="form-control shop-search-input" placeholder="Buscar por produto, categoria ou variação" oninput="applyFilters()"></div><button class="btn btn-secondary" onclick="clearFilters()">Limpar</button></div><div class="category-chip-row" aria-label="Categorias do catálogo">${chipButtons}</div></div><div class="shop-layout"><aside class="filters-sidebar"><div class="filter-block"><h3 style="font-size:1rem;">Atendimento comercial</h3><p class="text-gray" style="font-size:0.92rem; margin-bottom:14px;">Marketplace com lojas homologadas, pedido registrado e regra de envio por CEP.</p><a class="btn btn-secondary btn-block" href="#/seja-lojista">Cadastrar loja parceira</a></div><div class="filter-block"><label class="form-label">Categoria macro</label><select id="categoryFilter" class="form-control" onchange="fillFamilyOptions();applyFilters()"><option value="all">Todas</option>${categories.map(c=>`<option value="${c.slug}">${c.name}</option>`).join('')}</select></div><div class="filter-block"><label class="form-label">Família</label><select id="familyFilter" class="form-control" onchange="applyFilters()"><option value="all">Todas as famílias</option></select></div><div class="filter-block"><label class="form-label">Faixa de preço</label><select id="priceFilter" class="form-control" onchange="applyFilters()"><option value="all">Todos</option><option value="ate20">Até R$ 20</option><option value="20a50">R$ 20 a R$ 50</option><option value="50a100">R$ 50 a R$ 100</option><option value="acima100">Acima de R$ 100</option></select></div><div class="filter-block"><label class="form-label">Ordenação</label><select id="sortFilter" class="form-control" onchange="applyFilters()"><option value="relevancia">Relevância</option><option value="menor">Menor preço</option><option value="maior">Maior preço</option><option value="az">A-Z</option></select></div><div class="filter-block"><label style="display:flex; align-items:center; gap:10px; cursor:pointer;"><input id="premiumFilter" type="checkbox" onchange="applyFilters()"> <span>Somente premium</span></label></div></aside><div><div class="shop-results-line"><div id="filterCount" class="text-gray">0 produto(s) encontrado(s)</div><div class="marketplace-note" style="max-width:460px;"><strong style="display:block; margin-bottom:6px; color:var(--c-white);">Regra por CEP</strong>Porto Velho compra normal. Fora de Porto Velho: mínimo de R$ 90,00 por loja e somente produtos liberados pelo lojista.</div></div><div class="grid-4" id="productGrid"></div></div></div></div></section>`;
+}
+function renderProduct(slug){
+    const p = bySlug(slug);
+    if(!p) return renderNotFound();
+    trackEvent('view_product',{slug});
+    const allProductSellers = sellersForProduct(p.slug);
+    const availableSellers = psbAvailableSellersForProduct(p);
+    const sellers = availableSellers.length ? availableSellers : allProductSellers;
+    const rule = getProductRule(p.slug);
+    const defaultSeller = sellers.find(s=>s.id === (rule.default_seller || DEFAULT_SELLER_ID)) || sellers[0] || getStoreById(DEFAULT_SELLER_ID);
+    const related = products.filter(x=>x.categoria===p.categoria && x.slug!==p.slug).slice(0,4);
+    const mainImage = getProductMainImage(p.slug);
+    const galleryImages = [mainImage, ...getProductGalleryImages(p.slug)];
+    const thumbsHtml = galleryImages.map((img,i)=>{ const active = i===0 ? 'active' : ''; const initialStyle = i===0 ? 'display:block;' : 'display:none;'; const onError = i===0 ? 'productImageFallback(this); galleryThumbLoaded(this)' : 'galleryThumbError(this)'; return `<img class="gallery-thumb ${active}" src="${img}" alt="${p.nome}" style="${initialStyle}" onload="galleryThumbLoaded(this)" onerror="${onError}" onclick="setProductMainImage('${img}', this)">`; }).join('');
+    const noDestination = !psbDestinationKnown();
+    const noAvailable = psbDestinationKnown() && !availableSellers.length;
+    const sellerHtml = sellers.length > 1 ? `<div class="form-group product-seller-select"><label class="form-label">Escolha a loja vendedora</label><select id="sellerSelect" class="form-control">${sellers.map(store=>`<option value="${store.id}" ${store.id === defaultSeller.id ? 'selected' : ''}>${store.nome} — ${store.label}</option>`).join('')}</select></div><p class="text-gray product-seller-note">${productSellerNote(p.slug)}</p>` : `<p class="text-gray product-seller-note"><strong style="color:var(--c-white);">${defaultSeller.nome}</strong> — ${defaultSeller.label}. ${productSellerNote(p.slug)}</p>`;
+    const addDisabled = noDestination || noAvailable;
+    const ruleWarning = noDestination ? 'Informe seu CEP para liberar a compra e validar disponibilidade.' : (noAvailable ? 'Produto indisponível para envio ao CEP informado. Altere o CEP ou fale no WhatsApp.' : psbSellerProductAvailability(defaultSeller.id, p).reason);
+    return `<section class="section product-section"><div class="container"><div class="product-breadcrumb text-gray"><a href="#/home">Home</a> / <a href="#/loja">Loja</a> / ${p.nome}</div>${psbDestinationPanel('produto')}<div class="product-detail-grid product-detail-compact"><div class="product-gallery-panel"><div class="gallery-main" onclick="openLightbox(this.querySelector('img').src)"><img data-product-main-image src="${mainImage}" alt="${p.nome}" onerror="productImageFallback(this)"></div><div class="gallery-thumbs" aria-label="Galeria do produto">${thumbsHtml}</div><p class="product-gallery-hint text-gray">Toque nas miniaturas para alternar a imagem. A primeira miniatura volta para a foto principal.</p></div><div class="product-buy-panel"><div class="tag-badge">${catName(p.categoria)}</div><h1 class="pd-title">${p.nome}</h1><p class="text-gray product-short-desc">${p.desc}</p><div class="card seller-card"><strong class="text-yellow">Loja vendedora</strong>${sellerHtml}<div class="marketplace-note product-rule-note"><strong>Regra por CEP</strong>${ruleWarning}</div></div><div class="product-price-row"><div id="pdPrice" class="pd-price">${money(p.variacoes[0].preco)}</div></div>${p.slug === RABIOLA_PRODUCT_SLUG ? `<p id="pdBulkNote" class="marketplace-note" style="margin:0 0 14px; padding:10px 12px; font-size:.86rem;">Acima de 5 pacotes: ${money(RABIOLA_BULK_PRICE)} por pacote.</p>` : ``}<div class="product-form-grid"><div class="form-group"><label class="form-label">${p.slug === RABIOLA_PRODUCT_SLUG ? 'Cor' : 'Variação'}</label><select id="variationSelect" class="form-control" onchange="updatePrice()">${p.variacoes.map(v=>`<option value="${v.label}">${v.label} — ${money(v.preco)}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Quantidade</label><div class="qty-selector"><button class="qty-btn" onclick="document.getElementById('qtyInput').stepDown(); updatePrice();">-</button><input id="qtyInput" class="qty-input" type="number" min="1" value="1" oninput="updatePrice()" onchange="updatePrice()"><button class="qty-btn" onclick="document.getElementById('qtyInput').stepUp(); updatePrice();">+</button></div></div></div><div class="product-actions"><button class="btn btn-primary" ${addDisabled?'disabled':''} onclick="addToCart('${p.slug}')">${addDisabled?'Informe CEP':'Adicionar ao carrinho'}</button><button class="btn btn-success" onclick="openWhatsApp('produto','Olá! Quero atendimento sobre ${p.nome}.')">Falar no WhatsApp</button></div><details class="card product-info-details"><summary>Informação importante</summary><p class="text-gray">${p.slug === RABIOLA_PRODUCT_SLUG ? 'Escolha a cor da rabiola antes de adicionar ao carrinho. Em pedidos acima de 5 pacotes, o sistema aplica automaticamente o valor promocional de R$ 35,00 por pacote.' : 'A comercialização, posse e uso de determinados tipos de linha seguem regras específicas e devem observar cadastro, autorização, locais apropriados e legislação vigente.'}</p></details><div class="product-mobile-sticky"><strong id="pdStickyPrice">${money(p.variacoes[0].preco)}</strong><button class="btn btn-primary" ${addDisabled?'disabled':''} onclick="addToCart('${p.slug}')">${addDisabled?'CEP':'Adicionar'}</button></div></div></div>${related.length?`<div class="related-section"><h2>Produtos relacionados</h2><div class="grid-4 related-grid">${related.map(productCard).join('')}</div></div>`:''}</div></section>`;
+}
+function addToCart(slug){
+    const p=bySlug(slug);
+    if(!p) return;
+    if(!psbDestinationKnown()){
+        showToast('Informe seu CEP antes de adicionar produtos ao carrinho.');
+        const el = document.getElementById('psbDestinationCard');
+        if(el) el.scrollIntoView({block:'center', behavior:'smooth'});
+        return;
+    }
+    const sel=document.getElementById('variationSelect');
+    const sellerSel=document.getElementById('sellerSelect');
+    const qtyInput=document.getElementById('qtyInput');
+    const label=sel?sel.value:p.variacoes[0].label;
+    const v=p.variacoes.find(x=>x.label===label) || p.variacoes[0];
+    const seller = sellerSel ? getStoreById(sellerSel.value) : (psbAvailableSellersForProduct(p)[0] || sellersForProduct(slug)[0]);
+    const qty=Math.max(1, parseInt(qtyInput?.value || 1,10) || 1);
+    const availability = psbSellerProductAvailability(seller.id, p);
+    if(!availability.ok){ showToast(availability.reason || 'Produto indisponível para o CEP informado.'); return; }
+    const key=`${slug}-${label}-${seller.id}`;
+    const found=cart.find(i=>i.key===key);
+    if(found){
+        found.qty += qty;
+        found.preco = v.preco;
+        found.bulkMinQty = v.bulkMinQty || p.bulkMinQty || null;
+        found.bulkPreco = v.bulkPreco || p.bulkPreco || null;
+        found.shippingRuleMode = availability.mode;
+    } else {
+        cart.push({ key, slug, nome:p.nome, categoria:p.categoria, variacao:label, preco:v.preco, bulkMinQty: v.bulkMinQty || p.bulkMinQty || null, bulkPreco: v.bulkPreco || p.bulkPreco || null, qty, img:getProductMainImage(slug), sellerId: seller.id, sellerName: seller.nome, sellerLabel: seller.label, sellerPhone: seller.phone, shippingRuleMode: availability.mode });
+    }
+    saveCart();
+    showToast(availability.mode === 'quote_only' ? `Produto adicionado. Envio externo sob confirmação da loja ${seller.nome}.` : `Produto adicionado ao carrinho da loja ${seller.nome}.`);
+    trackEvent('add_to_cart',{slug,variacao:label,qty,preco:variationUnitPrice(p,v,qty),seller:seller.id,destino:psbDestinationType(),regra:availability.mode});
+}
+function renderCart(){
+    if(!cart.length) return `<section class="section"><div class="container"><div class="empty-state"><h1>Seu carrinho está vazio</h1><p class="text-gray">Selecione os produtos, escolha as variações e monte seu pedido.</p><a href="#/loja" class="btn btn-primary">Ir para a loja</a></div></div></section>`;
+    const {subtotal,total}=totals();
+    const validation = psbCartValidation();
+    const issuesHtml = validation.ok ? `<div class="marketplace-note success-note"><strong>Regras de envio validadas.</strong><br>${psbDestinationStatusHtml()}</div>` : `<div class="marketplace-note warning-note"><strong>Pendência para continuar:</strong><br>${validation.issues.map(function(issue){ return '• ' + issue; }).join('<br>')}</div>`;
+    return `<section class="section"><div class="container"><h1>Carrinho</h1>${psbDestinationPanel('carrinho')}${issuesHtml}<div class="shop-layout" style="grid-template-columns:1.3fr .7fr;"><div><table class="cart-table"><thead><tr><th>Produto</th><th>Variação</th><th>Qtd</th><th>Total</th><th></th></tr></thead><tbody>${cart.map(i=>`<tr><td data-label="Produto"><div class="cart-item-info"><img class="cart-item-img" src="${i.img}" alt="${i.nome}" onerror="productImageFallback(this)"><div><strong>${i.nome}</strong><div class="text-gray">${catName(i.categoria)} • Vendido por ${i.sellerName || STORE.nome}</div><div class="text-gray" style="font-size:0.82rem;">${i.sellerLabel || 'Loja oficial de referência'} • ${psbShippingSummaryLine(i.sellerId || DEFAULT_SELLER_ID)}</div></div></div></td><td data-label="Variação">${i.variacao}${itemPricingNote(i) ? `<br><small class="text-yellow">${itemPricingNote(i)}</small>` : ``}</td><td data-label="Qtd"><div style="display:flex; gap:8px; align-items:center;"><button class="qty-btn" style="width:32px;height:32px;" onclick="changeQty('${i.key}',-1)">-</button><strong>${i.qty}</strong><button class="qty-btn" style="width:32px;height:32px;" onclick="changeQty('${i.key}',1)">+</button></div></td><td data-label="Total">${money(itemTotal(i))}</td><td data-label="Ação"><button class="btn-remove" onclick="removeItem('${i.key}')">Remover</button></td></tr>`).join('')}</tbody></table></div><aside class="summary-box"><h3>Resumo</h3><div style="display:flex; justify-content:space-between; margin:14px 0; color:var(--c-gray);"><span>Subtotal</span><strong style="color:var(--c-white);">${money(subtotal)}</strong></div><div style="display:flex; justify-content:space-between; margin:14px 0; color:var(--c-gray);"><span>Frete</span><strong style="color:var(--c-white);">${psbDestinationType()==='external'?'API Correios na próxima etapa':'A combinar'}</strong></div><div style="display:flex; justify-content:space-between; padding-top:18px; border-top:1px solid var(--c-border); font-size:1.25rem;"><span>Total parcial</span><strong class="text-yellow">${money(total)}</strong></div><p class="text-gray" style="font-size:0.9rem; margin-top:14px;">${psbDestinationType()==='external'?'Pedido externo precisa respeitar mínimo por loja.':'Os itens são organizados por loja vendedora para facilitar o atendimento.'}</p><button class="btn btn-primary btn-block" onclick="psbGoCheckout()">Continuar</button><button class="btn btn-secondary btn-block" style="margin-top:12px;" onclick="clearCart()">Limpar carrinho</button></aside></div></div></section>`;
+}
+function renderCheckout(){
+    if(!cart.length) return `<section class="section"><div class="container"><div class="empty-state"><h2>Nada para finalizar</h2><p class="text-gray">Monte seu carrinho antes de seguir para o checkout.</p><a href="#/loja" class="btn btn-primary">Voltar para loja</a></div></div></section>`;
+    trackEvent('begin_checkout',{itens:cart.length});
+    const sellerGroups = Object.values(groupCartBySeller());
+    const {total}=totals();
+    const destination = psbDestination() || {};
+    const deliveryOptions = psbDestinationType() === 'external' ? `<option selected>Envio nacional com frete dos Correios/Melhor Envio</option>` : `<option selected>Retirada grátis na loja</option><option>Entrega local com taxa a consultar</option>`;
+    return `<section class="section"><div class="container"><h1>Checkout assistido</h1><p class="text-gray">Preencha os dados abaixo. O pedido entra no marketplace como <strong style="color:var(--c-white);">aguardando confirmação da loja</strong>. Registro: <strong style="color:var(--c-white);">${backendStatusLabel()}</strong>.</p>${psbDestinationPanel('checkout')}<div class="shop-layout" style="grid-template-columns:1.2fr .8fr;"><div><div class="marketplace-note" style="margin-bottom:18px;"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Regra comercial por CEP</strong>${psbDestinationStatusHtml()}</div><div class="form-group"><label class="form-label">Nome</label><input id="ckName" class="form-control" placeholder="Seu nome"></div><div class="form-group"><label class="form-label">Telefone</label><input id="ckPhone" class="form-control" placeholder="Seu telefone"></div><div class="grid-2"><div class="form-group"><label class="form-label">CEP</label><input id="ckCep" class="form-control" value="${psbFormatCep(destination.cep || '')}" placeholder="00000-000" maxlength="9" oninput="psbMaskCepInput(this)"></div><div class="form-group"><label class="form-label">Cidade/UF</label><input id="ckCity" class="form-control" value="${destination.city ? destination.city + '/' + destination.uf : ''}" placeholder="Sua cidade e estado"></div></div><div class="form-group"><label class="form-label">Endereço</label><input id="ckAddress" class="form-control" value="${destination.street || ''}" placeholder="Rua/Avenida"></div><div class="grid-2"><div class="form-group"><label class="form-label">Número</label><input id="ckNumber" class="form-control" placeholder="Número"></div><div class="form-group"><label class="form-label">Bairro</label><input id="ckDistrict" class="form-control" value="${destination.district || ''}" placeholder="Bairro"></div></div><div class="form-group"><label class="form-label">Complemento</label><input id="ckComplement" class="form-control" value="${destination.complement || ''}" placeholder="Apartamento, referência ou complemento"></div><div class="form-group"><label class="form-label">Forma de entrega</label><select id="ckDelivery" class="form-control">${deliveryOptions}</select></div><div class="form-group"><label class="form-label">Forma de pagamento desejada</label><select id="ckPayment" class="form-control"><option>Pix com envio de comprovante no WhatsApp</option><option>Link de pagamento enviado manualmente</option><option>Transferência sob validação manual</option><option>Cartão presencial na retirada</option><option>Dinheiro na retirada</option></select></div><div class="form-group"><label class="form-label">Observações</label><textarea id="ckObs" class="form-control" placeholder="Detalhes importantes do pedido"></textarea></div>${sellerGroups.length===1?psbCheckoutButton(sellerGroups[0]):sellerGroups.map(psbCheckoutButton).join('')}<p class="text-gray" style="font-size:0.9rem; margin-top:12px;">Quando houver mais de uma loja no carrinho, o checkout cria um pedido separado por loja vendedora.</p></div><aside class="summary-box"><h3>Resumo do pedido</h3>${sellerGroups.map(group=>`<div class="card" style="padding:18px; margin-bottom:14px;"><strong style="color:var(--c-white);">${group.seller.nome}</strong><div class="text-gray" style="font-size:0.85rem; margin-bottom:8px;">${group.seller.label}</div>${group.items.map(i=>`<div style="display:flex; justify-content:space-between; gap:12px; margin:10px 0; color:var(--c-gray);"><span>${i.qty}x ${i.nome}<br><small>${i.variacao}</small>${itemPricingNote(i) ? `<br><small class="text-yellow">${itemPricingNote(i)}</small>` : ``}</span><strong style="color:var(--c-white);">${money(itemTotal(i))}</strong></div>`).join('')}<div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:12px; border-top:1px solid var(--c-border);"><span>Subtotal da loja</span><strong class="text-yellow">${money(sellerTotals(group.seller.id))}</strong></div><small class="text-gray">${psbShippingSummaryLine(group.seller.id)}</small></div>`).join('')}<div style="display:flex; justify-content:space-between; margin-top:16px; padding-top:16px; border-top:1px solid var(--c-border);"><span>Total parcial geral</span><strong class="text-yellow">${money(total)}</strong></div><p class="text-gray" style="font-size:0.9rem; margin-top:12px;">Frete exato por Correios/Melhor Envio será conectado na próxima etapa da Fase 1.7. Esta fase já valida disponibilidade, mínimo por CEP e regras do lojista.</p></aside></div></div></section>`;
+}
+function psbCheckoutButton(group){
+    var issues = psbCartIssuesForSeller(group.seller.id);
+    var disabled = issues.length ? 'disabled' : '';
+    var msg = issues.length ? `<p class="text-gray" style="font-size:.86rem; margin:8px 0 14px;">${issues[0]}</p>` : '';
+    return `${msg}<button class="btn btn-success btn-block" ${disabled} onclick="sendOrderWhatsApp('${group.seller.id}')">Criar pedido para ${group.seller.nome}</button>`;
+}
+function psbBuildOrderPayload(sellerId, customerData){
+    const seller = getStoreById(sellerId);
+    const items = (groupCartBySeller()[sellerId]?.items || []);
+    const subtotal = sellerTotals(sellerId);
+    const itemsText = items.map(i=>`• ${i.qty}x ${i.nome} | ${i.variacao} | ${money(itemTotal(i))}${itemPricingNote(i) ? ` (${itemPricingNote(i)})` : ''}`).join('\n');
+    const destinationLine = customerData.destinationType === 'external' ? 'Envio externo' : 'Compra local Porto Velho';
+    const addressLine = [customerData.address, customerData.number, customerData.district, customerData.complement].filter(Boolean).join(', ');
+    return { seller, subtotal, items, text: `Olá! Quero confirmar meu pedido na ${seller.nome}.\n\nCliente: ${customerData.name}\nTelefone: ${customerData.phone}\nCEP: ${customerData.cep}\nCidade/UF: ${customerData.city}\nTipo: ${destinationLine}\nEndereço: ${addressLine || 'Não informado'}\nEntrega: ${customerData.delivery}\nPagamento: ${customerData.payment}\n\nItens:\n${itemsText}\n\nSubtotal: ${money(subtotal)}\nFrete: ${customerData.destinationType === 'external' ? 'calcular por Correios/Melhor Envio' : 'retirada/entrega local a combinar'}\nRegra: ${psbShippingSummaryLine(sellerId)}\n${customerData.obs?`Observações: ${customerData.obs}\n`:''}Por favor, confirmar disponibilidade e próximos passos.` };
+}
+async function sendOrderWhatsApp(sellerId = DEFAULT_SELLER_ID){
+    const name=document.getElementById('ckName')?.value.trim();
+    const phone=document.getElementById('ckPhone')?.value.trim();
+    const city=document.getElementById('ckCity')?.value.trim();
+    const cep=psbFormatCep(document.getElementById('ckCep')?.value.trim() || psbDestination()?.cep || '');
+    const address=document.getElementById('ckAddress')?.value.trim();
+    const number=document.getElementById('ckNumber')?.value.trim();
+    const district=document.getElementById('ckDistrict')?.value.trim();
+    const complement=document.getElementById('ckComplement')?.value.trim();
+    if(!name || !phone || !city || !psbDestinationKnown()){ showToast('Preencha nome, telefone e confirme o CEP para enviar o pedido.'); return; }
+    if(psbDestinationType() === 'external' && (!address || !number || !district)){ showToast('Para envio externo, preencha endereço, número e bairro.'); return; }
+    const sellerIssues = psbCartIssuesForSeller(sellerId);
+    if(sellerIssues.length){ showToast(sellerIssues[0]); return; }
+    const delivery=document.getElementById('ckDelivery').value;
+    const payment=document.getElementById('ckPayment').value;
+    const obs=document.getElementById('ckObs').value.trim();
+    const customerData = { name, phone, city, cep, address, number, district, complement, delivery, payment, obs, destinationType:psbDestinationType(), destination:psbDestination() };
+    const payload = psbBuildOrderPayload(sellerId, customerData);
+    if(!payload.items.length){ showToast('Não há itens dessa loja no carrinho.'); return; }
+    const orders = loadOrders();
+    const order = { id:createOrderId(), sellerId, sellerName:payload.seller.nome, status:'aguardando-confirmacao', paymentReleased:false, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(), customer:customerData, shipping:{ destinationType:customerData.destinationType, cep:customerData.cep, city:customerData.city, address, number, district, complement, ruleSummary:psbShippingSummaryLine(sellerId), freightStatus: customerData.destinationType === 'external' ? 'aguardando-api-correios' : 'local-a-combinar' }, items:payload.items, subtotal:payload.subtotal, timeline:[{ status:'aguardando-confirmacao', at:new Date().toISOString(), note:'Pedido criado no checkout com regra de CEP e configuração do lojista da Fase 1.6.2/1.6.3.' }] };
+    orders.unshift(order);
+    saveOrders(orders);
+    if(isOrdersBackendEnabled()){
+        try{
+            showToast('Registrando pedido no portal do lojista...');
+            await saveOrderToBackend(order);
+            await syncOrdersFromBackend();
+        }catch(error){
+            console.warn(error);
+            showToast('Pedido não foi registrado no banco. Não vou abrir o WhatsApp. Tente novamente.');
+            return;
+        }
+    }
+    trackEvent('send_preorder_whatsapp',{cliente:name,itens:payload.items.length,subtotal:payload.subtotal,entrega:delivery,pagamento:payment,seller:sellerId,orderId:order.id,destino:customerData.destinationType});
+    const waWindow = window.open(getWaLink(payload.seller.phone, `${payload.text}\n\nID do pedido: ${order.id}\nStatus inicial: aguardando confirmação da loja.`), '_blank', 'noopener,noreferrer');
+    cart = cart.filter(item => (item.sellerId || DEFAULT_SELLER_ID) !== sellerId);
+    saveCart();
+    if(!waWindow){ showToast(`Pedido ${order.id} registrado. O WhatsApp não abriu; faça o contato manualmente.`); router(); return; }
+    showToast(`Pedido ${order.id} registrado para ${payload.seller.nome}.`);
+    router();
+}
+var psbOriginalRenderStorePortal = renderStorePortal;
+function psbRenderSellerShippingControls(store){
+    var setting = psbGetShippingSetting(store.id);
+    var rules = psbLoadShippingRules();
+    var modeOptions = [['normal','Enviar normalmente'], ['package_only','Somente pacote'], ['quote_only','Sob confirmação'], ['blocked','Somente local']];
+    var productModeOptions = [['inherit','Usar regra da categoria'], ['normal','Enviar normalmente'], ['package_only','Somente pacote'], ['quote_only','Sob confirmação'], ['blocked','Somente local']];
+    var categoryRows = categories.map(function(cat){
+        var current = rules.find(function(rule){ return rule.sellerId === store.id && rule.scope === 'category' && rule.categorySlug === cat.slug; }) || psbNormalizeShippingRule({ sellerId:store.id, scope:'category', categorySlug:cat.slug, allowExternalSale:false, externalSaleMode:'blocked', externalMinOrder:setting.externalMinOrder });
+        return `<div class="shipping-rule-row"><div><strong>${cat.name}</strong><small class="text-gray">${psbModeLabel(current.externalSaleMode)}</small></div><select id="ship_rule_${store.id}_${cat.slug}" class="form-control">${modeOptions.map(function(opt){ return `<option value="${opt[0]}" ${current.externalSaleMode===opt[0]?'selected':''}>${opt[1]}</option>`; }).join('')}</select></div>`;
+    }).join('');
+    var sellerProducts = products.filter(function(product){
+        return sellersForProduct(product.slug).some(function(seller){ return seller.id === store.id; });
+    }).sort(function(a,b){ return catName(a.categoria).localeCompare(catName(b.categoria),'pt-BR') || a.nome.localeCompare(b.nome,'pt-BR'); });
+    var productRows = sellerProducts.map(function(product){
+        var current = rules.find(function(rule){ return rule.sellerId === store.id && rule.scope === 'product' && rule.productSlug === product.slug; });
+        var value = current ? current.externalSaleMode : 'inherit';
+        var label = current ? psbModeLabel(current.externalSaleMode) : 'Herdando regra da categoria';
+        return `<div class="shipping-rule-row"><div><strong>${product.nome}</strong><small class="text-gray">${catName(product.categoria)} • ${label}</small></div><select id="ship_product_rule_${store.id}_${product.slug}" class="form-control">${productModeOptions.map(function(opt){ return `<option value="${opt[0]}" ${value===opt[0]?'selected':''}>${opt[1]}</option>`; }).join('')}</select></div>`;
+    }).join('');
+    return `<section class="section-sm"><div class="container"><div class="card shipping-admin-card"><div style="display:flex; justify-content:space-between; gap:16px; align-items:start; flex-wrap:wrap;"><div><span class="tag-badge">Fase 1.6.3</span><h2>Configuração de envio externo</h2><p class="text-gray">Defina se a loja vende para fora de Porto Velho, pedido mínimo, categorias liberadas e exceções por produto.</p></div><button class="btn btn-primary" onclick="psbSaveSellerShippingAction('${store.id}')">Salvar envio externo</button></div><div class="grid-2" style="margin-top:20px;"><div><div class="form-group"><label class="form-label">CEP de origem da loja</label><input id="ship_origin_cep_${store.id}" class="form-control" value="${setting.originCep || ''}" placeholder="76820-680"></div><div class="grid-2"><div class="form-group"><label class="form-label">Cidade local</label><input id="ship_local_city_${store.id}" class="form-control" value="${setting.localCity || 'Porto Velho'}"></div><div class="form-group"><label class="form-label">UF</label><input id="ship_local_uf_${store.id}" class="form-control" value="${setting.localUf || 'RO'}" maxlength="2"></div></div><div class="form-group"><label class="form-label">Aceita venda fora de Porto Velho?</label><select id="ship_allow_external_${store.id}" class="form-control"><option value="true" ${setting.allowExternalShipping?'selected':''}>Sim</option><option value="false" ${!setting.allowExternalShipping?'selected':''}>Não</option></select></div><div class="form-group"><label class="form-label">Pedido mínimo externo em produtos</label><input id="ship_min_order_${store.id}" class="form-control" type="number" min="0" step="1" value="${setting.externalMinOrder || 90}"></div><div class="marketplace-note"><strong>Regra padrão atual</strong><br>Porto Velho compra normal. Fora de Porto Velho respeita o mínimo informado e as permissões abaixo.</div></div><div><h3 style="font-size:1rem; color:var(--c-white);">Categorias para envio externo</h3><div class="shipping-rule-list">${categoryRows}</div><p class="text-gray" style="font-size:.86rem; margin-top:12px;">Use “Somente pacote” para pipas e itens que não devem sair em unidade. Use “Sob confirmação” para produtos grandes ou frágeis.</p></div></div><details class="card" style="margin-top:20px; padding:18px;"><summary style="cursor:pointer; font-weight:900; color:var(--c-white);">Exceções por produto da loja</summary><p class="text-gray" style="margin-top:12px;">Aqui o lojista pode liberar, bloquear ou marcar um produto específico como “somente pacote”, mesmo que a categoria tenha outra regra.</p><div class="shipping-rule-list" style="margin-top:14px;">${productRows || '<p class="text-gray">Nenhum produto vinculado a esta loja ainda.</p>'}</div></details></div></div></section>`;
+}
+renderStorePortal = function(){
+    var html = psbOriginalRenderStorePortal();
+    var session = getStoreSession();
+    if(!session?.storeId) return html;
+    var store = getStoreById(session.storeId);
+    return html + psbRenderSellerShippingControls(store);
+};
+async function psbUpsertShippingSettingToBackend(setting){
+    if(!isOrdersBackendEnabled()) return { ok:false, disabled:true };
+    var row = { seller_id:setting.sellerId, seller_name:setting.sellerName || getStoreById(setting.sellerId)?.nome || setting.sellerId, origin_cep:setting.originCep || null, origin_city:setting.originCity || 'Porto Velho', origin_uf:setting.originUf || 'RO', local_city:setting.localCity || 'Porto Velho', local_uf:String(setting.localUf || 'RO').toUpperCase(), allow_external_shipping:!!setting.allowExternalShipping, external_min_order:Number(setting.externalMinOrder || 90), local_delivery_message:setting.localDeliveryMessage || null, external_shipping_message:setting.externalShippingMessage || null, active:true, settings_payload:setting };
+    var res = await fetch(supabaseRestBase() + '/psb_seller_shipping_settings?on_conflict=seller_id', { method:'POST', headers:supabaseHeaders('resolution=merge-duplicates,return=representation'), body:JSON.stringify(row) });
+    if(!res.ok){ console.warn('Falha ao salvar configuração de envio.', res.status, await res.text().catch(function(){return '';})); return { ok:false, status:res.status }; }
+    return { ok:true };
+}
+async function psbUpsertShippingRuleToBackend(rule){
+    if(!isOrdersBackendEnabled()) return { ok:false, disabled:true };
+    var row = { rule_key:rule.ruleKey, seller_id:rule.sellerId, seller_name:rule.sellerName || getStoreById(rule.sellerId)?.nome || rule.sellerId, scope:rule.scope, category_slug:rule.categorySlug || null, product_slug:rule.productSlug || null, allow_local_sale:rule.allowLocalSale !== false, allow_external_sale:rule.externalSaleMode !== 'blocked', external_sale_mode:rule.externalSaleMode, external_min_qty:Number(rule.externalMinQty || 1), external_min_order:Number(rule.externalMinOrder || 90), external_message:rule.externalMessage || psbModeMessage(rule.externalSaleMode, rule.categorySlug), priority:Number(rule.priority || 20), active:true, rule_payload:rule };
+    var res = await fetch(supabaseRestBase() + '/psb_seller_shipping_rules?on_conflict=rule_key', { method:'POST', headers:supabaseHeaders('resolution=merge-duplicates,return=representation'), body:JSON.stringify(row) });
+    if(!res.ok){ console.warn('Falha ao salvar regra de envio.', res.status, await res.text().catch(function(){return '';})); return { ok:false, status:res.status }; }
+    return { ok:true };
+}
+async function psbDeactivateSellerProductShippingRulesFromBackend(storeId){
+    if(!isOrdersBackendEnabled()) return { ok:false, disabled:true };
+    var res = await fetch(supabaseRestBase() + '/psb_seller_shipping_rules?seller_id=eq.' + encodeURIComponent(storeId) + '&scope=eq.product', { method:'PATCH', headers:supabaseHeaders('return=minimal'), body:JSON.stringify({ active:false }) });
+    if(!res.ok){ console.warn('Falha ao desativar exceções antigas de produto.', res.status, await res.text().catch(function(){return '';})); return { ok:false, status:res.status }; }
+    return { ok:true };
+}
+async function psbSaveSellerShippingAction(storeId){
+    var store = getStoreById(storeId);
+    var settings = psbLoadShippingSettings().filter(function(item){ return item.sellerId !== storeId; });
+    var minOrder = Number(document.getElementById('ship_min_order_' + storeId)?.value || 90) || 90;
+    var setting = psbNormalizeShippingSetting({ sellerId:storeId, sellerName:store.nome, originCep:document.getElementById('ship_origin_cep_' + storeId)?.value || '', originCity:'Porto Velho', originUf:'RO', localCity:document.getElementById('ship_local_city_' + storeId)?.value || 'Porto Velho', localUf:document.getElementById('ship_local_uf_' + storeId)?.value || 'RO', allowExternalShipping:document.getElementById('ship_allow_external_' + storeId)?.value === 'true', externalMinOrder:minOrder, localDeliveryMessage:'Retirada local em Porto Velho ou entrega local combinada no atendimento.', externalShippingMessage:'Envio externo disponível a partir de ' + money(minOrder) + ' em produtos.' });
+    settings.push(setting);
+    psbSaveShippingSettings(settings);
+    var allRules = psbLoadShippingRules().filter(function(rule){ return !(rule.sellerId === storeId && (rule.scope === 'category' || rule.scope === 'product')); });
+    var categoryRules = categories.map(function(cat){
+        var mode = document.getElementById('ship_rule_' + storeId + '_' + cat.slug)?.value || 'blocked';
+        return psbNormalizeShippingRule({ ruleKey:storeId + '::cat::' + cat.slug, sellerId:storeId, sellerName:store.nome, scope:'category', categorySlug:cat.slug, productSlug:'', allowLocalSale:true, allowExternalSale:mode !== 'blocked', externalSaleMode:mode, externalMinQty:1, externalMinOrder:minOrder, externalMessage:psbModeMessage(mode, cat.slug), priority:20, active:true });
+    });
+    var sellerProducts = products.filter(function(product){
+        return sellersForProduct(product.slug).some(function(seller){ return seller.id === storeId; });
+    });
+    var productRules = sellerProducts.map(function(product){
+        var mode = document.getElementById('ship_product_rule_' + storeId + '_' + product.slug)?.value || 'inherit';
+        if(mode === 'inherit') return null;
+        return psbNormalizeShippingRule({ ruleKey:storeId + '::product::' + product.slug, sellerId:storeId, sellerName:store.nome, scope:'product', categorySlug:product.categoria, productSlug:product.slug, allowLocalSale:true, allowExternalSale:mode !== 'blocked', externalSaleMode:mode, externalMinQty:1, externalMinOrder:minOrder, externalMessage:psbModeMessage(mode, product.categoria), priority:5, active:true });
+    }).filter(Boolean);
+    var nextRules = categoryRules.concat(productRules);
+    psbSaveShippingRules(allRules.concat(nextRules));
+    showToast('Configuração salva localmente. Sincronizando Supabase...');
+    try{
+        await psbUpsertShippingSettingToBackend(setting);
+        await psbDeactivateSellerProductShippingRulesFromBackend(storeId);
+        await Promise.all(nextRules.map(psbUpsertShippingRuleToBackend));
+        await syncShippingFromBackend();
+        showToast('Regras de envio externo atualizadas.');
+    }catch(error){
+        console.warn(error);
+        showToast('Configuração salva no navegador. Verifique conexão com Supabase.');
+    }
+    router();
+}
+window.addEventListener('load', function(){ syncShippingFromBackend({ rerender:true }); });
+window.addEventListener('hashchange', function(){ syncShippingFromBackend({ rerender:false }); });
+</script>
+
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 
 <script>
