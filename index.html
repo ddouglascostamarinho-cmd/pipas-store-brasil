@@ -937,11 +937,11 @@ const PRODUCT_RULES = {
     },
     'rabiola-500m': {
         sell_mode: 'restricted',
-        allowed_sellers: ['juninho-pipas', 'pipas-store-brasil'],
-        default_seller: 'juninho-pipas',
+        allowed_sellers: ['pipas-store-brasil'],
+        default_seller: 'pipas-store-brasil',
         requires_stock_confirmation: true,
         catalog_status: 'ativo',
-        note: 'Produto disponível em mais de uma loja homologada. Escolha a loja antes de adicionar ao carrinho.'
+        note: 'Venda exclusiva da Pipas Store Brasil.'
     }
 };
 const PARTNER_STORE_STORAGE_KEY = 'psb_partner_stores_23';
@@ -1104,6 +1104,8 @@ const saveProductRequests = requests => writeJSON(PRODUCT_REQUESTS_STORAGE_KEY, 
 
 const DEFAULT_SELLER_OFFERS = [
     { offerKey:'juninho-pipas::all', sellerId:'juninho-pipas', sellerName:'Juninho Pipas', scope:'all', productSlug:'', categorySlug:'', active:true, useCatalogPrice:true },
+    // Exceção comercial: Juninho vende o catálogo geral, exceto rabiolas.
+    { offerKey:'juninho-pipas::cat::rabiolas', sellerId:'juninho-pipas', sellerName:'Juninho Pipas', scope:'category', productSlug:'', categorySlug:'rabiolas', active:false, useCatalogPrice:true },
     { offerKey:'pipas-store-brasil::cat::rabiolas', sellerId:'pipas-store-brasil', sellerName:'Pipas Store Brasil', scope:'category', productSlug:'', categorySlug:'rabiolas', active:true, useCatalogPrice:true }
 ];
 const makeOfferKey = (sellerId, scope, value='') => {
@@ -1247,8 +1249,21 @@ const offerMatchesProduct = (offer, product) => {
 const sellerCanSellProduct = (store, product, offers = loadSellerOffers()) => {
     if(!store?.id || !product) return false;
     const sellerOffers = offers.filter(offer => offer.sellerId === store.id);
+
+    // Produto específico marcado funciona como exceção positiva fora da categoria.
+    const productOffer = sellerOffers.find(offer => offer.scope === 'product' && offer.productSlug === product.slug);
+    if(productOffer?.active) return true;
+
+    // A categoria tem precedência sobre a permissão global. Assim é possível liberar
+    // todo o catálogo e desmarcar apenas uma categoria, como Rabiolas.
+    const categoryOffer = sellerOffers.find(offer => offer.scope === 'category' && offer.categorySlug === product.categoria);
+    if(categoryOffer) return !!categoryOffer.active;
+
+    const allOffer = sellerOffers.find(offer => offer.scope === 'all');
+    if(allOffer) return !!allOffer.active;
+
     if(store.id === DEFAULT_SELLER_ID && !sellerOffers.length) return true;
-    return sellerOffers.some(offer => offerMatchesProduct(offer, product));
+    return false;
 };
 const buildSellerOffer = (store, scope, value, active) => normalizeSellerOffer({
     offerKey: makeOfferKey(store.id, scope, value),
@@ -1289,9 +1304,15 @@ const sellersForProduct = slug => {
     if(!product) return [MARKETPLACE_STORES[0]];
     const stores = approvedStores();
     const offers = loadSellerOffers();
-    const sellers = stores.filter(store => sellerCanSellProduct(store, product, offers));
-    if(sellers.length) return sellers;
     const rule = getProductRule(slug);
+    const explicitRule = PRODUCT_RULES[slug];
+    const sellers = stores.filter(store => {
+        // Regras comerciais explícitas do produto limitam quais lojas podem aparecer,
+        // mesmo que exista uma permissão global antiga no navegador ou no Supabase.
+        if(explicitRule && ['exclusive', 'restricted'].includes(rule.sell_mode) && !rule.allowed_sellers.includes(store.id)) return false;
+        return sellerCanSellProduct(store, product, offers);
+    });
+    if(sellers.length) return sellers;
     const fallback = stores.filter(store => rule.sell_mode === 'open' || rule.allowed_sellers.includes(store.id));
     return fallback.length ? fallback : [MARKETPLACE_STORES[0]];
 };
@@ -1991,10 +2012,16 @@ async function provisionStoreAccessAction(id){
     router();
 }
 function renderSellerCatalogControls(store){
-    const allChecked = isExplicitOfferActive(store.id, 'all');
-    const categoryHtml = categories.map(cat => `<label class="permission-card"><input type="checkbox" id="perm_${store.id}_cat_${cat.slug}" ${allChecked || isExplicitOfferActive(store.id,'category',cat.slug) ? 'checked' : ''}>${cat.name}</label>`).join('');
+    const offers = loadSellerOffers().filter(offer => offer.sellerId === store.id);
+    const allOffer = offers.find(offer => offer.scope === 'all');
+    const allChecked = !!allOffer?.active;
+    const categoryHtml = categories.map(cat => {
+        const categoryOffer = offers.find(offer => offer.scope === 'category' && offer.categorySlug === cat.slug);
+        const checked = categoryOffer ? !!categoryOffer.active : allChecked;
+        return `<label class="permission-card"><input type="checkbox" id="perm_${store.id}_cat_${cat.slug}" ${checked ? 'checked' : ''}>${cat.name}</label>`;
+    }).join('');
     const productHtml = products.map(product => `<label class="permission-card"><input type="checkbox" id="perm_${store.id}_prod_${product.slug}" ${isExplicitOfferActive(store.id,'product',product.slug) ? 'checked' : ''}><span><strong style="color:var(--c-white);">${product.nome}</strong><br><small>${catName(product.categoria)} • ${moneyFrom(product)}</small></span></label>`).join('');
-    return `<details class="admin-seller-control"><summary>Configurar produtos da loja</summary><div class="admin-catalog-body"><p class="text-gray">Marque as categorias que esta loja pode vender. Use produtos específicos apenas como exceção fora da categoria liberada.</p><label class="permission-card" style="margin:10px 0;"><input type="checkbox" id="perm_${store.id}_all" ${allChecked ? 'checked' : ''}>Liberar todo o catálogo para esta loja</label><h4 style="color:var(--c-white); margin:14px 0 8px;">Categorias permitidas</h4><div class="permission-grid">${categoryHtml}</div><details><summary style="cursor:pointer; color:var(--c-yellow); font-weight:800; text-transform:uppercase;">Produtos específicos +</summary><div class="product-permission-list" style="margin-top:10px;">${productHtml}</div></details><div class="admin-control-actions"><button class="btn btn-primary" onclick="saveSellerPermissionsAction('${store.id}')">Salvar permissões</button><button class="btn btn-secondary" onclick="syncMarketplaceCatalogFromBackend({rerender:true})">Sincronizar</button></div></div></details>`;
+    return `<details class="admin-seller-control"><summary>Configurar produtos da loja</summary><div class="admin-catalog-body"><p class="text-gray">Marque as categorias que esta loja pode vender. Se "Liberar todo o catálogo" estiver ativo, uma categoria desmarcada passa a funcionar como exceção de bloqueio. Produtos específicos podem ser usados como exceção positiva.</p><label class="permission-card" style="margin:10px 0;"><input type="checkbox" id="perm_${store.id}_all" ${allChecked ? 'checked' : ''}>Liberar todo o catálogo para esta loja</label><h4 style="color:var(--c-white); margin:14px 0 8px;">Categorias permitidas</h4><div class="permission-grid">${categoryHtml}</div><details><summary style="cursor:pointer; color:var(--c-yellow); font-weight:800; text-transform:uppercase;">Produtos específicos +</summary><div class="product-permission-list" style="margin-top:10px;">${productHtml}</div></details><div class="admin-control-actions"><button class="btn btn-primary" onclick="saveSellerPermissionsAction('${store.id}')">Salvar permissões</button><button class="btn btn-secondary" onclick="syncMarketplaceCatalogFromBackend({rerender:true})">Sincronizar</button></div></div></details>`;
 }
 async function saveSellerPermissionsAction(storeId){
     const store = getStoreById(storeId);
