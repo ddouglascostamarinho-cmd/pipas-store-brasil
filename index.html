@@ -932,7 +932,7 @@ const MARKETPLACE_STORES = [
     },
     {
         id: 'pipas-store-brasil',
-        nome: 'Pipas Store Brasil',
+        nome: 'Apex Rabiolas',
         label: 'Loja parceira homologada',
         phone: STORE.waParceiro,
         cidade: 'Porto Velho/RO',
@@ -962,7 +962,7 @@ const PRODUCT_RULES = {
         default_seller: 'pipas-store-brasil',
         requires_stock_confirmation: true,
         catalog_status: 'ativo',
-        note: 'Venda exclusiva da Pipas Store Brasil.'
+        note: 'Venda exclusiva da Apex Rabiolas.'
     }
 };
 const PARTNER_STORE_STORAGE_KEY = 'psb_partner_stores_23';
@@ -1121,7 +1121,7 @@ const DEFAULT_SELLER_OFFERS = [
     { offerKey:'juninho-pipas::all', sellerId:'juninho-pipas', sellerName:'Juninho Pipas', scope:'all', productSlug:'', categorySlug:'', active:true, useCatalogPrice:true },
     // Exceção comercial: Juninho vende o catálogo geral, exceto rabiolas.
     { offerKey:'juninho-pipas::cat::rabiolas', sellerId:'juninho-pipas', sellerName:'Juninho Pipas', scope:'category', productSlug:'', categorySlug:'rabiolas', active:false, useCatalogPrice:true },
-    { offerKey:'pipas-store-brasil::cat::rabiolas', sellerId:'pipas-store-brasil', sellerName:'Pipas Store Brasil', scope:'category', productSlug:'', categorySlug:'rabiolas', active:true, useCatalogPrice:true }
+    { offerKey:'pipas-store-brasil::cat::rabiolas', sellerId:'pipas-store-brasil', sellerName:'Apex Rabiolas', scope:'category', productSlug:'', categorySlug:'rabiolas', active:true, useCatalogPrice:true }
 ];
 const makeOfferKey = (sellerId, scope, value='') => {
     if(scope === 'all') return `${sellerId}::all`;
@@ -2244,7 +2244,7 @@ var PSB_SHIPPING_RULES_STORAGE_KEY = 'psb_seller_shipping_rules_16';
 var PSB_EXTERNAL_DEFAULT_MIN_ORDER = 90;
 var PSB_DEFAULT_SHIPPING_SETTINGS = [
     { sellerId:'juninho-pipas', sellerName:'Juninho Pipas', originCep:'76820-680', originCity:'Porto Velho', originUf:'RO', localCity:'Porto Velho', localUf:'RO', allowExternalShipping:true, externalMinOrder:90, localDeliveryMessage:'Retirada local em Porto Velho ou entrega local combinada no atendimento.', externalShippingMessage:'Envio para fora de Porto Velho disponível a partir de R$ 90,00 em produtos.' },
-    { sellerId:'pipas-store-brasil', sellerName:'Pipas Store Brasil', originCep:'76820-680', originCity:'Porto Velho', originUf:'RO', localCity:'Porto Velho', localUf:'RO', allowExternalShipping:true, externalMinOrder:90, localDeliveryMessage:'Retirada local em Porto Velho ou entrega local combinada no atendimento.', externalShippingMessage:'Envio para fora de Porto Velho disponível a partir de R$ 90,00 em produtos.' }
+    { sellerId:'pipas-store-brasil', sellerName:'Apex Rabiolas', originCep:'76820-680', originCity:'Porto Velho', originUf:'RO', localCity:'Porto Velho', localUf:'RO', allowExternalShipping:true, externalMinOrder:90, localDeliveryMessage:'Retirada local em Porto Velho ou entrega local combinada no atendimento.', externalShippingMessage:'Envio para fora de Porto Velho disponível a partir de R$ 90,00 em produtos.' }
 ];
 var PSB_SHIPPING_CATEGORY_DEFAULTS = {
     linhas: 'normal',
