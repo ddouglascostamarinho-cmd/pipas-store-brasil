@@ -844,8 +844,6 @@ footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); p
                     <li><a href="#/privacidade">Política de Privacidade</a></li>
                     <li><a href="#/seja-lojista">Seja um Lojista Parceiro</a></li>
                     <li><a href="#/portal-lojista">Portal do Lojista</a></li>
-                    <li><a href="#/painel-marketplace">Painel Admin</a></li>
-                    <li><a href="#/especificacao-marketplace">Especificação Marketplace</a></li>
                 </ul>
             </div>
             <div id="footerContactInfo"></div>
@@ -1010,16 +1008,7 @@ const isOrdersBackendEnabled = () => {
     return !!(cfg.enabled && cfg.url && cfg.anonKey && !String(cfg.url).includes('COLE_AQUI') && !String(cfg.anonKey).includes('COLE_AQUI'));
 };
 const supabaseRestBase = () => String(getSupabaseConfig().url || '').replace(/\/$/, '') + '/rest/v1';
-const supabaseHeaders = (prefer = '') => {
-    const key = getSupabaseConfig().anonKey;
-    const headers = {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        'Content-Type': 'application/json'
-    };
-    if(prefer) headers.Prefer = prefer;
-    return headers;
-};
+const PSB_AUTH_SESSION_KEY = 'psb_auth_session_23'; let __psbAuthToken = null; let __psbAuthUser = null; const psbLoadAuthSession = () => { try { const raw = localStorage.getItem(PSB_AUTH_SESSION_KEY); if(!raw) return; const s = JSON.parse(raw); __psbAuthToken = s.access_token || null; __psbAuthUser = s.user || null; } catch(e){} }; psbLoadAuthSession(); async function psbSignIn(email, password){ try { const cfg = getSupabaseConfig(); const base = String(cfg.url || '').replace(/\/$/, ''); const res = await fetch(base + '/auth/v1/token?grant_type=password', { method: 'POST', headers: { apikey: cfg.anonKey, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password }) }); if(!res.ok) return false; const data = await res.json(); __psbAuthToken = data.access_token; __psbAuthUser = data.user; localStorage.setItem(PSB_AUTH_SESSION_KEY, JSON.stringify({ access_token: data.access_token, refresh_token: data.refresh_token, user: data.user })); return true; } catch(e){ return false; } } function psbSignOut(){ __psbAuthToken = null; __psbAuthUser = null; localStorage.removeItem(PSB_AUTH_SESSION_KEY); } const PSB_SELLER_AUTH_EMAILS = { 'juninho-pipas': 'juninho@lojistas.pipasstore.com.br', 'pipas-store-brasil': 'lojista2@psb-internal.app' }; const supabaseHeaders = (prefer = '') => { const key = getSupabaseConfig().anonKey; const headers = { apikey: key, Authorization: `Bearer ${__psbAuthToken || key}`, 'Content-Type': 'application/json' }; if(prefer) headers.Prefer = prefer; return headers; };
 const normalizeRemoteOrder = row => {
     const payload = row.order_payload || {};
     return {
@@ -1481,17 +1470,8 @@ const rejectPartnerStore = id => {
     savePendingPartnerStores(pending.filter(store => store.id !== id));
     return partner;
 };
-function loginStorePortal(){
-    const login = document.getElementById('storeLogin')?.value.trim().toLowerCase();
-    const password = document.getElementById('storePassword')?.value.trim();
-    const store = allStores().find(item => item.status === 'approved' && (item.login || '').toLowerCase() === login && (item.password || '') === password);
-    if(!store){ showToast('Credenciais inválidas, loja inativa ou ainda não homologada.'); return; }
-    setStoreSession({ storeId: store.id, loginAt: new Date().toISOString() });
-    showToast(`Acesso liberado para ${store.nome}.`);
-    if(location.hash === '#/portal-lojista') router();
-    else location.hash = '#/portal-lojista';
-}
-function logoutStorePortal(){ clearStoreSession(); showToast('Sessão do lojista encerrada.'); router(); }
+async function loginStorePortal(){ const login = document.getElementById('storeLogin')?.value.trim().toLowerCase(); const password = document.getElementById('storePassword')?.value.trim(); const store = allStores().find(item => item.status === 'approved' && (item.login || '').toLowerCase() === login); if(!store){ showToast('Credenciais inválidas, loja inativa ou ainda não homologada.'); return; } const email = PSB_SELLER_AUTH_EMAILS[store.id]; if(!email){ showToast('Login ainda não migrado para o novo sistema. Fale com o administrador.'); return; } const ok = await psbSignIn(email, password); if(!ok){ showToast('Credenciais inválidas, loja inativa ou ainda não homologada.'); return; } setStoreSession({ storeId: store.id, loginAt: new Date().toISOString() }); showToast(`Acesso liberado para ${store.nome}.`); if(location.hash === '#/portal-lojista') router(); else location.hash = '#/portal-lojista'; }
+  function logoutStorePortal(){ psbSignOut(); clearStoreSession(); showToast('Sessão do lojista encerrada.'); router(); }
 function loginAdminPortal(){ const pin = document.getElementById('adminPin')?.value.trim(); if(pin !== ADMIN_ACCESS_PIN){ showToast('PIN administrativo inválido.'); return; } setAdminSession(true); showToast('Acesso administrativo confirmado.'); router(); }
 function logoutAdminPortal(){ setAdminSession(false); showToast('Sessão administrativa encerrada.'); router(); }
 function approvePartnerStoreAction(id){ const approved = approvePartnerStore(id); if(!approved){ showToast('Loja pendente não encontrada.'); return; } showToast(`Loja ${approved.nome} homologada com sucesso.`); router(); }
@@ -2246,7 +2226,7 @@ function renderAdminPortal(){
 }
 
 function renderNotFound(){ return `<section class="section"><div class="container"><div class="empty-state"><h1>Página não encontrada</h1><p class="text-gray">A rota solicitada não existe ou ainda não está disponível.</p><a href="#/home" class="btn btn-primary">Voltar para Home</a></div></div></section>`; }
-function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'especificacao-marketplace': renderMarketplaceSpec, 'portal-lojista': renderStorePortal, 'painel-marketplace': renderAdminPortal }; app.innerHTML = (routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); applyFilters(); } if(['loja','produto','portal-lojista','painel-marketplace'].includes(page)){ syncMarketplaceCatalogFromBackend({ rerender:['loja','produto','painel-marketplace'].includes(page) }); } if(['portal-lojista','painel-marketplace'].includes(page)){ syncOrdersFromBackend({ rerender:true }); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
+function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'portal-lojista': renderStorePortal }; app.innerHTML = (routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); applyFilters(); } if(['loja','produto','portal-lojista','painel-marketplace'].includes(page)){ syncMarketplaceCatalogFromBackend({ rerender:['loja','produto','painel-marketplace'].includes(page) }); } if(['portal-lojista','painel-marketplace'].includes(page)){ syncOrdersFromBackend({ rerender:true }); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
 window.addEventListener('hashchange', router);
 window.addEventListener('load', async ()=>{ await loadPriceTable(); await syncMarketplaceCatalogFromBackend(); await syncOrdersFromBackend(); if(!location.hash){ location.hash='#/home'; return; } router(); });
 </script>
