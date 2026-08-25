@@ -1574,6 +1574,8 @@ const RABIOLA_PRODUCT_SLUG = 'rabiola-500m';
 const RABIOLA_BASE_PRICE = 40;
 const RABIOLA_BULK_MIN_QTY = 6;
 const RABIOLA_BULK_PRICE = 35;
+  const RABIOLA_SUPER_BULK_MIN_QTY = 100;
+  const RABIOLA_SUPER_BULK_PRICE = 34;
 const RABIOLA_COLORS = ['Preto', 'Vermelho', 'Azul', 'Verde', 'Rosa', 'Amarelo'];
 function splitCsvLine(line, delimiter = ';'){
     const result = [];
@@ -1829,23 +1831,27 @@ function productPriceLabel(p){
     return `A partir de ${moneyFrom(p)}`;
 }
 function variationUnitPrice(product, variation, qty = 1){
-    if(product?.slug === RABIOLA_PRODUCT_SLUG && qty >= RABIOLA_BULK_MIN_QTY) return RABIOLA_BULK_PRICE;
+    if(product?.slug === RABIOLA_PRODUCT_SLUG && qty >= RABIOLA_SUPER_BULK_MIN_QTY) return RABIOLA_SUPER_BULK_PRICE;
+  if(product?.slug === RABIOLA_PRODUCT_SLUG && qty >= RABIOLA_BULK_MIN_QTY) return RABIOLA_BULK_PRICE;
     return variation?.preco || 0;
 }
 function itemUnitPrice(item){
-    if(item?.slug === RABIOLA_PRODUCT_SLUG && Number(item.qty || 0) >= RABIOLA_BULK_MIN_QTY) return RABIOLA_BULK_PRICE;
+    if(item?.slug === RABIOLA_PRODUCT_SLUG && Number(item.qty || 0) >= RABIOLA_SUPER_BULK_MIN_QTY) return RABIOLA_SUPER_BULK_PRICE;
+  if(item?.slug === RABIOLA_PRODUCT_SLUG && Number(item.qty || 0) >= RABIOLA_BULK_MIN_QTY) return RABIOLA_BULK_PRICE;
     return item?.preco || 0;
 }
 function itemTotal(item){ return itemUnitPrice(item) * (Number(item?.qty || 0) || 0); }
 function itemPricingNote(item){
     if(item?.slug !== RABIOLA_PRODUCT_SLUG) return '';
-    return Number(item.qty || 0) >= RABIOLA_BULK_MIN_QTY
+if(Number(item.qty || 0) >= RABIOLA_SUPER_BULK_MIN_QTY) return `Preço de lojista aplicado: ${money(RABIOLA_SUPER_BULK_PRICE)} cada (${RABIOLA_SUPER_BULK_MIN_QTY}+ pacotes).`;
+  return Number(item.qty || 0) >= RABIOLA_BULK_MIN_QTY
         ? `Preço especial aplicado: ${money(RABIOLA_BULK_PRICE)} cada (${RABIOLA_BULK_MIN_QTY}+ pacotes).`
         : `Acima de 5 pacotes: ${money(RABIOLA_BULK_PRICE)} cada.`;
 }
 function productBulkNote(product, qty = 1){
     if(product?.slug !== RABIOLA_PRODUCT_SLUG) return '';
-    return qty >= RABIOLA_BULK_MIN_QTY
+if(qty >= RABIOLA_SUPER_BULK_MIN_QTY) return `Preço de lojista aplicado: ${money(RABIOLA_SUPER_BULK_PRICE)} por pacote.`;
+  return qty >= RABIOLA_BULK_MIN_QTY
         ? `Preço especial aplicado: ${money(RABIOLA_BULK_PRICE)} por pacote.`
         : `Acima de 5 pacotes: ${money(RABIOLA_BULK_PRICE)} por pacote.`;
 }
