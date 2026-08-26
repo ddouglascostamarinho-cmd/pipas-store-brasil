@@ -1672,7 +1672,6 @@ async function loadPriceTable(){
         if(!response.ok) throw new Error(`HTTP ${response.status}`);
         const csvText = await response.text();
         applyPriceTable(parsePriceCsv(csvText));
-        configureRabiolaProduct();
         window.__PSB_PRICE_TABLE_LOADED__ = true;
     } catch(error){
         console.warn('Não foi possível carregar /assets/data/tabela-precos.csv. O site usará os preços internos do index.html.', error);
