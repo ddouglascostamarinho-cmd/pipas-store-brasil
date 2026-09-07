@@ -1,0 +1,55 @@
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const {PGlite}=require('@electric-sql/pglite');
+const quote=s=>'"'+s.replaceAll('"','""')+'"';
+(async()=>{
+ const db=new PGlite();const b=JSON.parse(fs.readFileSync(__dirname+'/../supabase/baseline/schema-before-release.json','utf8'));
+ await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create schema auth;create table auth.users(id uuid primary key);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;create function auth.role() returns text language sql stable as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;grant usage on schema auth to anon,authenticated;`);
+ for(const t of b.tables) await db.exec(`create table public.${quote(t.name)} (${t.columns.map(c=>quote(c.name)+' '+c.type+(c.notnull?' not null':'')+(c.default?' default '+c.default:'')).join(',')});alter table public.${quote(t.name)} enable row level security;`);
+ await db.exec('alter table public.psb_security_audit_log alter column id add generated always as identity');
+ for(const f of b.functions)await db.exec(f);
+ for(const kind of ['p','u','c','f'])for(const t of b.tables)for(const c of t.constraints||[])if(c.kind===kind)await db.exec(`alter table public.${quote(t.name)} add constraint ${quote(c.name)} ${c.def};`);
+ for(const p of b.policies)await db.exec(`create policy ${quote(p.policyname)} on public.${quote(p.tablename)} as ${p.permissive} for ${p.cmd} to ${p.roles.map(quote).join(',')}${p.qual?' using ('+p.qual+')':''}${p.with_check?' with check ('+p.with_check+')':''};`);
+ for(const g of b.grants)if(b.tables.some(t=>t.name===g.table_name))await db.exec(`grant ${g.privilege_type} on public.${quote(g.table_name)} to ${quote(g.grantee)};`);
+ for(const t of b.triggers)await db.exec(t);
+ await db.exec(`revoke execute on function public.psb_write_security_audit() from public,anon,authenticated;insert into auth.users values('11111111-1111-4111-8111-111111111111'),('22222222-2222-4222-8222-222222222222'),('33333333-3333-4333-8333-333333333333');insert into public.psb_sellers(seller_id,seller_name,status) values('juninho-pipas','Loja de teste','approved'),('pipas-store-brasil','Outra loja','approved');insert into public.psb_user_roles(user_id,role,seller_id) values('11111111-1111-4111-8111-111111111111','seller','juninho-pipas'),('22222222-2222-4222-8222-222222222222','seller','pipas-store-brasil'),('33333333-3333-4333-8333-333333333333','admin',null);insert into public.psb_seller_offers(offer_key,seller_id,scope,active) values('test1','juninho-pipas','all',true),('test2','pipas-store-brasil','all',true);`);
+ await db.exec(fs.readFileSync(__dirname+'/../supabase/migrations/20260907190835_checkout_reliability.sql','utf8'));
+
+ const role=async(r,id='')=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.role',$1,false),set_config('request.jwt.claim.sub',$2,false)",[r,id]);if(r)await db.exec('set role '+r);};
+
+ await db.exec(`create schema storage;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;grant usage on schema storage to anon,authenticated;grant select,insert,update,delete on storage.objects to anon,authenticated;`);
+ await db.exec(fs.readFileSync(__dirname+'/../supabase/migrations/20260907194924_central_partner_and_product_requests.sql','utf8'));
+ const a='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',appB='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+ const payload={nome:'Loja de teste',responsavel:'Pessoa teste',cpfCnpj:'00000000000',phone:'00000000000',cidade:'Cidade teste'};
+ const submit=async(id,p=payload)=>(await db.query('select public.psb_submit_partner_application($1,$2) as r',[id,JSON.stringify(p)])).rows[0].r;
+ const review=async(id,yes)=>(await db.query('select public.psb_review_partner_application($1,$2) as r',[id,yes])).rows[0].r;
+ const check=async(name,fn)=>{await fn();console.log('PASS',name)};
+ await role('anon');
+ await check('Visitante envia e repete protocolo sem duplicar',async()=>{assert.equal((await submit(a)).confirmed,true);assert.equal((await submit(a)).id,a);});
+ await check('Visitante não lê documentos nem solicitações',async()=>{await assert.rejects(db.query('select * from public.psb_partner_applications'));await assert.rejects(db.query('select * from public.psb_product_requests'));});
+ await check('Visitante não escolhe status nem aprova',async()=>{await assert.rejects(db.query("insert into public.psb_partner_applications(id,payload,status) values($1,$2,'approved')",[appB,JSON.stringify(payload)]));await assert.rejects(review(a,true));});
+ await check('Cadastro inválido não deixa protocolo reservado',async()=>{await assert.rejects(submit(appB,{...payload,cpfCnpj:''}));assert.equal((await submit(appB)).confirmed,true);});
+ await role('authenticated','11111111-1111-4111-8111-111111111111');
+ await check('Lojista não lê nem aprova cadastros pessoais',async()=>{assert.equal((await db.query('select * from public.psb_partner_applications')).rows.length,0);await assert.rejects(review(a,true));});
+ const photo='juninho-pipas/'+a+'.jpg';
+ await check('Lojista não envia foto para outra loja',()=>assert.rejects(db.query("insert into storage.objects(bucket_id,name) values('psb-product-requests',$1)",['pipas-store-brasil/'+a+'.jpg'])));
+ await db.query("insert into storage.objects(bucket_id,name) values('psb-product-requests',$1)",[photo]);
+ const request=()=>db.query('insert into public.psb_product_requests(id,seller_id,product_name,request_type,details,photo_path,photo_name) values($1,$2,$3,$4,$5,$6,$7) returning id',[a,'juninho-pipas','Produto teste','cadastro','Detalhes teste',photo,'foto.jpg']);
+ await check('Lojista envia com foto própria e recebe registro',async()=>assert.equal((await request()).rows[0].id,a));
+ await check('Lojista não muda status nem conteúdo enviado',async()=>{assert.equal((await db.query("update public.psb_product_requests set status='concluido' returning id")).rows.length,0);await assert.rejects(db.query("update public.psb_product_requests set details='adulterado'"));});
+ await role('authenticated','22222222-2222-4222-8222-222222222222');
+ await check('Outra loja não lê solicitação nem foto',async()=>{assert.equal((await db.query('select * from public.psb_product_requests')).rows.length,0);assert.equal((await db.query('select * from storage.objects')).rows.length,0);});
+ await role('authenticated','33333333-3333-4333-8333-333333333333');
+ await check('Admin acessa as duas filas e a foto privada',async()=>{assert.equal((await db.query('select * from public.psb_partner_applications')).rows.length,2);assert.equal((await db.query('select * from public.psb_product_requests')).rows.length,1);assert.equal((await db.query('select * from storage.objects')).rows.length,1);});
+ await check('Admin registra retorno visível à loja',async()=>{await db.query("update public.psb_product_requests set status='em-analise',review_note='Vamos analisar'");});
+ await check('Homologação cria uma loja e repetir é idempotente',async()=>{const first=await review(a,true);assert.equal(first.status,'approved');assert.equal((await review(a,true)).seller_id,first.seller_id);assert.equal((await db.query('select seller_id from public.psb_sellers where seller_id=$1',[first.seller_id])).rows.length,1);});
+ await check('Recusa preserva histórico sem criar loja',async()=>assert.equal((await review(appB,false)).status,'rejected'));
+ await role('authenticated','11111111-1111-4111-8111-111111111111');
+ await check('Lojista consulta resposta em nova sessão',async()=>assert.equal((await db.query('select review_note from public.psb_product_requests')).rows[0].review_note,'Vamos analisar'));
+ await role('anon');
+ await check('Visitante não vê foto privada',async()=>assert.equal((await db.query('select * from storage.objects')).rows.length,0));
+ await role('');
+ await check('Nenhuma permissão de TRUNCATE público',async()=>{const r=await db.query("select has_table_privilege('anon','public.psb_partner_applications','TRUNCATE') as ok");assert.equal(r.rows[0].ok,false);});
+ await db.close();
+})().catch(e=>{console.error(e);process.exit(1)});
+
