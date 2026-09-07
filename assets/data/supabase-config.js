@@ -78,7 +78,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
 
     async function readOwnRole(){
       try{
-        if(typeof supabaseRestBase !== 'function' || typeof supabaseHeaders !== 'function') return null;
+        if(typeof supabaseRestBase !== 'function' || typeof supabaseHeaders !== 'function' || !await psbEnsureAuthSession()) return null;
         const res = await fetch(`${supabaseRestBase()}/psb_user_roles?select=role,seller_id&limit=1`, {
           headers: supabaseHeaders()
         });
@@ -152,7 +152,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
         }
 
         sellerVerifiedId = null;
-        if(typeof psbSignOut === 'function') psbSignOut();
+        if(typeof psbClearAuth === 'function') psbClearAuth();
         if(typeof clearStoreSession === 'function') clearStoreSession();
 
         const signed = typeof psbSignIn === 'function' && await psbSignIn(email, password);
@@ -163,28 +163,30 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
 
         const role = await readOwnRole();
         if(!role || role.role !== 'seller' || role.seller_id !== store.id){
-          if(typeof psbSignOut === 'function') psbSignOut();
+          if(typeof psbClearAuth === 'function') psbClearAuth();
           if(typeof clearStoreSession === 'function') clearStoreSession();
           if(typeof showToast === 'function') showToast('A conta autenticada não possui vínculo com esta loja.');
           return;
         }
 
         sellerVerifiedId = store.id;
+        psbCatalogSyncedAt=0;await syncMarketplaceCatalogFromBackend();
         if(typeof setStoreSession === 'function') setStoreSession({ storeId:store.id, loginAt:new Date().toISOString() });
         if(typeof showToast === 'function') showToast(`Acesso autenticado para ${store.nome}.`);
         if(location.hash === '#/portal-lojista') window.router();
         else location.hash = '#/portal-lojista';
       }catch(_){
         sellerVerifiedId = null;
-        if(typeof psbSignOut === 'function') psbSignOut();
+        if(typeof psbClearAuth === 'function') psbClearAuth();
         if(typeof clearStoreSession === 'function') clearStoreSession();
         if(typeof showToast === 'function') showToast('Não foi possível validar o acesso do lojista.');
       }
     };
 
     window.logoutStorePortal = function(){
+      psbSignOut();
       sellerVerifiedId = null;
-      if(typeof psbSignOut === 'function') psbSignOut();
+      if(typeof psbClearAuth === 'function') psbClearAuth();
       if(typeof clearStoreSession === 'function') clearStoreSession();
       localStorage.removeItem(ORDERS_KEY);
       if(typeof showToast === 'function') showToast('Sessão do lojista encerrada.');
@@ -200,7 +202,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
       if(!legacyRenderAdmin) return '<section class="section"><div class="container"><div class="empty-state"><h3>Painel indisponível</h3></div></div></section>';
       return withSanitizedStorage(
         [ORDERS_KEY, PRODUCT_REQUESTS_KEY, PARTNER_STORES_KEY, PENDING_STORES_KEY, PROFILE_OVERRIDES_KEY],
-        () => legacyRenderAdmin()
+        () => legacyRenderAdmin() + psbRenderCatalogAdmin()
       );
     }
 
@@ -240,7 +242,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
       try{
         adminVerified = false;
         sellerVerifiedId = null;
-        if(typeof psbSignOut === 'function') psbSignOut();
+        if(typeof psbClearAuth === 'function') psbClearAuth();
         if(typeof setAdminSession === 'function') setAdminSession(false);
         if(typeof clearStoreSession === 'function') clearStoreSession();
 
@@ -252,7 +254,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
 
         const role = await readOwnRole();
         if(!role || role.role !== 'admin'){
-          if(typeof psbSignOut === 'function') psbSignOut();
+          if(typeof psbClearAuth === 'function') psbClearAuth();
           if(typeof setAdminSession === 'function') setAdminSession(false);
           if(typeof showToast === 'function') showToast('Esta conta não possui permissão administrativa.');
           return;
@@ -264,15 +266,16 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
         renderAdminRoute();
       }catch(_){
         adminVerified = false;
-        if(typeof psbSignOut === 'function') psbSignOut();
+        if(typeof psbClearAuth === 'function') psbClearAuth();
         if(typeof setAdminSession === 'function') setAdminSession(false);
         if(typeof showToast === 'function') showToast('Não foi possível validar o acesso administrativo.');
       }
     };
 
     window.logoutAdminPortal = function(){
+      psbSignOut();
       adminVerified = false;
-      if(typeof psbSignOut === 'function') psbSignOut();
+      if(typeof psbClearAuth === 'function') psbClearAuth();
       if(typeof setAdminSession === 'function') setAdminSession(false);
       localStorage.removeItem(ORDERS_KEY);
       if(typeof showToast === 'function') showToast('Sessão administrativa encerrada.');

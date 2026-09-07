@@ -1,3 +1,4 @@
+-- LEGADO: NÃO REAPLICAR. Consulte ../baseline e ../migrations para o estado atual.
 -- Pipas Store Brasil - Registro central de pedidos assistidos
 -- Execute este SQL no Supabase em: SQL Editor -> New query -> Run
 
