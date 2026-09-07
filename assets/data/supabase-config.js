@@ -137,20 +137,9 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
       }
 
       try{
-        const store = typeof allStores === 'function'
-          ? allStores().find(item => item?.status === 'approved' && String(item.login || '').toLowerCase() === login)
-          : null;
-        if(!store){
-          if(typeof showToast === 'function') showToast('Credenciais inválidas, loja inativa ou não homologada.');
-          return;
-        }
-
-        const email = typeof PSB_SELLER_AUTH_EMAILS !== 'undefined' ? PSB_SELLER_AUTH_EMAILS[store.id] : null;
-        if(!email){
-          if(typeof showToast === 'function') showToast('Esta loja ainda não possui acesso migrado para o Supabase Auth.');
-          return;
-        }
-
+        const legacyStore=typeof allStores==='function'?allStores().find(item=>String(item.login||'').toLowerCase()===login):null;
+        const email=login.includes('@')?login:(legacyStore&&typeof PSB_SELLER_AUTH_EMAILS!=='undefined'?PSB_SELLER_AUTH_EMAILS[legacyStore.id]:null);
+        if(!email){showToast('Informe o e-mail de acesso da loja.');return;}
         sellerVerifiedId = null;
         if(typeof psbClearAuth === 'function') psbClearAuth();
         if(typeof clearStoreSession === 'function') clearStoreSession();
@@ -162,15 +151,17 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
         }
 
         const role = await readOwnRole();
-        if(!role || role.role !== 'seller' || role.seller_id !== store.id){
+        if(!role || role.role !== 'seller' || !role.seller_id){
           if(typeof psbClearAuth === 'function') psbClearAuth();
           if(typeof clearStoreSession === 'function') clearStoreSession();
           if(typeof showToast === 'function') showToast('A conta autenticada não possui vínculo com esta loja.');
           return;
         }
 
-        sellerVerifiedId = store.id;
         psbCatalogSyncedAt=0;await syncMarketplaceCatalogFromBackend();
+        const store=allStores().find(item=>item.id===role.seller_id&&item.status==='approved');
+        if(!store){psbClearAuth();showToast('Loja inativa ou não homologada.');return;}
+        sellerVerifiedId = store.id;
         if(typeof setStoreSession === 'function') setStoreSession({ storeId:store.id, loginAt:new Date().toISOString() });
         if(typeof showToast === 'function') showToast(`Acesso autenticado para ${store.nome}.`);
         if(location.hash === '#/portal-lojista') window.router();
@@ -287,46 +278,8 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
       if(typeof showToast === 'function') showToast('Geração local de senha desativada. Gerencie o acesso no Supabase Auth.');
     };
 
-    // Homologa a loja sem criar nem persistir senha local.
-    window.approvePartnerStoreAction = async function(id){
-      try{
-        if(!adminVerified){
-          if(typeof showToast === 'function') showToast('Autenticação administrativa necessária.');
-          return;
-        }
-        if(typeof loadPendingPartnerStores !== 'function' || typeof savePendingPartnerStores !== 'function' || typeof loadPartnerStores !== 'function' || typeof savePartnerStores !== 'function'){
-          if(typeof showToast === 'function') showToast('Não foi possível homologar a loja.');
-          return;
-        }
+    // Central request review is implemented in requests.js.
 
-        const pending = loadPendingPartnerStores();
-        const partner = pending.find(store => store.id === id);
-        if(!partner){
-          if(typeof showToast === 'function') showToast('Loja pendente não encontrada.');
-          return;
-        }
-
-        const approvedStore = {
-          ...partner,
-          status: 'approved',
-          label: 'Loja parceira homologada',
-          aprovadoEm: new Date().toISOString()
-        };
-        delete approvedStore.password;
-        delete approvedStore.senha;
-
-        const currentApproved = loadPartnerStores().filter(store => store.id !== id);
-        savePendingPartnerStores(pending.filter(store => store.id !== id));
-        savePartnerStores([...currentApproved, approvedStore]);
-        localStorage.removeItem(STORE_ACCESS_KEY);
-
-        if(typeof upsertSellerToBackend === 'function') await upsertSellerToBackend(approvedStore);
-        if(typeof showToast === 'function') showToast(`Loja ${approvedStore.nome} homologada. O acesso deve ser criado no Supabase Auth.`);
-        renderAdminRoute();
-      }catch(_){
-        if(typeof showToast === 'function') showToast('Falha ao homologar a loja com segurança.');
-      }
-    };
 
     const secureRouter = function(){
       if(currentPage() === 'painel-marketplace') return renderAdminRoute();

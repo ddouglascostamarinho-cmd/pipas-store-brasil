@@ -18,10 +18,6 @@
 <meta property="og:locale" content="pt_BR">
 
 <!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <!-- Structured Data -->
 <script type="application/ld+json">
 {
@@ -43,749 +39,9 @@
 }
 </script>
 
-<style>
-:root {
-    --c-dark-main: #0F1115;
-    --c-dark-sec: #1A1E24;
-    --c-yellow: #FFD400;
-    --c-yellow-hover: #E6BE00;
-    --c-blue: #1E8BFF;
-    --c-white: #F5F7FA;
-    --c-gray: #A8B0BC;
-    --c-border: #2A3038;
-    --font-headings: 'Montserrat', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --rad: 8px;
-    --rad-lg: 16px;
-    --trans: all 0.3s ease;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: var(--font-body); background: var(--c-dark-main); color: var(--c-white); line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-a { color: var(--c-white); text-decoration: none; transition: var(--trans); }
-a:hover { color: var(--c-yellow); }
-img { max-width: 100%; display: block; border-radius: 4px; }
-h1, h2, h3, h4, h5, h6 { font-family: var(--font-headings); text-transform: uppercase; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; color: var(--c-white); }
-p { margin-bottom: 1rem; }
-
-/* Utils */
-.text-yellow { color: var(--c-yellow); }
-.text-blue { color: var(--c-blue); }
-.text-gray { color: var(--c-gray); }
-.text-center { text-align: center; }
-.empty-state { text-align: center; padding: 60px 20px; background: var(--c-dark-sec); border-radius: var(--rad-lg); border: 1px dashed var(--c-border); }
-.tag-badge { display: inline-block; padding: 4px 10px; background: rgba(255,212,0,0.1); border: 1px solid var(--c-yellow); color: var(--c-yellow); border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; }
-
-/* Buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; padding: 14px 28px; font-family: var(--font-headings); font-weight: 800; text-transform: uppercase; border-radius: var(--rad); cursor: pointer; border: none; transition: var(--trans); gap: 8px; font-size: 0.95rem; text-align: center; }
-.btn-primary { background: var(--c-yellow); color: var(--c-dark-main); }
-.btn-primary:hover { background: var(--c-yellow-hover); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,212,0,0.2); }
-.btn-secondary { background: transparent; color: var(--c-white); border: 2px solid var(--c-border); }
-.btn-secondary:hover { border-color: var(--c-yellow); color: var(--c-yellow); }
-.btn-success { background: #25D366; color: white; }
-.btn-success:hover { background: #20BA56; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(37,211,102,0.3); }
-.btn-block { width: 100%; }
-
-/* Layout */
-.container { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
-.section { padding: 80px 0; }
-.section-sm { padding: 40px 0; }
-.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
-.grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
-
-/* Header & Nav */
-header { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 17, 21, 0.97); backdrop-filter: blur(12px); border-bottom: 1px solid var(--c-border); z-index: 1000; height: 112px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
-.nav-container { display: flex; justify-content: space-between; align-items: center; height: 100%; }
-.brand-link { display: flex; align-items: center; flex-shrink: 0; }
-.logo-img { height: 82px; object-fit: contain; filter: drop-shadow(0 0 14px rgba(255,212,0,0.16)); }
-.nav-links { display: flex; gap: 20px; align-items: center; }
-.nav-links a { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: var(--c-white); }
-.nav-links a.active, .nav-links a:hover { color: var(--c-yellow); }
-.nav-actions { display: flex; align-items: center; gap: 20px; }
-.cart-icon { position: relative; display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; background: var(--c-dark-sec); cursor: pointer; transition: var(--trans); }
-.cart-icon:hover { background: var(--c-border); }
-.cart-count { position: absolute; top: -5px; right: -5px; background: var(--c-blue); color: #fff; font-size: 0.75rem; font-weight: bold; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.menu-toggle { display: none; background: none; border: none; color: var(--c-white); font-size: 1.8rem; cursor: pointer; }
-main { margin-top: 112px; min-height: calc(100vh - 112px - 300px); }
-
-/* Hero */
-.hero { position: relative; padding: 120px 0 100px; background: linear-gradient(to bottom, rgba(15, 17, 21, 0.88), var(--c-dark-main)), url('/assets/institutional/hero-loja.webp') center/cover; text-align: center; border-bottom: 1px solid var(--c-border); }
-.hero h1 { font-size: 3.5rem; margin-bottom: 20px; color: var(--c-yellow); letter-spacing: -1px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-.hero-sub { font-size: 1.25rem; color: var(--c-white); margin: 0 auto 35px; max-width: 850px; font-weight: 500; line-height: 1.6; }
-
-/* Cards & Products */
-.card { background: var(--c-dark-sec); border: 1px solid var(--c-border); border-radius: var(--rad-lg); overflow: hidden; transition: var(--trans); display: flex; flex-direction: column; }
-.product-card:hover { border-color: var(--c-yellow); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-.product-img { height: 260px; background: #111; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.product-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; opacity: 0.95; }
-.product-card:hover .product-img img { transform: scale(1.05); opacity: 1; }
-.product-tag { position: absolute; top: 12px; left: 12px; background: var(--c-yellow); color: var(--c-dark-main); font-size: 0.75rem; font-weight: 800; padding: 6px 12px; border-radius: 4px; text-transform: uppercase; z-index: 2; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-.product-info { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
-.product-cat { font-size: 0.75rem; color: var(--c-yellow); margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-.product-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: var(--c-white); line-height: 1.4; }
-.product-vars { font-size: 0.8rem; color: var(--c-gray); margin-bottom: 10px; }
-.product-price { font-family: var(--font-headings); font-size: 1.3rem; font-weight: 800; color: var(--c-white); margin-bottom: 16px; margin-top: auto;}
-
-/* Forms */
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; color: var(--c-gray); }
-.form-control { width: 100%; padding: 14px; background: rgba(0,0,0,0.2); border: 1px solid var(--c-border); color: var(--c-white); border-radius: var(--rad); font-family: var(--font-body); font-size: 1rem; transition: var(--trans); }
-.form-control:focus { outline: none; border-color: var(--c-yellow); background: rgba(255,212,0,0.02); box-shadow: 0 0 0 3px rgba(255,212,0,0.08); }
-.form-control option { background: var(--c-dark-sec); color: var(--c-white); }
-textarea.form-control { resize: vertical; min-height: 100px; }
-select.form-control { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23A8B0BC%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat: no-repeat; background-position: right 14px top 50%; background-size: 12px auto; padding-right: 40px; }
-
-/* Shop Layout */
-.shop-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; }
-.filters-sidebar { background: var(--c-dark-sec); padding: 24px; border-radius: var(--rad-lg); border: 1px solid var(--c-border); height: fit-content; position: sticky; top: 112px; box-shadow: 0 12px 30px rgba(0,0,0,0.18); }
-.filter-block { margin-bottom: 24px; border-bottom: 1px solid var(--c-border); padding-bottom: 15px; }
-.filter-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.marketplace-note { background: rgba(30,139,255,0.08); border: 1px solid rgba(30,139,255,0.28); border-radius: var(--rad); padding: 16px; color: #DCEBFF; }
-.store-chip-list { display: flex; gap: 10px; flex-wrap: wrap; }
-.store-chip { display: inline-flex; align-items: center; padding: 10px 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--c-border); border-radius: 999px; font-size: 0.85rem; color: var(--c-white); }
-.step-list { display: grid; gap: 14px; }
-.step-item { padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid var(--c-border); border-radius: var(--rad); }
-
-/* Product Detail */
-.product-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start; }
-.gallery-main { border-radius: var(--rad-lg); overflow: hidden; background: #111; border: 1px solid var(--c-border); height: 500px; cursor: pointer; position: relative; }
-.gallery-main img { width: 100%; height: 100%; object-fit: cover; }
-.gallery-thumbs { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; margin-top: 15px; }
-.gallery-thumb { width: 80px; height: 80px; border-radius: var(--rad); border: 2px solid var(--c-border); cursor: pointer; opacity: 0.5; transition: var(--trans); object-fit: cover; }
-.gallery-thumb:hover, .gallery-thumb.active { opacity: 1; border-color: var(--c-yellow); }
-.pd-title { font-size: 2.4rem; margin-bottom: 10px; line-height: 1.2; text-transform: none; }
-.pd-price { font-family: var(--font-headings); font-size: 2.8rem; color: var(--c-yellow); font-weight: 900; margin: 20px 0; }
-.qty-selector { display: flex; align-items: center; border: 1px solid var(--c-border); border-radius: var(--rad); width: fit-content; background: var(--c-dark-main); overflow: hidden; }
-.qty-btn { background: var(--c-dark-sec); border: none; color: var(--c-white); width: 45px; height: 50px; font-size: 1.2rem; cursor: pointer; transition: var(--trans); }
-.qty-btn:hover { background: var(--c-border); color: var(--c-yellow); }
-.qty-input { width: 50px; height: 50px; background: transparent; border: none; color: var(--c-white); text-align: center; font-weight: bold; font-size: 1.1rem; }
-
-/* Cart & Checkout */
-.cart-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
-.cart-table th { text-align: left; padding: 15px; border-bottom: 2px solid var(--c-border); color: var(--c-gray); font-size: 0.85rem; text-transform: uppercase; }
-.cart-table td { padding: 20px 15px; border-bottom: 1px solid var(--c-border); vertical-align: middle; }
-.cart-item-info { display: flex; align-items: center; gap: 15px; }
-.cart-item-img { width: 80px; height: 80px; border-radius: var(--rad); object-fit: cover; background: #111; }
-.btn-remove { background: none; border: none; color: #ff4d4d; cursor: pointer; font-size: 0.9rem; font-weight: bold; text-decoration: underline; }
-.summary-box { background: var(--c-dark-sec); border: 1px solid var(--c-border); padding: 30px; border-radius: var(--rad-lg); position: sticky; top: 100px; }
-
-/* Modals & Utils */
-.toast { position: fixed; bottom: 30px; right: -400px; background: var(--c-blue); color: white; padding: 16px 32px; border-radius: var(--rad); font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: right 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); opacity: 0; z-index: 2000; pointer-events: none; }
-.toast.show { right: 30px; opacity: 1; }
-.wa-fab { position: fixed; bottom: 30px; left: 30px; background: #25D366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 15px rgba(37,211,102,0.4); z-index: 1000; transition: var(--trans); }
-.wa-fab:hover { transform: scale(1.1); background: #20BA56; }
-.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; align-items: center; justify-content: center; padding: 40px; }
-.lightbox.active { display: flex; }
-.lightbox img { max-width: 100%; max-height: 90vh; border-radius: var(--rad); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-.lightbox-close { position: absolute; top: 30px; right: 30px; background: none; border: none; color: white; font-size: 40px; cursor: pointer; transition: var(--trans); }
-.lightbox-close:hover { color: var(--c-yellow); transform: scale(1.1); }
-
-/* Accordion */
-.accordion-item { border: 1px solid var(--c-border); border-radius: var(--rad); margin-bottom: 16px; background: var(--c-dark-sec); overflow: hidden; }
-.accordion-header { padding: 20px; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: var(--trans); }
-.accordion-header:hover { color: var(--c-yellow); }
-.accordion-body { padding: 0 20px; max-height: 0; transition: all 0.3s ease; opacity: 0; color: var(--c-gray); overflow: hidden; }
-.accordion-item.active .accordion-body { padding: 0 20px 20px; max-height: 500px; opacity: 1; }
-.accordion-item.active .accordion-header { color: var(--c-yellow); border-bottom: 1px solid var(--c-border); }
-
-/* Footer */
-footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); padding: 80px 0 30px; margin-top: 60px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; margin-bottom: 50px; }
-.footer-links { list-style: none; }
-.footer-links li { margin-bottom: 12px; }
-.footer-links a { color: var(--c-gray); transition: var(--trans); font-size: 0.95rem; }
-.footer-links a:hover { color: var(--c-yellow); padding-left: 5px; }
-
-/* Responsive */
-@media(max-width: 1024px) {
-    .nav-links { position: fixed; top: 112px; left: -100%; width: 300px; height: calc(100vh - 112px); background: var(--c-dark-sec); flex-direction: column; padding: 40px 20px; align-items: flex-start; transition: left 0.3s ease; border-right: 1px solid var(--c-border); box-shadow: 10px 0 30px rgba(0,0,0,0.5); overflow-y: auto;}
-    .nav-links.active-menu { left: 0; }
-    .menu-toggle { display: block; }
-    .shop-layout, .product-detail-grid, .footer-grid { grid-template-columns: 1fr; }
-    .filters-sidebar { position: static; }
-    .hero h1 { font-size: 2.8rem; }
-}
-@media(max-width: 768px) {
-    header { height: 94px; }
-    main { margin-top: 94px; min-height: calc(100vh - 94px - 300px); }
-    .logo-img { height: 68px; }
-    .nav-links { top: 94px; height: calc(100vh - 94px); }
-    .mobile-fixed-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--c-dark-sec); border-top: 1px solid var(--c-border); padding: 15px; display: flex; gap: 10px; z-index: 900; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
-    .wa-fab { bottom: 90px; }
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-    .cart-table thead { display: none; }
-    .cart-table tr, .cart-table td { display: block; border: none; text-align: right; }
-    .cart-table tr { border-bottom: 2px solid var(--c-border); margin-bottom: 15px; padding-bottom: 15px; }
-    .cart-table td::before { content: attr(data-label); float: left; font-weight: bold; color: var(--c-gray); }
-    .cart-item-info { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
-}
-@media(max-width: 576px) {
-    .grid-4 { grid-template-columns: 1fr; }
-}
-
-
-/* ==========================================================================
-   FASE 1.3 — POLIMENTO MOBILE
-   Ajustes exclusivamente visuais/responsivos. Não altera Supabase, CSV, login,
-   carrinho, checkout ou fluxo de WhatsApp.
-   ========================================================================== */
-@media(max-width: 768px) {
-    html { font-size: 15px; }
-    body { line-height: 1.5; }
-    .container { padding: 0 14px; }
-    .section { padding: 34px 0; }
-    .section-sm { padding: 26px 0; }
-    h1 { font-size: 1.75rem; letter-spacing: -0.02em; margin-bottom: 12px; }
-    h2 { font-size: 1.45rem; margin-bottom: 10px; }
-    h3 { font-size: 1.05rem; margin-bottom: 10px; }
-    p, .text-gray { font-size: 0.92rem; }
-    .tag-badge { font-size: 0.62rem; padding: 3px 7px; margin-bottom: 8px; }
-
-    header { height: 72px; }
-    main { margin-top: 72px; min-height: calc(100vh - 72px); }
-    .nav-container { padding: 0 14px; }
-    .logo-img { height: 44px; max-width: 138px; }
-    .nav-actions { gap: 10px; }
-    .cart-icon { width: 40px; height: 40px; }
-    .cart-count { width: 18px; height: 18px; font-size: 0.68rem; top: -2px; right: -2px; }
-    .menu-toggle { font-size: 1.45rem; line-height: 1; }
-    .nav-links {
-        top: 72px;
-        left: auto;
-        right: -86vw;
-        width: 82vw;
-        max-width: 320px;
-        height: calc(100vh - 72px);
-        padding: 18px;
-        gap: 6px;
-        border-right: none;
-        border-left: 1px solid var(--c-border);
-        box-shadow: -12px 0 30px rgba(0,0,0,0.55);
-        align-items: stretch;
-    }
-    .nav-links.active-menu { left: auto; right: 0; }
-    .nav-links a {
-        display: block;
-        width: 100%;
-        padding: 12px 10px;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid transparent;
-        font-size: 0.82rem;
-    }
-    .nav-links a.active, .nav-links a:hover {
-        border-color: rgba(255,212,0,0.32);
-        background: rgba(255,212,0,0.08);
-    }
-
-    .hero { padding: 46px 0 36px; text-align: left; }
-    .hero h1 { font-size: 1.85rem; line-height: 1.08; margin-bottom: 12px; }
-    .hero-sub { font-size: 0.96rem; margin-bottom: 18px; line-height: 1.45; }
-    .hero .btn, .btn { min-height: 42px; padding: 11px 14px; font-size: 0.78rem; border-radius: 9px; }
-    .btn-secondary { border-width: 1px; }
-
-    .grid-2, .grid-3, .grid-4 { gap: 14px; }
-    .card { border-radius: 13px; }
-    .card[style*="padding:24px"], .card[style*="padding:28px"], .card[style*="padding:30px"], .card[style*="padding:22px"] { padding: 16px !important; }
-    .product-img { height: 175px; border-radius: 12px; }
-    .product-info { padding: 15px; }
-    .product-title { font-size: 1rem; line-height: 1.25; margin-bottom: 5px; }
-    .product-cat, .product-vars { font-size: 0.7rem; }
-    .product-price { font-size: 1.05rem; margin-bottom: 10px; }
-    .product-tag { font-size: 0.62rem; padding: 4px 8px; top: 8px; left: 8px; }
-
-    .shop-layout, .shop-layout[style] { grid-template-columns: 1fr !important; gap: 16px; }
-    .filters-sidebar { padding: 14px; border-radius: 13px; top: 72px; }
-    .filter-block { margin-bottom: 14px; padding-bottom: 12px; }
-    .marketplace-note { padding: 12px; font-size: 0.88rem; }
-    .form-group { margin-bottom: 14px; }
-    .form-label { font-size: 0.8rem; margin-bottom: 6px; }
-    .form-control { padding: 12px; font-size: 0.95rem; }
-    textarea.form-control { min-height: 88px; }
-
-    .product-detail-grid { gap: 18px; }
-    .gallery-main { height: auto; max-height: 360px; }
-    .gallery-main img { aspect-ratio: 1 / 1; object-fit: contain; background: #111; }
-    .gallery-thumbs { gap: 8px; margin-top: 10px; }
-    .gallery-thumb { width: 58px; height: 58px; }
-    .pd-title { font-size: 1.55rem; }
-    .pd-price { font-size: 1.9rem; margin: 12px 0; }
-    .qty-btn { width: 42px; height: 44px; }
-    .qty-input { height: 44px; }
-
-    /* Carrinho mobile em blocos verticais */
-    .cart-table { display: block; margin-bottom: 14px; }
-    .cart-table tbody { display: grid; gap: 12px; }
-    .cart-table tr {
-        display: grid;
-        gap: 8px;
-        padding: 14px;
-        margin: 0;
-        border: 1px solid var(--c-border);
-        border-radius: 13px;
-        background: var(--c-dark-sec);
-    }
-    .cart-table td {
-        display: grid;
-        grid-template-columns: 82px 1fr;
-        gap: 10px;
-        align-items: center;
-        padding: 0;
-        text-align: left;
-        border: none;
-    }
-    .cart-table td::before {
-        float: none;
-        content: attr(data-label);
-        color: var(--c-gray);
-        font-weight: 700;
-        font-size: 0.78rem;
-        text-transform: uppercase;
-    }
-    .cart-item-info { flex-direction: row; justify-content: flex-start; text-align: left; gap: 10px; min-width: 0; }
-    .cart-item-img { width: 58px; height: 58px; flex: 0 0 58px; }
-    .cart-item-info strong { font-size: 0.92rem; line-height: 1.2; display: block; }
-    .cart-item-info .text-gray { font-size: 0.76rem !important; line-height: 1.25; }
-    .cart-table td[data-label="Qtd"] > div { justify-content: flex-start; }
-    .cart-table .qty-btn { width: 30px !important; height: 30px !important; min-height: 30px; padding: 0; }
-    .summary-box { position: static; top: auto; padding: 16px; border-radius: 13px; }
-    .summary-box h3 { font-size: 1.05rem; }
-
-    /* Portal do lojista compacto */
-    .accordion-item { margin-bottom: 10px; border-radius: 12px; }
-    .accordion-header { padding: 13px 14px; font-size: 0.84rem; gap: 10px; align-items: flex-start; }
-    .accordion-body { font-size: 0.88rem; }
-    .accordion-item.active .accordion-body { padding: 0 14px 14px !important; max-height: none; }
-    .accordion-body p { margin-bottom: 8px; }
-    .accordion-body .text-gray { font-size: 0.83rem; }
-    .accordion-body div[style*="display:flex"] { gap: 7px !important; }
-    .accordion-body .btn { flex: 1 1 calc(50% - 7px); padding: 9px 8px; min-height: 36px; font-size: 0.68rem; }
-    .step-item { padding: 12px; }
-    .empty-state { padding: 32px 16px; }
-
-    /* Blog e galerias */
-    #app .grid-3 article.card .product-img { height: 150px; }
-    #app .grid-3 article.card .product-info p.text-gray {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        min-height: 2.8em;
-    }
-    #app .grid-4 > a.card.product-img { height: auto; min-height: 0; }
-    #app .grid-4 > a.card.product-img img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
-
-    /* Rodapé mobile mais enxuto */
-    footer { margin-top: 28px; padding: 34px 0 18px; }
-    .footer-grid { gap: 22px; margin-bottom: 24px; }
-    footer img { max-width: 110px !important; }
-    footer h3 { font-size: 0.95rem; margin-bottom: 8px; }
-    .footer-links li { margin-bottom: 7px; }
-    .footer-links a, footer p, footer li, footer .text-gray { font-size: 0.82rem; line-height: 1.45; }
-    footer .btn { min-height: 38px; }
-
-    .toast { left: 12px; right: 12px; bottom: 14px; padding: 13px 16px; font-size: 0.88rem; border-radius: 10px; }
-    .toast.show { right: 12px; }
-    .wa-fab { left: 16px; bottom: 18px; width: 50px; height: 50px; font-size: 25px; }
-}
-
-@media(max-width: 420px) {
-    .container { padding: 0 12px; }
-    h1 { font-size: 1.55rem; }
-    .hero h1 { font-size: 1.62rem; }
-    .product-img { height: 158px; }
-    .cart-table td { grid-template-columns: 72px 1fr; }
-    .accordion-body .btn { flex-basis: 100%; }
-    .summary-box { padding: 14px; }
-}
-
-
-
-/* ==========================================================================
-   FASE 1.3.1 — COMPACTAÇÃO MOBILE FINAL
-   Loja, portal e rodapé mais enxutos sem alterar lógica de pedido/Supabase.
-   ========================================================================== */
-.placeholder-img { object-fit: cover !important; background: #11151b; }
-.portal-header { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; }
-.portal-header-actions { display:flex; gap:12px; flex-wrap:wrap; }
-.portal-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:22px; }
-.portal-stats .card { padding:16px; }
-.portal-stats strong { display:block; color:var(--c-gray); font-size:.82rem; text-transform:uppercase; }
-.portal-stats span { display:block; margin-top:4px; color:var(--c-white); font:800 1.35rem var(--font-headings); }
-.portal-layout { display:grid; grid-template-columns:1.15fr .85fr; gap:22px; align-items:start; margin-top:24px; }
-.portal-orders-box { padding:22px; }
-.portal-section-title { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
-.portal-section-title h3 { margin-bottom:0; }
-.portal-order-card { border:1px solid var(--c-border); border-radius:12px; background:rgba(255,255,255,.018); margin-bottom:10px; overflow:hidden; }
-.portal-order-card summary { cursor:pointer; list-style:none; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; padding:14px 16px; }
-.portal-order-card summary::-webkit-details-marker { display:none; }
-.portal-order-card summary strong { color:var(--c-yellow); font-size:.9rem; }
-.portal-order-card summary span { display:block; margin-top:3px; color:var(--c-gray); font-size:.86rem; }
-.portal-order-date { display:block; margin-top:6px; color:var(--c-yellow); font-size:.74rem; font-weight:800; letter-spacing:.01em; }
-.portal-order-card summary em { color:var(--c-gray); font-size:.72rem; font-style:normal; text-align:right; text-transform:lowercase; }
-.portal-order-body { padding:0 16px 16px; color:var(--c-gray); font-size:.9rem; }
-.portal-order-body strong { color:var(--c-white); }
-.portal-order-body p { margin-bottom:7px; }
-.portal-items { padding:10px; border-radius:10px; background:rgba(0,0,0,.18); margin:8px 0 12px; }
-.portal-status-row { margin-top:10px; }
-.portal-quick-actions { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
-.portal-quick-actions .btn { padding:9px 8px; min-height:36px; font-size:.7rem; }
-.portal-request-panel { padding:0; }
-.portal-request-panel > summary { cursor:pointer; list-style:none; padding:18px 20px; font-family:var(--font-headings); font-weight:800; text-transform:uppercase; color:var(--c-white); }
-.portal-request-panel > summary::-webkit-details-marker { display:none; }
-.portal-request-panel > summary::after { content:'+'; float:right; color:var(--c-yellow); }
-.portal-request-panel[open] > summary::after { content:'−'; }
-.portal-request-body { padding:0 20px 20px; }
-
-@media(max-width:768px){
-    #productGrid, .grid-3, .grid-4 { gap:10px; }
-    #productGrid .product-card,
-    .grid-3 > .product-card,
-    .grid-4 > .product-card {
-        display:grid;
-        grid-template-columns:96px 1fr;
-        min-height:112px;
-        overflow:hidden;
-    }
-    #productGrid .product-card .product-img,
-    .grid-3 > .product-card .product-img,
-    .grid-4 > .product-card .product-img {
-        height:100%;
-        min-height:112px;
-        border-radius:0;
-    }
-    #productGrid .product-card .product-info,
-    .grid-3 > .product-card .product-info,
-    .grid-4 > .product-card .product-info { padding:11px 12px; min-width:0; }
-    #productGrid .product-card .product-title,
-    .grid-3 > .product-card .product-title,
-    .grid-4 > .product-card .product-title {
-        font-size:.9rem; line-height:1.18; margin-bottom:4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
-    }
-    #productGrid .product-card .product-cat,
-    .grid-3 > .product-card .product-cat,
-    .grid-4 > .product-card .product-cat { font-size:.62rem; margin-bottom:3px; }
-    #productGrid .product-card .product-vars,
-    .grid-3 > .product-card .product-vars,
-    .grid-4 > .product-card .product-vars { display:none; }
-    #productGrid .product-card .product-price,
-    .grid-3 > .product-card .product-price,
-    .grid-4 > .product-card .product-price { font-size:.86rem; margin:2px 0 8px; }
-    #productGrid .product-card .btn,
-    .grid-3 > .product-card .btn,
-    .grid-4 > .product-card .btn { min-height:32px; padding:8px 10px; font-size:.65rem; }
-    #productGrid .product-tag,
-    .grid-3 > .product-card .product-tag,
-    .grid-4 > .product-card .product-tag { font-size:.52rem; padding:3px 5px; top:6px; left:6px; max-width:86px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-    .filters-sidebar { padding:12px; }
-    .filters-sidebar .filter-block:first-child p { display:none; }
-    .filters-sidebar .filter-block:first-child h3 { font-size:.9rem !important; margin-bottom:8px; }
-    .filters-sidebar .filter-block { margin-bottom:10px; padding-bottom:10px; }
-    .shop-layout > div > div:first-child { margin-bottom:12px !important; }
-    .shop-layout .marketplace-note { max-width:none !important; padding:10px; font-size:.78rem; }
-
-    .portal-header { gap:10px; }
-    .portal-header h1 { margin-bottom:6px; }
-    .portal-header p { margin-bottom:0; }
-    .portal-header-actions { width:100%; display:grid; grid-template-columns:1fr 92px; gap:8px; }
-    .portal-stats { grid-template-columns:repeat(3,1fr); gap:8px; margin-top:14px; }
-    .portal-stats .card { padding:10px; border-radius:11px; }
-    .portal-stats strong { font-size:.62rem; }
-    .portal-stats span { font-size:1rem; }
-    .portal-layout { grid-template-columns:1fr; gap:14px; margin-top:14px; }
-    .portal-orders-box { padding:14px; border-radius:13px; }
-    .portal-section-title { margin-bottom:10px; }
-    .portal-section-title h3 { font-size:.95rem; }
-    .portal-order-card { border-radius:10px; margin-bottom:8px; }
-    .portal-order-card summary { padding:11px 12px; }
-    .portal-order-card summary strong { font-size:.78rem; }
-    .portal-order-card summary span { font-size:.74rem; }
-    .portal-order-date { font-size:.66rem; }
-    .portal-order-card summary em { font-size:.65rem; }
-    .portal-order-body { padding:0 12px 12px; font-size:.78rem; }
-    .portal-items { font-size:.75rem; padding:8px; }
-    .portal-quick-actions { grid-template-columns:1fr 1fr 1fr; gap:6px; }
-    .portal-quick-actions .btn { min-height:32px; font-size:.58rem; padding:7px 6px; }
-    .portal-request-panel > summary { padding:14px; font-size:.86rem; }
-    .portal-request-body { padding:0 14px 14px; }
-    .portal-request-panel:not([open]) { min-height:auto; }
-
-    footer { padding:24px 0 14px; margin-top:24px; }
-    .footer-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 16px; margin-bottom:16px; }
-    .footer-grid > div:first-child { grid-column:1 / -1; }
-    .footer-grid > div:first-child img { max-width:82px !important; margin-bottom:8px !important; }
-    .footer-grid > div:first-child p { margin-bottom:0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    #footerContactInfo { grid-column:1 / -1; }
-    footer h3, footer h4 { font-size:.82rem !important; margin-bottom:6px !important; }
-    .footer-links li { margin-bottom:5px; }
-    .footer-links a, footer p, footer li, footer .text-gray { font-size:.72rem !important; line-height:1.35 !important; }
-    #footerContactInfo p { margin-bottom:8px; }
-    #footerContactInfo .btn, footer .btn { min-height:32px; padding:8px 10px; font-size:.62rem; }
-    footer .text-center { font-size:.68rem !important; line-height:1.35; }
-}
-
-@media(max-width:420px){
-    #productGrid .product-card,
-    .grid-3 > .product-card,
-    .grid-4 > .product-card { grid-template-columns:88px 1fr; min-height:104px; }
-    #productGrid .product-card .product-img,
-    .grid-3 > .product-card .product-img,
-    .grid-4 > .product-card .product-img { min-height:104px; }
-    .portal-header-actions { grid-template-columns:1fr 78px; }
-    .footer-grid { gap:12px; }
-}
-
-
-
-/* ==========================================================================
-   FASE 1.3.2 — PRODUTO MOBILE E GALERIA
-   Corrige retorno para foto principal e compacta a página individual do produto.
-   ========================================================================== */
-.product-section .container { max-width: 1120px; }
-.product-breadcrumb { margin-bottom: 14px; font-size: .9rem; }
-.product-detail-compact { gap: 34px; }
-.product-gallery-panel { min-width: 0; }
-.product-gallery-hint { font-size: .82rem; margin-top: 8px; }
-.product-buy-panel { min-width: 0; }
-.product-short-desc { margin-bottom: 12px; }
-.seller-card { padding: 16px !important; margin: 16px 0; }
-.product-seller-select { margin: 10px 0 8px; }
-.product-seller-note { margin: 8px 0 0; font-size: .9rem; }
-.seller-expansion-note { margin: 8px 0 0; font-size: .86rem; }
-.product-rule-note { margin-top: 12px; padding: 12px; font-size: .86rem; }
-.product-rule-note strong { display:block; margin-bottom:5px; color:var(--c-white); }
-.product-price-row { display:flex; align-items:center; justify-content:space-between; gap: 14px; margin: 8px 0 10px; }
-.product-form-grid { display:grid; grid-template-columns: 1fr auto; gap: 14px; align-items:end; }
-.product-actions { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
-.product-actions .btn { width:100%; justify-content:center; }
-.product-info-details { padding: 0 !important; margin-top: 18px; overflow: hidden; }
-.product-info-details summary { cursor:pointer; padding: 15px 16px; color: var(--c-yellow); font-weight: 800; list-style: none; }
-.product-info-details summary::-webkit-details-marker { display:none; }
-.product-info-details summary::after { content: '+'; float:right; color: var(--c-white); }
-.product-info-details[open] summary::after { content: '–'; }
-.product-info-details p { padding: 0 16px 16px; margin: 0; }
-.related-section { margin-top: 36px; }
-.related-section h2 { margin-bottom: 16px; }
-.related-grid .product-card { min-height: 0; }
-
-@media(max-width: 768px) {
-    .product-breadcrumb { font-size: .78rem; margin-bottom: 10px; }
-    .product-detail-compact { gap: 14px; }
-    .gallery-main { border-radius: 14px; max-height: none; }
-    .gallery-main img { aspect-ratio: 1 / 1; object-fit: contain; }
-    .gallery-thumbs { gap: 9px; margin-top: 9px; padding-bottom: 4px; }
-    .gallery-thumb { width: 54px; height: 54px; flex: 0 0 54px; border-radius: 10px; opacity: .62; }
-    .gallery-thumb.active { opacity: 1; box-shadow: 0 0 0 2px rgba(255,212,0,.16); }
-    .product-gallery-hint { display:none; }
-    .product-buy-panel .tag-badge { margin-top: 4px; }
-    .pd-title { margin-bottom: 8px; }
-    .product-short-desc { font-size: .88rem; line-height: 1.42; margin-bottom: 10px; }
-    .seller-card { margin: 12px 0; padding: 13px !important; }
-    .product-seller-note { font-size: .82rem; line-height: 1.42; }
-    .seller-expansion-note { display:none; }
-    .product-rule-note { font-size: .78rem; line-height: 1.38; padding: 10px; margin-top: 10px; }
-    .product-price-row { margin: 8px 0; }
-    .pd-price { font-size: 1.72rem; margin: 0; }
-    .product-form-grid { grid-template-columns: 1fr; gap: 8px; }
-    .product-form-grid .form-group { margin-bottom: 8px; }
-    .qty-selector { width: fit-content; }
-    .product-actions { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-    .product-actions .btn { min-height: 40px; padding: 10px 8px; font-size: .67rem; }
-    .product-info-details { margin-top: 14px; }
-    .product-info-details summary { padding: 13px 14px; font-size: .86rem; }
-    .product-info-details p { padding: 0 14px 14px; font-size: .82rem; }
-    .related-section { margin-top: 28px; }
-    .related-section h2 { font-size: 1.18rem; margin-bottom: 10px; }
-    .related-grid { gap: 8px; }
-}
-
-@media(max-width: 420px) {
-    .gallery-thumb { width: 50px; height: 50px; flex-basis: 50px; }
-    .product-actions { grid-template-columns: 1fr; }
-    .product-actions .btn { font-size: .72rem; }
-}
-
-
-/* ==========================================================================
-   FASE 1.4 — EXPERIÊNCIA PREMIUM DE COMPRA
-   Mobile-first, com melhoria também no desktop. Mantém Supabase, CSV, login,
-   checkout, carrinho e WhatsApp intactos.
-   ========================================================================== */
-.shop-premium-head {
-    position: relative;
-    overflow: hidden;
-    padding: 26px;
-    margin-bottom: 22px;
-    border-radius: 22px;
-    border: 1px solid rgba(255,212,0,.22);
-    background:
-        radial-gradient(circle at 20% 0%, rgba(255,212,0,.18), transparent 32%),
-        linear-gradient(135deg, rgba(255,212,0,.08), rgba(30,139,255,.08) 48%, rgba(255,255,255,.02));
-}
-.shop-premium-head::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(255,255,255,.04), transparent); }
-.shop-premium-kicker { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
-.shop-premium-title { max-width: 820px; margin-bottom: 10px; }
-.shop-premium-title h1 { margin-bottom: 8px; }
-.shop-premium-title p { max-width: 780px; margin-bottom: 0; }
-.trust-rail { display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 18px; }
-.trust-pill { padding: 12px 14px; border: 1px solid var(--c-border); border-radius: 14px; background: rgba(255,255,255,.035); color: var(--c-gray); font-size: .86rem; }
-.trust-pill strong { display:block; color:var(--c-white); font-size:.88rem; margin-bottom:2px; }
-.shop-control-panel { position: sticky; top: 112px; z-index: 50; margin-bottom: 18px; padding: 14px; border:1px solid var(--c-border); border-radius: 18px; background: rgba(26,30,36,.96); backdrop-filter: blur(10px); box-shadow: 0 10px 26px rgba(0,0,0,.22); }
-.shop-search-row { display:grid; grid-template-columns: 1fr auto; gap: 10px; align-items:center; margin-bottom: 12px; }
-.shop-search-input { min-height: 46px; padding-left: 44px; background-image: none !important; }
-.search-wrap { position:relative; }
-.search-wrap::before { content:'⌕'; position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--c-yellow); font-weight:900; z-index:1; }
-.category-chip-row { display:flex; gap: 9px; overflow-x:auto; padding-bottom: 2px; scrollbar-width: none; }
-.category-chip-row::-webkit-scrollbar { display:none; }
-.category-chip { flex:0 0 auto; border:1px solid var(--c-border); border-radius:999px; background:rgba(255,255,255,.04); color:var(--c-white); padding: 10px 14px; font-weight:800; font-size:.78rem; text-transform:uppercase; cursor:pointer; transition: var(--trans); }
-.category-chip:hover, .category-chip.active { background: var(--c-yellow); color: var(--c-dark-main); border-color: var(--c-yellow); box-shadow: 0 8px 20px rgba(255,212,0,.14); }
-.shop-results-line { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
-.shop-results-line #filterCount { font-weight:700; color:var(--c-white); }
-.product-card.premium-product-card { border-color: rgba(255,255,255,.08); }
-.product-card.premium-product-card .product-info { gap: 3px; }
-.product-meta-line { display:flex; flex-wrap:wrap; gap:6px; margin: 2px 0 8px; }
-.product-meta-line span { font-size:.68rem; color:var(--c-gray); border:1px solid rgba(255,255,255,.08); border-radius:999px; padding:3px 7px; background:rgba(255,255,255,.03); }
-.product-card.premium-product-card .product-price { color: var(--c-yellow); }
-.premium-empty-state { grid-column:1/-1; }
-.product-mobile-sticky { display:none; }
-.footer-compact-note { display:none; }
-
-@media(min-width: 1025px) {
-    #productGrid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
-    .product-card.premium-product-card .product-img { height: 230px; }
-}
-
-@media(max-width: 768px) {
-    .shop-premium-head { padding: 17px; margin-bottom: 14px; border-radius: 16px; }
-    .shop-premium-kicker { margin-bottom: 8px; }
-    .shop-premium-title h1 { font-size: 1.5rem; line-height:1.08; }
-    .shop-premium-title p { font-size:.86rem; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-    .trust-rail { grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-    .trust-pill { padding: 9px 10px; font-size:.72rem; line-height:1.25; border-radius: 12px; }
-    .trust-pill strong { font-size:.74rem; }
-    .shop-control-panel { top: 72px; padding: 10px; border-radius: 14px; margin-bottom: 12px; }
-    .shop-search-row { grid-template-columns:1fr; gap: 8px; margin-bottom: 9px; }
-    .shop-search-input { min-height: 40px; padding: 10px 12px 10px 38px; font-size:.86rem; }
-    .search-wrap::before { left:13px; }
-    .category-chip { padding:8px 10px; font-size:.64rem; }
-    .shop-results-line { margin-bottom: 10px; }
-    .shop-results-line .marketplace-note { display:none; }
-    #filterCount { font-size:.78rem; }
-    .product-meta-line { display:none; }
-    .product-card.premium-product-card .product-price { font-size: .82rem; }
-    .product-card.premium-product-card .product-info { padding-top: 10px !important; padding-bottom:10px !important; }
-    .product-card.premium-product-card .product-img img.placeholder-img { object-fit: cover !important; }
-
-    .product-mobile-sticky { display:grid; grid-template-columns: .75fr 1fr; gap: 8px; position: fixed; left: 10px; right: 10px; bottom: 10px; z-index: 960; padding: 10px; border-radius: 16px; border: 1px solid rgba(255,212,0,.25); background: rgba(26,30,36,.97); backdrop-filter: blur(12px); box-shadow: 0 -10px 30px rgba(0,0,0,.45); }
-    .product-mobile-sticky strong { display:flex; align-items:center; color:var(--c-yellow); font:900 1rem var(--font-headings); }
-    .product-mobile-sticky .btn { min-height: 38px; padding: 9px 10px; font-size:.66rem; }
-    body:has(.product-mobile-sticky) .wa-fab { bottom: 82px; }
-
-    footer { padding-bottom: 24px; }
-    .footer-grid { align-items:start; }
-    .footer-grid > div:first-child p { -webkit-line-clamp: 3; }
-    footer .footer-links li:nth-child(n+6) { display:none; }
-    footer .footer-links a { display:block; padding:2px 0; }
-    .footer-compact-note { display:block; color:var(--c-gray); font-size:.68rem; margin-top:6px; }
-}
-
-@media(max-width: 420px) {
-    .trust-rail { grid-template-columns: 1fr 1fr; }
-    .trust-pill { min-height: 58px; }
-    .shop-premium-title h1 { font-size: 1.36rem; }
-}
-
-
-/* Fase 1.4.1 - Remove duplicidade de filtros no mobile.
-   No celular, a loja usa apenas busca + chips premium horizontais.
-   O painel lateral completo permanece disponível no desktop. */
-@media(max-width: 768px) {
-    .shop-layout { display:block !important; }
-    .filters-sidebar { display:none !important; }
-    .shop-results-line { margin-top: 0; }
-}
-
-
-/* Fase 1.4.2 - Lojista Parceiro: plano fundador */
-.partner-pricing-card { margin: 24px 0 8px; padding: 28px; border: 1px solid rgba(255,210,0,.35); border-radius: 22px; background: linear-gradient(135deg, rgba(255,210,0,.12), rgba(20,26,35,.92) 42%, rgba(17,24,39,.95)); box-shadow: 0 22px 60px rgba(0,0,0,.28); }
-.partner-pricing-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; align-items: stretch; }
-.partner-price-box { border: 1px solid rgba(255,255,255,.10); border-radius: 18px; padding: 22px; background: rgba(0,0,0,.22); }
-.partner-price { font-size: clamp(2rem, 5vw, 3.2rem); line-height: .95; color: var(--c-yellow); font-weight: 1000; letter-spacing: -1px; }
-.partner-price small { display:block; font-size:.95rem; color: var(--c-gray); margin-top: 8px; font-weight: 700; letter-spacing:0; }
-.partner-benefits { display:grid; gap: 10px; margin-top: 18px; }
-.partner-benefit { display:flex; gap:10px; align-items:flex-start; color: var(--c-gray); font-size:.95rem; }
-.partner-benefit strong { color: var(--c-white); }
-.partner-benefit:before { content:'✓'; color: var(--c-yellow); font-weight: 1000; margin-top:1px; }
-@media(max-width: 768px){
-  .partner-pricing-card { padding: 18px; border-radius: 18px; margin: 18px 0 4px; }
-  .partner-pricing-grid { grid-template-columns: 1fr; gap: 14px; }
-  .partner-price-box { padding: 16px; }
-  .partner-price { font-size: 2.15rem; }
-  .partner-benefit { font-size: .88rem; }
-}
-
-
-/* Fase 1.5 - Gestão de produtos por lojista */
-.admin-seller-control { margin-top: 14px; border: 1px solid var(--c-border); border-radius: 14px; overflow: hidden; background: rgba(10,12,16,.28); }
-.admin-seller-control > summary { cursor: pointer; list-style: none; padding: 13px 14px; font-family: var(--font-headings); font-weight: 800; text-transform: uppercase; color: var(--c-white); display:flex; justify-content:space-between; gap:12px; align-items:center; }
-.admin-seller-control > summary::-webkit-details-marker { display:none; }
-.admin-seller-control > summary::after { content:'+'; color: var(--c-yellow); font-size:1.2rem; }
-.admin-seller-control[open] > summary::after { content:'−'; }
-.admin-catalog-body { padding: 0 14px 16px; }
-.permission-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px; margin: 10px 0 14px; }
-.permission-card { display:flex; align-items:center; gap:8px; padding:10px; border:1px solid var(--c-border); border-radius:12px; background: rgba(255,255,255,.025); color:var(--c-gray); font-size:.9rem; }
-.permission-card input { accent-color: var(--c-yellow); transform: scale(1.05); }
-.product-permission-list { max-height: 280px; overflow:auto; padding-right:4px; display:grid; gap:8px; }
-.product-permission-list .permission-card { justify-content:flex-start; }
-.admin-control-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
-@media (max-width: 768px){ .permission-grid { grid-template-columns: 1fr; } .admin-seller-control > summary { font-size:.82rem; } .admin-catalog-body { padding:0 10px 12px; } .product-permission-list { max-height:240px; } }
-
-
-/* Fase 1.6.1 - CEP e regras de envio externo */
-.shipping-cep-card { padding: 20px; margin: 18px 0 24px; border-color: rgba(255,212,0,.22); }
-.shipping-cep-title { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
-.shipping-cep-title h3 { margin:6px 0 0; color:var(--c-white); font-size:1.08rem; }
-.shipping-status { border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:7px 10px; color:var(--c-gray); font-size:.82rem; background:rgba(255,255,255,.03); }
-.shipping-status.local { color:var(--c-green); border-color:rgba(0,214,99,.35); }
-.shipping-status.external { color:var(--c-yellow); border-color:rgba(255,212,0,.35); }
-.shipping-cep-grid { display:grid; grid-template-columns: minmax(150px, 220px) auto auto; gap:10px; align-items:center; margin:12px 0 8px; }
-.marketplace-note.warning-note { border-color:rgba(255,212,0,.35); background:rgba(255,212,0,.06); margin: 0 0 18px; }
-.marketplace-note.success-note { border-color:rgba(0,214,99,.30); background:rgba(0,214,99,.05); margin: 0 0 18px; }
-.shipping-admin-card { padding:28px; border-color:rgba(255,212,0,.18); }
-.shipping-rule-list { display:grid; gap:8px; margin-top:12px; }
-.shipping-rule-row { display:grid; grid-template-columns: 1fr minmax(160px, 220px); gap:10px; align-items:center; padding:10px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.025); }
-.shipping-rule-row strong { display:block; color:var(--c-white); }
-.shipping-rule-row small { display:block; margin-top:2px; }
-.btn[disabled], button[disabled] { opacity:.55; cursor:not-allowed; filter:grayscale(.15); }
-@media (max-width: 768px){
-  .shipping-cep-grid, .shipping-rule-row { grid-template-columns:1fr; }
-  .shipping-cep-card { padding:15px; margin:14px 0 18px; }
-  .shipping-status { width:100%; text-align:center; }
-}
-
-
-
-/* Fase 1.7 - Administração completa de lojas */
-.btn-danger { background:#B42318; color:#fff; }
-.btn-danger:hover { background:#8F1C13; color:#fff; transform:translateY(-2px); }
-.admin-store-card { border:1px solid rgba(255,255,255,.08); border-radius:14px; }
-.admin-store-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-.admin-store-status { flex:0 0 auto; padding:5px 9px; border-radius:999px; font-size:.68rem; font-weight:800; text-transform:uppercase; border:1px solid var(--c-border); }
-.admin-store-status.active { color:var(--c-yellow); border-color:rgba(255,212,0,.35); background:rgba(255,212,0,.07); }
-.admin-store-status.inactive { color:var(--c-gray); background:rgba(255,255,255,.03); }
-.admin-store-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:12px; }
-.admin-core-note { color:var(--c-gray); font-size:.74rem; padding:7px 0; }
-.admin-store-edit-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 12px; margin-top:10px; }
-.admin-store-edit-wide { grid-column:1 / -1; }
-@media(max-width:768px){
-  .admin-store-edit-grid { grid-template-columns:1fr; }
-  .admin-store-edit-wide { grid-column:auto; }
-  .admin-store-card-head { flex-direction:column; }
-  .admin-store-actions .btn { flex:1 1 100%; }
-}
-</style>
+<link rel="stylesheet" href="/assets/css/fonts.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/premium.css">
 </head>
 <body>
 
@@ -794,23 +50,13 @@ footer { background: var(--c-dark-sec); border-top: 1px solid var(--c-border); p
         <a href="#/home" aria-label="Ir para Home" class="brand-link">
             <img src="/assets/brand/logo-pipas-store.webp" alt="Pipas Store Brasil" width="500" height="281" class="logo-img" fetchpriority="high">
         </a>
-        <nav class="nav-links" id="navMenu">
-            <a href="#/home" data-route="home">Home</a>
-            <a href="#/loja" data-route="loja">Loja</a>
-            <a href="#/cao-de-caca" data-route="cao-de-caca">Cão de Caça</a>
-            <a href="#/eventos" data-route="eventos">Eventos</a>
-            <a href="#/aspiron" data-route="aspiron">ASPIRON</a>
-            <a href="#/galeria" data-route="galeria">Galeria</a>
-            <a href="#/blog" data-route="blog">Blog</a>
-            <a href="#/contato" data-route="contato">Contato</a>
-            <a href="#/portal-lojista" data-route="portal-lojista">Portal</a>
-        </nav>
+        <nav class="nav-links" id="navMenu" aria-label="Navegação principal"><a href="#/loja" data-route="loja">Loja</a><a href="#/cao-de-caca" data-route="cao-de-caca">Cão de Caça</a><a href="#/galeria" data-route="galeria">Cultura pipeira</a><a href="#/seja-lojista" data-route="seja-lojista">Para lojistas</a><a href="#/contato" data-route="contato">Contato</a></nav>
         <div class="nav-actions">
             <a href="#/carrinho" class="cart-icon" aria-label="Acessar Carrinho">
                 <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                 <span class="cart-count" id="cartCount">0</span>
             </a>
-            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir Menu">☰</button>
+            <button class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu" aria-controls="navMenu" aria-expanded="false">☰</button>
         </div>
     </div>
 </header>
@@ -996,7 +242,7 @@ const loadSellerProfileOverrides = () => readJSON(SELLER_PROFILE_OVERRIDES_STORA
 const saveSellerProfileOverrides = profiles => writeJSON(SELLER_PROFILE_OVERRIDES_STORAGE_KEY, profiles);
 const loadPartnerStores = () => readJSON(PARTNER_STORE_STORAGE_KEY, []);
 const savePartnerStores = stores => writeJSON(PARTNER_STORE_STORAGE_KEY, stores);
-const loadPendingPartnerStores = () => readJSON(PENDING_PARTNER_STORE_STORAGE_KEY, []);
+const loadPendingPartnerStores = () => []; // Old device drafts are not submitted applications.
 const savePendingPartnerStores = stores => writeJSON(PENDING_PARTNER_STORE_STORAGE_KEY, stores);
 const loadOrders = () => readJSON(ORDERS_STORAGE_KEY, []);
 const saveOrders = orders => writeJSON(ORDERS_STORAGE_KEY, orders);
@@ -1081,7 +327,7 @@ async function syncOrdersFromBackend({ rerender = false } = {}){
 }
 const backendStatusLabel = () => isOrdersBackendEnabled() ? 'Registro central ativo' : 'Registro central não configurado';
 
-const loadProductRequests = () => readJSON(PRODUCT_REQUESTS_STORAGE_KEY, []);
+const loadProductRequests = () => []; // Remote queues are rendered by requests.js.
 const saveProductRequests = requests => writeJSON(PRODUCT_REQUESTS_STORAGE_KEY, requests);
 
 const DEFAULT_SELLER_OFFERS = [
@@ -1440,7 +686,7 @@ async function loginStorePortal(){ const login = document.getElementById('storeL
 function loginAdminPortal(){ const pin = document.getElementById('adminPin')?.value.trim(); if(pin !== ADMIN_ACCESS_PIN){ showToast('PIN administrativo inválido.'); return; } setAdminSession(true); showToast('Acesso administrativo confirmado.'); router(); }
 function logoutAdminPortal(){ setAdminSession(false); showToast('Sessão administrativa encerrada.'); router(); }
 
-function rejectPartnerStoreAction(id){ const rejected = rejectPartnerStore(id); if(!rejected){ showToast('Loja pendente não encontrada.'); return; } showToast(`Cadastro de ${rejected.nome} removido da fila.`); router(); }
+
 
 const psbStatusBusy=new Set();
 async function changeOrderStatus(orderId,status,note=''){
@@ -1459,42 +705,7 @@ function readImageAsDataUrl(file){
         reader.readAsDataURL(file);
     });
 }
-async function submitProductRequest(){
-    const session = getStoreSession();
-    if(!session?.storeId){ showToast('Faça login no portal do lojista para solicitar alterações.'); return; }
-    const productName = document.getElementById('requestProductName')?.value.trim();
-    const requestType = document.getElementById('requestType')?.value;
-    const details = document.getElementById('requestDetails')?.value.trim();
-    const photoFile = document.getElementById('requestPhoto')?.files?.[0];
-    if(!productName || !details){ showToast('Preencha produto e justificativa da solicitação.'); return; }
-    if(!photoFile){ showToast('Envie a foto do produto para concluir a solicitação.'); return; }
-    if(!photoFile.type.startsWith('image/')){ showToast('Envie um arquivo de imagem válido.'); return; }
-    if(photoFile.size > 2 * 1024 * 1024){ showToast('A foto deve ter no máximo 2 MB.'); return; }
-    let photoData = '';
-    try {
-        photoData = await readImageAsDataUrl(photoFile);
-    } catch(err){
-        showToast('Não foi possível ler a foto enviada.');
-        return;
-    }
-    const requests = loadProductRequests();
-    requests.unshift({
-        id: `REQ-${Date.now().toString().slice(-8)}`,
-        storeId: session.storeId,
-        storeName: getStoreById(session.storeId)?.nome || 'Loja',
-        productName,
-        requestType,
-        details,
-        photoName: photoFile.name,
-        photoType: photoFile.type,
-        photoData,
-        createdAt: new Date().toISOString(),
-        status: 'pendente'
-    });
-    saveProductRequests(requests);
-    showToast('Solicitação enviada para análise da operação central.');
-    router();
-}
+
 
 const REF = {
     hero: '/assets/institutional/hero-loja.webp',
@@ -1863,7 +1074,7 @@ const buildOrderMessage = (sellerId, customerData) => {
 function saveCart(){ localStorage.setItem('psb_cart_23', JSON.stringify(cart)); updateCartCount(); }
 function updateCartCount(){ const count = cart.reduce((acc,i)=>acc+i.qty,0); const el = document.getElementById('cartCount'); if(el) el.textContent = count; }
 function showToast(msg='✅ Produto adicionado ao pedido.'){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(currentToast); currentToast=setTimeout(()=>t.classList.remove('show'),2200); }
-function toggleMenu(){ document.getElementById('navMenu').classList.toggle('active-menu'); }
+function toggleMenu(){const open=document.getElementById('navMenu').classList.toggle('active-menu');document.querySelector('.menu-toggle').setAttribute('aria-expanded',String(open));}
 function toggleAccordion(el){ el.parentElement.classList.toggle('active'); }
 function openLightbox(src){ const lb=document.getElementById('lightbox'); document.getElementById('lightbox-img').src=src; lb.classList.add('active'); }
 function closeLightbox(e){ if(!e || e.target.id==='lightbox' || e.target.classList.contains('lightbox-close')) document.getElementById('lightbox').classList.remove('active'); }
@@ -1873,20 +1084,7 @@ function fillFooterContact(){ document.getElementById('footerContactInfo').inner
 function openWhatsApp(origin='site', txt='Olá! Quero atendimento da Pipas Store Brasil.', phone=STORE.waGeral) { trackEvent('open_whatsapp',{origin, phone}); const waWindow = window.open(getWaLink(phone || STORE.waGeral, txt), '_blank', 'noopener,noreferrer'); if(!waWindow) showToast('Não foi possível abrir o Whatsapp. Verifique o bloqueador de pop-up.'); }
 function openPartnerWhatsApp(txt='Olá! Quero falar sobre parceria comercial com a Pipas Store Brasil.') { trackEvent('open_partner_whatsapp',{origin: location.hash || '#/seja-lojista'}); const waWindow = window.open(getWaLink(STORE.waParceiro || STORE.waGeral, txt), '_blank', 'noopener,noreferrer'); if(!waWindow) showToast('Não foi possível abrir o WhatsApp do setor de parcerias. Verifique o bloqueador de pop-up.'); }
 function openMap(){ trackEvent('open_map',{origin: location.hash || '#/home'}); const mapWindow = window.open(STORE.mapLink, '_blank', 'noopener,noreferrer'); if(!mapWindow) showToast('Não foi possível abrir o mapa. Verifique o bloqueador de pop-up.'); }
-function registerPartnerStore(){ const name=document.getElementById('partnerStoreName')?.value.trim(); const owner=document.getElementById('partnerOwnerName')?.value.trim(); const documentId=document.getElementById('partnerDocument')?.value.trim() || ''; const phoneRaw=document.getElementById('partnerStorePhone')?.value.trim() || ''; const instagram=document.getElementById('partnerInstagram')?.value.trim() || ''; const city=document.getElementById('partnerStoreCity')?.value.trim(); const address=document.getElementById('partnerStoreAddress')?.value.trim() || ''; const paymentMode=document.getElementById('partnerPaymentMode')?.value || 'manual'; const cardIntegration=document.getElementById('partnerCardIntegration')?.value || 'manual'; const categoriesRequested=document.getElementById('partnerCategories')?.value.trim() || ''; const operationDescription=document.getElementById('partnerOperation')?.value.trim() || ''; const notes=document.getElementById('partnerStoreNotes')?.value.trim() || ''; const phone=phoneRaw.replace(/\D/g,''); const docDigits=documentId.replace(/\D/g,''); if(!name || !owner || !city || phone.length < 10 || !docDigits){ showToast('Preencha loja, responsável, CPF/CNPJ, cidade e WhatsApp válido.'); return; } const id=slugify(name); if(allStores().some(store=>store.id===id) || pendingPartnerStores().some(store=>store.id===id)){ showToast('Já existe uma loja cadastrada ou pendente com esse nome.'); return; } const pendingStores = loadPendingPartnerStores(); const partnerStore={ id, nome:name, label:'Aguardando homologação', phone, cidade:city, destaque:false, responsavel:owner, cpfCnpj:documentId, instagram, enderecoComercial:address, operationDescription, observacoes:notes, paymentMode, cardIntegration, categoriesRequested, status:'pending', createdAt:new Date().toISOString() }; pendingStores.push(partnerStore); savePendingPartnerStores(pendingStores); trackEvent('partner_store_registered',{store:id,cidade:city,status:'pending'}); const waText=`Olá! Quero solicitar homologação da loja ${name} na Pipas Store Brasil.
 
-Responsável: ${owner}
-CPF/CNPJ: ${documentId}
-WhatsApp da loja: ${phoneRaw}
-Instagram: ${instagram || 'A informar'}
-Cidade/UF: ${city}
-Endereço comercial: ${address || 'A informar'}
-Modelo de pagamento: ${paymentMode}
-Integração cartão: ${cardIntegration}
-Categorias de interesse: ${categoriesRequested || 'A informar'}
-Descrição da operação: ${operationDescription || 'A informar'}
-${notes?`Observações: ${notes}
-`:''}Cadastro enviado para análise no marketplace.`; const waWindow = window.open(getWaLink(STORE.waParceiro || STORE.waGeral, waText), '_blank', 'noopener,noreferrer'); if(!waWindow) showToast('Cadastro enviado para homologação. Finalize o contato pelo WhatsApp para acelerar a análise.'); else showToast(`Cadastro da loja ${name} enviado para homologação.`); router(); }
 
 function removeItem(key){ cart = cart.filter(i=>i.key!==key); saveCart(); router(); }
 function changeQty(key,delta){ const item=cart.find(i=>i.key===key); if(!item) return; item.qty=Math.max(1,item.qty+delta); saveCart(); router(); }
@@ -1899,9 +1097,14 @@ function updatePrice(){ const p = bySlug((location.hash.split('/')[2]||'')); con
 
 function fillFamilyOptions(){ const familySel=document.getElementById('familyFilter'); if(!familySel) return; const currentValue = familySel.value || 'all'; const cat=document.getElementById('categoryFilter')?.value || 'all'; const base = cat==='all' ? products : products.filter(p=>p.categoria===cat); const familyOptions = [...new Set(base.map(p=>p.nome))].sort((a,b)=>a.localeCompare(b,'pt-BR')); familySel.innerHTML = `<option value="all">Todas as famílias</option>` + familyOptions.map(n=>`<option value="${n}">${n}</option>`).join(''); familySel.value = familyOptions.includes(currentValue) ? currentValue : 'all'; }
 
+function psbBrowseCategory(slug){window.psbNextCategory=slug;if(location.hash==='#/loja')router();}
 function setIntent(){ return; }
 
-function renderHome(){ const featured = ['linha-chilena','mucha','carretilhas-madeira','linha-vera-cruz','charuto','carretilhas-plastico'].map(bySlug).filter(Boolean); const secondary = products.filter(p=>p.categoria==='rabiolas'); return `<section class="hero"><div class="container"><span class="tag-badge">Lojas homologadas • pedido registrado • compra assistida</span><h1>Pipas Store Brasil: o marketplace pipeiro para comprar com segurança</h1><p class="hero-sub">Pipas, linhas, carretilhas, rabiolas e materiais de apoio em um só lugar. Compre pelo site, tenha seu pedido registrado e finalize com atendimento humano pelo WhatsApp.</p><div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;"><a class="btn btn-primary" href="#/loja">Comprar agora</a><button class="btn btn-success" onclick="openWhatsApp('hero','Olá! Quero atendimento para comprar na Pipas Store Brasil.')">Falar no WhatsApp</button></div><div class="grid-4" style="margin-top:40px;"><div class="card" style="padding:24px;"><strong class="text-yellow">Lojas homologadas</strong><p class="text-gray">Operação com parceiros aprovados e atendimento comercial validado.</p></div><div class="card" style="padding:24px;"><strong class="text-yellow">Pedido registrado</strong><p class="text-gray">Histórico centralizado no sistema para acompanhamento da compra.</p></div><div class="card" style="padding:24px;"><strong class="text-yellow">Compra segura</strong><p class="text-gray">Pagamento somente após confirmação de estoque e orientação da loja.</p></div><div class="card" style="padding:24px;"><strong class="text-yellow">Atendimento humano</strong><p class="text-gray">Finalização assistida pelo WhatsApp, com retirada local ou envio combinado.</p></div></div></div></section><section class="section"><div class="container"><div style="display:flex; justify-content:space-between; align-items:end; gap:20px; flex-wrap:wrap; margin-bottom:24px;"><div><span class="tag-badge">Destaques comerciais</span><h2>Linhas, Pipas, Carretilhas e Cão de Caça</h2><p class="text-gray">Famílias com maior tração comercial para acelerar conversão e ticket médio.</p></div><a href="#/loja" class="btn btn-secondary">Abrir catálogo completo</a></div><div class="grid-3">${featured.map(productCard).join('')}</div></div></section><section class="section-sm"><div class="container"><div class="card" style="padding:30px;"><div class="grid-2" style="align-items:center;"><div><span class="tag-badge">Complemento de ticket</span><h2>Rabiolas e materiais de apoio</h2><p class="text-gray">Além dos carros-chefe, a operação contempla rabiolas, folhas, fibras, bambu, colas e formas para fabricação, ampliando mix e recompra.</p><div style="display:flex; gap:12px; flex-wrap:wrap;"><a class="btn btn-primary" href="#/loja">Ver categorias</a><button class="btn btn-secondary" onclick="openMap()">Abrir mapa da loja</button></div></div><div class="grid-2">${secondary.map(productCard).join('')}</div></div></div></div></section><section class="section"><div class="container"><div class="grid-2" style="align-items:center;"><div><span class="tag-badge">Linha em destaque</span><h2>Cão de Caça como vitrine premium do ecossistema</h2><p class="text-gray">A linha Cão de Caça reforça posicionamento premium, exclusividade comercial e autoridade visual dentro da operação atual.</p><div style="display:flex; gap:12px; flex-wrap:wrap;"><a class="btn btn-primary" href="#/cao-de-caca">Ver Cão de Caça</a><button class="btn btn-success" onclick="openWhatsApp('home-cao','Olá! Quero comprar produtos da linha Cão de Caça.')">Falar no WhatsApp</button></div></div><div><img src="${REF.logoC}" alt="Linha Cão de Caça" style="max-width:360px; margin:0 auto;" loading="lazy"></div></div></div></section><section class="section"><div class="container"><div class="grid-2" style="align-items:center;"><div><img src="${REF.fachada}" alt="Fachada oficial da loja Juninho Pipas" style="border-radius:16px; border:1px solid var(--c-border);" loading="lazy"></div><div><span class="tag-badge">Marca e comunidade</span><h2>Juninho Pipas: presença real, atendimento humano e catálogo forte</h2><p class="text-gray">Fundada em 2015 por Mauro César Nogueira Pinheiro Ferreira, a Juninho Pipas consolidou presença local, relacionamento com a comunidade e um modelo comercial guiado por variedade, preço competitivo e confiança.</p><p class="text-gray">A fachada oficial reforça a prova física da operação em Porto Velho/RO, fortalecendo confiança, retirada local e percepção de marca para clientes e futuros lojistas parceiros.</p><div style="display:flex; gap:12px; flex-wrap:wrap;"><a class="btn btn-primary" href="#/contato">Contato e retirada</a><a class="btn btn-secondary" href="#/seja-lojista">Cadastrar loja parceira</a></div></div></div></div></section>`; }
+function renderHome(){
+const featured=['mucha','carretilhas-madeira','charuto','rabiola-cotoco-normal-20cm'].map(bySlug).filter(Boolean);
+const cats=[['pipas','Pipas','Do papel ao céu.','mucha'],['carretilhas','Carretilhas','O voo na sua mão.','carretilhas-madeira'],['rabiolas','Rabiolas','O detalhe faz o voo.','rabiola-cotoco-normal-20cm']];
+return `<div class="premium-home"><section class="editorial-hero"><div class="editorial-copy"><p class="eyebrow">Pipas Store Brasil · Cultura em movimento</p><h1>Feita de papel.<br>Movida a<br><em>paixão.</em></h1><p class="editorial-intro">Para quem faz, para quem vende.<br>Para quem olha para cima e já quer voar.</p><div class="editorial-actions"><a class="btn btn-primary" href="#/loja">Explore a loja <span aria-hidden="true">↗</span></a><a class="editorial-link" href="#/seja-lojista">Faça parte como lojista →</a></div><p class="hero-origin">De Porto Velho para a cultura pipeira.</p></div><figure class="editorial-photo"><img src="/assets/gallery/galeria-1.webp" width="1280" height="720" fetchpriority="high" alt="Parede de pipas coloridas na loja Juninho Pipas"><figcaption><span>Dentro da nossa casa</span><strong>Juninho Pipas / Porto Velho, RO</strong></figcaption></figure></section><div class="editorial-trust"><span>01 <strong>Lojas homologadas</strong></span><span>02 <strong>Pedido registrado no site</strong></span><span>03 <strong>Atendimento de quem entende</strong></span></div><section class="editorial-categories"><div class="container"><div class="editorial-heading"><div><p class="eyebrow">Encontre o seu próximo voo</p><h2>O céu é só<br>o começo.</h2></div><a href="#/loja" class="editorial-link">Todas as categorias ↗</a></div><div class="category-collection">${cats.map(([cat,title,desc,slug],i)=>`<a class="category-tile" href="#/loja" onclick="psbBrowseCategory('${cat}')"><div class="category-top"><span>0${i+1}</span><span aria-hidden="true">↗</span></div><img src="${getProductMainImage(slug)}" alt="${title}" loading="lazy" decoding="async" width="600" height="600"><div><h3>${title}</h3><p>${desc}</p></div></a>`).join('')}</div></div></section><section class="section editorial-selection"><div class="container"><div class="editorial-heading"><div><p class="eyebrow">Escolhas para levar ao céu</p><h2>Seu próximo pedido<br>começa por aqui.</h2></div><a class="editorial-link" href="#/loja">Ver catálogo completo ↗</a></div><div class="grid-4">${featured.map(productCard).join('')}</div></div></section><section class="editorial-culture"><img src="/assets/gallery/galeria-2.webp" alt="Comunidade pipeira reunida ao pôr do sol" loading="lazy" decoding="async" width="900" height="1600"><div class="container"><p class="eyebrow">Muito além da loja</p><h2>A nossa essência<br>vem de quem<br><em>vive isso.</em></h2><p>O encontro, a oficina, o primeiro voo.<br>A cultura pipeira se constrói junto.</p><div class="editorial-actions"><a href="#/galeria" class="btn btn-primary">Conheça nossa comunidade ↗</a><a href="#/eventos" class="editorial-link">Encontros e eventos →</a></div></div></section><section class="editorial-network"><div class="container"><span>Gente que faz parte dessa história</span><div><a href="#/contato">Juninho Pipas</a><a href="#/aspiron">ASPIRON</a><a href="#/cao-de-caca">Cão de Caça</a></div></div></section><section class="section editorial-partner"><div class="container"><div><p class="eyebrow">Para quem vive de pipa</p><h2>Sua loja tem história.<br>Vamos dar a ela<br><em>novos caminhos.</em></h2></div><div><p>Traga seus produtos para um espaço feito para o nosso nicho. Receba pedidos e acompanhe sua operação no portal do lojista.</p><a href="#/seja-lojista" class="btn btn-primary">Conhecer a parceria ↗</a><a href="#/portal-lojista" class="editorial-link">Já sou parceiro →</a></div></div></section></div>`;
+}
 
 
 
@@ -1919,12 +1122,12 @@ function renderFaq(){ const faqs=[['Como funciona a compra?','Você escolhe os p
 function renderDelivery(){ return `<section class="section"><div class="container"><h1>Entregas e Retirada</h1><div class="card" style="padding:28px;"><p class="text-gray">A Pipas Store Brasil trabalha com <strong style="color:var(--c-white);">retirada grátis na loja</strong>, entrega local com taxa a consultar e envio nacional com frete calculado no atendimento.</p><p class="text-gray">O pedido é criado no site e confirmado pelo WhatsApp, onde também são validados disponibilidade, prazo, frete e condições finais de entrega.</p></div></div></section>`; }
 function renderTrade(){ return `<section class="section"><div class="container"><h1>Trocas e Devoluções</h1><div class="card" style="padding:28px;"><p class="text-gray">Solicitações passam por análise da equipe. Produtos personalizados, itens com uso ou avarias causadas após recebimento não entram automaticamente em troca.</p><p class="text-gray">Fale com a equipe pelo WhatsApp para abrir o atendimento e receber as orientações do caso.</p></div></div></section>`; }
 function renderPrivacy(){ return `<section class="section"><div class="container"><h1>Política de Privacidade</h1><div class="card" style="padding:28px;"><p class="text-gray">Os dados informados no pedido são utilizados para contato, confirmação de disponibilidade, organização do atendimento e fechamento comercial.</p><p class="text-gray">A Pipas Store Brasil não vende dados pessoais e trata as informações com foco operacional, comercial e de suporte ao cliente.</p></div></div></section>`; }
-function renderPartner(){ const stores = approvedStores(); const partnerOnly = stores.filter(store => store.id !== DEFAULT_SELLER_ID); const pending = pendingPartnerStores(); return `<section class="section"><div class="container"><span class="tag-badge">Expansão comercial</span><h1>Seja um Lojista Parceiro</h1><p class="text-gray" style="max-width:920px;">Marketplace em expansão controlada: o parceiro envia cadastro público, passa por homologação manual e, após aprovação, recebe a instrução de pagamento para ativação anual como lojista parceiro.</p><div class="partner-pricing-card"><div class="partner-pricing-grid"><div><span class="tag-badge">Lojista Fundador</span><h2 style="margin-top:14px;">Plano anual para primeiras lojas homologadas</h2><p class="text-gray">Condição comercial de entrada para lojas aprovadas na fase inicial da Pipas Store Brasil. A ativação acontece somente após análise, aprovação e confirmação do pagamento.</p><div class="partner-benefits"><div class="partner-benefit"><span><strong>Cadastro da loja</strong> no marketplace com análise manual.</span></div><div class="partner-benefit"><span><strong>Portal do lojista</strong> para acompanhar pedidos vinculados à loja.</span></div><div class="partner-benefit"><span><strong>Sem comissão sobre vendas</strong> nesta fase inicial assistida.</span></div><div class="partner-benefit"><span><strong>Pedido com confirmação de estoque</strong> antes do pagamento do cliente.</span></div></div></div><div class="partner-price-box"><div class="partner-price">R$ 497<small>por ano • condição de Lojista Fundador</small></div><p class="text-gray" style="margin-top:16px;">Vagas limitadas para as primeiras lojas homologadas. Após a fase inicial, o valor poderá ser reajustado para novos parceiros.</p><button class="btn btn-primary btn-block" onclick="document.getElementById('partnerStoreName')?.scrollIntoView({behavior:'smooth',block:'center'})">Solicitar análise</button><button class="btn btn-success btn-block" style="margin-top:10px;" onclick="openPartnerWhatsApp('Olá! Quero informações sobre o Plano Lojista Fundador da Pipas Store Brasil.')">Falar com parcerias</button><p class="text-gray" style="font-size:.85rem; margin-top:12px;">Atendimento de parcerias: +55 69 99265-6686</p></div></div></div><div style="display:flex; gap:12px; flex-wrap:wrap; margin:18px 0 8px;"><a class="btn btn-secondary" href="#/especificacao-marketplace">Ver especificação funcional</a><a class="btn btn-primary" href="#/loja">Validar catálogo atual</a><a class="btn btn-secondary" href="#/portal-lojista">Portal do lojista</a><a class="btn btn-secondary" href="#/painel-marketplace">Área administrativa</a></div><div class="grid-3" style="margin-top:28px;"><div class="card" style="padding:24px;"><h3>Catálogo único</h3><p class="text-gray">Produtos centralizados, sem duplicidade de cadastro e com governança da operação principal.</p></div><div class="card" style="padding:24px;"><h3>Confirmação antes do pagamento</h3><p class="text-gray">O pedido entra pendente, a loja confirma estoque e só depois a operação avança para pagamento.</p></div><div class="card" style="padding:24px;"><h3>Credenciais após aprovação</h3><p class="text-gray">O acesso ao portal do lojista só é gerado após homologação no painel administrativo.</p></div></div><div class="grid-2" style="align-items:start; margin-top:34px;"><div class="card" style="padding:28px;"><h3>Lojas homologadas</h3><div class="store-chip-list" style="margin-top:16px;">${stores.map(store=>`<span class="store-chip">${store.nome} • ${store.cidade}</span>`).join('')}</div><div class="marketplace-note" style="margin-top:18px;"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Modelo operacional</strong>Cadastro → homologação → geração de acesso → confirmação de estoque → liberação do pagamento.</div><p class="text-gray" style="margin-top:18px;">Hoje há <strong style="color:var(--c-white);">${approvedStores().length}</strong> loja(s) homologada(s) na estrutura, com a Juninho Pipas como referência operacional.</p><p class="text-gray" style="margin-top:10px;">Cadastros pendentes: <strong style="color:var(--c-white);">${pending.length}</strong></p><div style="margin-top:18px;"><a class="btn btn-secondary" href="#/loja">Ver produtos com seleção de loja</a></div></div><div class="card" style="padding:28px;"><h3>Solicitação de nova loja</h3><p class="text-gray">Preencha os dados comerciais para análise. A ativação ocorre somente após homologação e pagamento anual do Plano Lojista Fundador.</p><div class="form-group"><label class="form-label" for="partnerStoreName">Nome da loja</label><input id="partnerStoreName" class="form-control" placeholder="Ex.: Pipas Norte"></div><div class="form-group"><label class="form-label" for="partnerOwnerName">Nome do responsável</label><input id="partnerOwnerName" class="form-control" placeholder="Nome do responsável"></div><div class="form-group"><label class="form-label" for="partnerDocument">CPF/CNPJ</label><input id="partnerDocument" class="form-control" placeholder="CPF ou CNPJ"></div><div class="form-group"><label class="form-label" for="partnerStorePhone">WhatsApp comercial</label><input id="partnerStorePhone" class="form-control" placeholder="(69) 99999-9999"></div><div class="form-group"><label class="form-label" for="partnerInstagram">Instagram</label><input id="partnerInstagram" class="form-control" placeholder="@perfil_da_loja"></div><div class="form-group"><label class="form-label" for="partnerStoreCity">Cidade / UF</label><input id="partnerStoreCity" class="form-control" placeholder="Ex.: Rio Branco/AC"></div><div class="form-group"><label class="form-label" for="partnerStoreAddress">Endereço comercial</label><input id="partnerStoreAddress" class="form-control" placeholder="Rua, número e bairro"></div><div class="form-group"><label class="form-label" for="partnerPaymentMode">Fluxo de pagamento</label><select id="partnerPaymentMode" class="form-control"><option value="manual">Manual via atendimento</option><option value="automatico">Automático após aprovação</option></select></div><div class="form-group"><label class="form-label" for="partnerCardIntegration">Integração de cartão</label><select id="partnerCardIntegration" class="form-control"><option value="manual">Não integrada</option><option value="maquininha">Maquininha / captura manual</option><option value="gateway">Gateway / checkout online</option></select></div><div class="form-group"><label class="form-label" for="partnerCategories">Categorias e linhas que deseja vender</label><textarea id="partnerCategories" class="form-control" placeholder="Ex.: Linha Chilena, Linha Indonésia, Pipas 60cm"></textarea></div><div class="form-group"><label class="form-label" for="partnerOperation">Descrição da operação</label><textarea id="partnerOperation" class="form-control" placeholder="Estrutura, cobertura geográfica, diferenciais e capacidade operacional"></textarea></div><div class="form-group"><label class="form-label" for="partnerStoreNotes">Observações</label><textarea id="partnerStoreNotes" class="form-control" placeholder="Informações adicionais relevantes"></textarea></div><button class="btn btn-primary btn-block" onclick="registerPartnerStore()">Enviar para homologação</button><button class="btn btn-success btn-block" style="margin-top:12px;" onclick="openPartnerWhatsApp('Olá! Quero falar sobre parceria comercial com a Pipas Store Brasil.')">Falar sobre parceria</button><div class="step-list" style="margin-top:18px;"><div class="step-item"><strong class="text-yellow">1. Cadastro</strong><p class="text-gray" style="margin:8px 0 0;">Loja, responsável, CPF/CNPJ, canais e operação.</p></div><div class="step-item"><strong class="text-yellow">2. Homologação</strong><p class="text-gray" style="margin:8px 0 0;">Aprovação interna, definição de mix, confirmação do plano anual e geração de credenciais.</p></div><div class="step-item"><strong class="text-yellow">3. Operação</strong><p class="text-gray" style="margin:8px 0 0;">Loja aprovada e ativada recebe acesso ao portal para acompanhar pedidos e solicitar novos produtos.</p></div></div></div></div></div></section>`; }
+function renderPartner(){ const stores = approvedStores(); const partnerOnly = stores.filter(store => store.id !== DEFAULT_SELLER_ID); const pending = pendingPartnerStores(); return `<section class="section"><div class="container"><span class="tag-badge">O próximo capítulo da sua loja</span><h1>Seu lugar na<br>cultura pipeira.</h1><p class="text-gray" style="max-width:920px;">Sua experiência, seus produtos e a sua história em um espaço dedicado a quem vive de pipa. Envie seu cadastro para análise e conheça o plano para lojas parceiras.</p><div class="partner-pricing-card"><div class="partner-pricing-grid"><div><span class="tag-badge">Lojista Fundador</span><h2 style="margin-top:14px;">Plano anual para primeiras lojas homologadas</h2><p class="text-gray">Condição comercial de entrada para lojas aprovadas na fase inicial da Pipas Store Brasil. A ativação acontece somente após análise, aprovação e confirmação do pagamento.</p><div class="partner-benefits"><div class="partner-benefit"><span><strong>Cadastro da loja</strong> no marketplace com análise manual.</span></div><div class="partner-benefit"><span><strong>Portal do lojista</strong> para acompanhar pedidos vinculados à loja.</span></div><div class="partner-benefit"><span><strong>Sem comissão sobre vendas</strong> nesta fase inicial assistida.</span></div><div class="partner-benefit"><span><strong>Pedido com confirmação de estoque</strong> antes do pagamento do cliente.</span></div></div></div><div class="partner-price-box"><div class="partner-price">R$ 497<small>por ano • condição de Lojista Fundador</small></div><p class="text-gray" style="margin-top:16px;">Vagas limitadas para as primeiras lojas homologadas. Após a fase inicial, o valor poderá ser reajustado para novos parceiros.</p><button class="btn btn-primary btn-block" onclick="document.getElementById('partnerStoreName')?.scrollIntoView({behavior:'smooth',block:'center'})">Solicitar análise</button><button class="btn btn-success btn-block" style="margin-top:10px;" onclick="openPartnerWhatsApp('Olá! Quero informações sobre o Plano Lojista Fundador da Pipas Store Brasil.')">Falar com parcerias</button><p class="text-gray" style="font-size:.85rem; margin-top:12px;">Atendimento de parcerias: +55 69 99265-6686</p></div></div></div><div style="display:flex; gap:12px; flex-wrap:wrap; margin:18px 0 8px;"><a class="btn btn-primary" href="#/loja">Conhecer o catálogo</a><a class="btn btn-secondary" href="#/portal-lojista">Portal do lojista</a><a class="btn btn-secondary" href="#/painel-marketplace">Área administrativa</a></div><div class="grid-3" style="margin-top:28px;"><div class="card" style="padding:24px;"><h3>Catálogo único</h3><p class="text-gray">Uma vitrine organizada para o cliente encontrar o produto e escolher a loja.</p></div><div class="card" style="padding:24px;"><h3>Confirmação antes do pagamento</h3><p class="text-gray">O pedido entra pendente, a loja confirma estoque e só depois a operação avança para pagamento.</p></div><div class="card" style="padding:24px;"><h3>Credenciais após aprovação</h3><p class="text-gray">O acesso ao portal do lojista só é gerado após homologação no painel administrativo.</p></div></div><div class="grid-2" style="align-items:start; margin-top:34px;"><div class="card" style="padding:28px;"><h3>Lojas homologadas</h3><div class="store-chip-list" style="margin-top:16px;">${stores.map(store=>`<span class="store-chip">${store.nome} • ${store.cidade}</span>`).join('')}</div><div class="marketplace-note" style="margin-top:18px;"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Modelo operacional</strong>Cadastro → homologação → geração de acesso → confirmação de estoque → liberação do pagamento.</div><p class="text-gray" style="margin-top:18px;">Hoje há <strong style="color:var(--c-white);">${approvedStores().length}</strong> loja(s) homologada(s) na estrutura, com a Juninho Pipas como referência operacional.</p><p class="text-gray" style="margin-top:10px;">Cadastros pendentes: <strong style="color:var(--c-white);">${pending.length}</strong></p><div style="margin-top:18px;"><a class="btn btn-secondary" href="#/loja">Ver produtos com seleção de loja</a></div></div><div class="card" style="padding:28px;"><h3>Solicitação de nova loja</h3><p class="text-gray">Preencha os dados comerciais para análise. A ativação ocorre somente após homologação e pagamento anual do Plano Lojista Fundador.</p><div class="form-group"><label class="form-label" for="partnerStoreName">Nome da loja</label><input id="partnerStoreName" class="form-control" placeholder="Ex.: Pipas Norte"></div><div class="form-group"><label class="form-label" for="partnerOwnerName">Nome do responsável</label><input id="partnerOwnerName" class="form-control" placeholder="Nome do responsável"></div><div class="form-group"><label class="form-label" for="partnerDocument">CPF/CNPJ</label><input id="partnerDocument" class="form-control" placeholder="CPF ou CNPJ"></div><div class="form-group"><label class="form-label" for="partnerStorePhone">WhatsApp comercial</label><input id="partnerStorePhone" class="form-control" placeholder="(69) 99999-9999"></div><div class="form-group"><label class="form-label" for="partnerInstagram">Instagram</label><input id="partnerInstagram" class="form-control" placeholder="@perfil_da_loja"></div><div class="form-group"><label class="form-label" for="partnerStoreCity">Cidade / UF</label><input id="partnerStoreCity" class="form-control" placeholder="Ex.: Rio Branco/AC"></div><div class="form-group"><label class="form-label" for="partnerStoreAddress">Endereço comercial</label><input id="partnerStoreAddress" class="form-control" placeholder="Rua, número e bairro"></div><div class="form-group"><label class="form-label" for="partnerPaymentMode">Fluxo de pagamento</label><select id="partnerPaymentMode" class="form-control"><option value="manual">Manual via atendimento</option><option value="automatico">Automático após aprovação</option></select></div><div class="form-group"><label class="form-label" for="partnerCardIntegration">Integração de cartão</label><select id="partnerCardIntegration" class="form-control"><option value="manual">Não integrada</option><option value="maquininha">Maquininha / captura manual</option><option value="gateway">Gateway / checkout online</option></select></div><div class="form-group"><label class="form-label" for="partnerCategories">Categorias e linhas que deseja vender</label><textarea id="partnerCategories" class="form-control" placeholder="Ex.: Linha Chilena, Linha Indonésia, Pipas 60cm"></textarea></div><div class="form-group"><label class="form-label" for="partnerOperation">Descrição da operação</label><textarea id="partnerOperation" class="form-control" placeholder="Estrutura, cobertura geográfica, diferenciais e capacidade operacional"></textarea></div><div class="form-group"><label class="form-label" for="partnerStoreNotes">Observações</label><textarea id="partnerStoreNotes" class="form-control" placeholder="Informações adicionais relevantes"></textarea></div><button class="btn btn-primary btn-block" onclick="registerPartnerStore()">Enviar para homologação</button><button class="btn btn-success btn-block" style="margin-top:12px;" onclick="openPartnerWhatsApp('Olá! Quero falar sobre parceria comercial com a Pipas Store Brasil.')">Falar sobre parceria</button><div class="step-list" style="margin-top:18px;"><div class="step-item"><strong class="text-yellow">1. Cadastro</strong><p class="text-gray" style="margin:8px 0 0;">Loja, responsável, CPF/CNPJ, canais e operação.</p></div><div class="step-item"><strong class="text-yellow">2. Homologação</strong><p class="text-gray" style="margin:8px 0 0;">Aprovação interna, definição de mix, confirmação do plano anual e geração de credenciais.</p></div><div class="step-item"><strong class="text-yellow">3. Operação</strong><p class="text-gray" style="margin:8px 0 0;">Loja aprovada e ativada recebe acesso ao portal para acompanhar pedidos e solicitar novos produtos.</p></div></div></div></div></div></section>`; }
 function renderMarketplaceSpec(){ return `<section class="section"><div class="container"><span class="tag-badge">Documento executivo</span><h1>Especificação Funcional do Marketplace</h1><p class="text-gray" style="max-width:980px;">Documento-base para evolução da Pipas Store Brasil para um marketplace controlado, escalável e profissional. A diretriz consolidada é: <strong style="color:var(--c-white);">catálogo centralizado, lojistas homologados, confirmação de estoque via painel e pagamento liberado somente após aprovação da loja</strong>.</p><div class="grid-3" style="margin-top:28px;"><div class="card" style="padding:24px;"><h3>Modelo aprovado</h3><p class="text-gray">Marketplace controlado com governança central. Lojista não altera produto livremente e o site mantém consistência comercial.</p></div><div class="card" style="padding:24px;"><h3>Princípio operacional</h3><p class="text-gray">Pedido entra no sistema, loja confirma disponibilidade, pagamento é liberado depois da validação e a operação ganha rastreabilidade.</p></div><div class="card" style="padding:24px;"><h3>Diretriz visual</h3><p class="text-gray">Imagem principal padronizada por produto e galeria complementar com fotos reais por loja, preservando padrão e credibilidade.</p></div></div><div class="card" style="padding:30px; margin-top:34px;"><span class="tag-badge">Bloco 1</span><h2>Regras de sellers por produto</h2><div class="grid-3"><div class="card" style="padding:22px;"><h3>Open</h3><p class="text-gray">Produto pode ser vendido por todas as lojas homologadas habilitadas naquela categoria.</p></div><div class="card" style="padding:22px;"><h3>Restricted</h3><p class="text-gray">Produto pertence ao catálogo central, porém só pode ser vendido por um grupo específico de lojas autorizadas.</p></div><div class="card" style="padding:22px;"><h3>Exclusive</h3><p class="text-gray">Produto de venda exclusiva de uma loja. Exemplo consolidado: <strong style="color:var(--c-white);">Linha Cão de Caça = exclusiva da Juninho Pipas</strong>.</p></div></div><div class="grid-2" style="align-items:start; margin-top:24px;"><div><h3>Campos funcionais mínimos por produto</h3><ul class="text-gray" style="padding-left:18px;"><li><strong style="color:var(--c-white);">sell_mode</strong>: open, restricted ou exclusive</li><li><strong style="color:var(--c-white);">allowed_sellers</strong>: lista de lojas habilitadas</li><li><strong style="color:var(--c-white);">default_seller</strong>: Juninho Pipas como fallback operacional</li><li><strong style="color:var(--c-white);">requires_stock_confirmation</strong>: confirmação obrigatória antes do pagamento</li><li><strong style="color:var(--c-white);">catalog_status</strong>: ativo, suspenso ou em revisão</li></ul></div><div><h3>Política comercial consolidada</h3><ul class="text-gray" style="padding-left:18px;"><li>Catálogo continua centralizado pela operação principal</li><li>Lojistas parceiros não criam nem editam produtos livremente</li><li>Inclusão de novos itens/linhas ocorre por solicitação e homologação</li><li>Produtos exclusivos preservam margem, identidade e conflito zero entre sellers</li></ul></div></div></div><div class="card" style="padding:30px; margin-top:34px;"><span class="tag-badge">Bloco 2</span><h2>Fluxo do lojista parceiro</h2><div class="step-list" style="margin-top:18px;"><div class="step-item"><strong class="text-yellow">1. Cadastro</strong><p class="text-gray" style="margin:8px 0 0;">Loja envia formulário com dados cadastrais, responsável, cidade/UF, WhatsApp, cobertura, meios de pagamento, categorias que deseja vender e ciência do plano anual de ativação.</p></div><div class="step-item"><strong class="text-yellow">2. Análise interna</strong><p class="text-gray" style="margin:8px 0 0;">Operação central avalia documentação, aderência comercial, capacidade operacional, reputação e compatibilidade com o ecossistema.</p></div><div class="step-item"><strong class="text-yellow">3. Homologação</strong><p class="text-gray" style="margin:8px 0 0;">Após aprovação, a loja é ativada no sistema, vinculada aos produtos permitidos e recebe login e senha do painel.</p></div><div class="step-item"><strong class="text-yellow">4. Operação no painel</strong><p class="text-gray" style="margin:8px 0 0;">O lojista acessa apenas os próprios pedidos, confirma ou reprova disponibilidade, informa prazo e acompanha o status operacional.</p></div><div class="step-item"><strong class="text-yellow">5. Solicitações controladas</strong><p class="text-gray" style="margin:8px 0 0;">Alterações de preço, mix, inclusão de linha ou material visual passam por formulário de solicitação e aprovação central.</p></div></div><div class="grid-2" style="margin-top:24px;"><div class="marketplace-note"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Permissões do lojista</strong>Confirmar estoque, atualizar status do pedido, consultar histórico e solicitar ajustes cadastrais.</div><div class="marketplace-note"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Bloqueios do lojista</strong>Sem edição livre de nome, preço-base, fotos principais, categorias, descrições e regras comerciais do catálogo.</div></div></div><div class="card" style="padding:30px; margin-top:34px;"><span class="tag-badge">Bloco 3</span><h2>Fluxo do cliente no marketplace</h2><div class="grid-3"><div class="card" style="padding:22px;"><h3>1. Descoberta</h3><p class="text-gray">Cliente navega no catálogo central, entende família, variação, faixa de preço e lojas habilitadas.</p></div><div class="card" style="padding:22px;"><h3>2. Escolha da loja</h3><p class="text-gray">Na página do produto, o cliente escolhe a loja vendedora. Se não escolher, o pedido vai por padrão para a Juninho Pipas.</p></div><div class="card" style="padding:22px;"><h3>3. Pedido pendente</h3><p class="text-gray">Pedido entra como <strong style="color:var(--c-white);">aguardando confirmação da loja</strong>, sem cobrança imediata.</p></div></div><div class="grid-3" style="margin-top:18px;"><div class="card" style="padding:22px;"><h3>4. Confirmação</h3><p class="text-gray">Loja analisa disponibilidade e aprova, reprova ou aprova parcialmente o pedido.</p></div><div class="card" style="padding:22px;"><h3>5. Pagamento</h3><p class="text-gray">Após aprovação, o sistema libera Pix e cartão online. Isso reduz cancelamento e retrabalho com reembolso.</p></div><div class="card" style="padding:22px;"><h3>6. Pós-pagamento</h3><p class="text-gray">Pedido segue para separação, entrega/retirada/envio e fechamento operacional.</p></div></div><h3 style="margin-top:24px;">Regras de experiência</h3><ul class="text-gray" style="padding-left:18px;"><li>Na primeira fase profissional, preferir 1 pedido = 1 loja para reduzir complexidade de frete e SLA</li><li>Status visíveis ao cliente: aguardando confirmação, aprovado para pagamento, pago, em separação, enviado, concluído, cancelado</li><li>SLA recomendado de resposta da loja: 30 minutos a 2 horas, com regra de expiração ou redirecionamento operacional</li><li>WhatsApp permanece como canal de notificação e exceção, não como motor central da operação</li></ul></div><div class="card" style="padding:30px; margin-top:34px;"><span class="tag-badge">Bloco 4</span><h2>Modelo visual das imagens por produto e por loja</h2><div class="grid-3"><div class="card" style="padding:22px;"><h3>Camada 1</h3><p class="text-gray">Imagem principal padronizada da plataforma para manter consistência visual do catálogo.</p></div><div class="card" style="padding:22px;"><h3>Camada 2</h3><p class="text-gray">Fotos reais da loja selecionada entram como galeria complementar, reforçando autenticidade e reduzindo objeção.</p></div><div class="card" style="padding:22px;"><h3>Camada 3</h3><p class="text-gray">Aviso visual quando a imagem for ilustrativa: apresentação e embalagem podem variar conforme a loja escolhida.</p></div></div><div class="grid-2" style="align-items:start; margin-top:24px;"><div><h3>Padrão recomendado</h3><ul class="text-gray" style="padding-left:18px;"><li>Não usar apenas fotos da Juninho para todo seller no longo prazo</li><li>Não deixar cada loja subir qualquer imagem sem validação</li><li>Não depender só de IA para representar produto físico real</li><li>Adotar padrão híbrido: imagem institucional + prova visual da loja</li></ul></div><div><h3>Dados visuais exigidos no onboarding</h3><ul class="text-gray" style="padding-left:18px;"><li>Logo da loja</li><li>Foto de operação/fachada</li><li>Fotos reais dos produtos que deseja vender</li><li>Padrão mínimo de enquadramento e iluminação</li><li>Aprovação central antes da publicação</li></ul></div></div></div><div class="card" style="padding:30px; margin-top:34px;"><span class="tag-badge">Bloco 5</span><h2>Requisitos da futura implementação no site</h2><div class="grid-2" style="align-items:start;"><div><h3>Backoffice e governança</h3><ul class="text-gray" style="padding-left:18px;"><li>Painel administrativo central para homologar lojas, ativar sellers e controlar catálogo</li><li>Painel do lojista com login e senha, restrito à própria operação</li><li>Matriz produto x seller com regras open, restricted e exclusive</li><li>Formulário interno para solicitação de alteração de catálogo</li><li>Logs de auditoria para confirmação, aprovação e alterações</li></ul></div><div><h3>Motor operacional</h3><ul class="text-gray" style="padding-left:18px;"><li>Fluxo de pedidos com status e SLA</li><li>Confirmação de estoque antes do pagamento</li><li>Integração de Pix e cartão online após aprovação</li><li>Notificações por painel, e-mail e WhatsApp de apoio</li><li>Relatórios por loja, pedido, tempo de resposta e taxa de conversão</li></ul></div></div><div class="grid-3" style="margin-top:24px;"><div class="card" style="padding:22px;"><h3>Fase 1</h3><p class="text-gray">Cadastro de lojista, homologação manual, painel, confirmação de estoque, liberação de pagamento e produtos exclusivos.</p></div><div class="card" style="padding:22px;"><h3>Fase 2</h3><p class="text-gray">Controle de estoque por loja, relatórios operacionais, solicitação de ajustes e padrão visual por seller.</p></div><div class="card" style="padding:22px;"><h3>Fase 3</h3><p class="text-gray">Split financeiro, automação avançada, subcontas e operação marketplace robusta em escala.</p></div></div><div class="marketplace-note" style="margin-top:24px;"><strong style="display:block; margin-bottom:8px; color:var(--c-white);">Decisão executiva consolidada</strong>Implementar primeiro o modelo profissional viável: painel do lojista + confirmação de estoque + pagamento após aprovação + catálogo centralizado + regras de exclusividade por produto.</div></div></div></section>`; }
 function renderStorePortal(){
     const session = getStoreSession();
     if(!session?.storeId){
-        return `<section class="section"><div class="container"><span class="tag-badge">Portal do lojista</span><h1>Acesso do lojista</h1><div class="grid-2" style="align-items:start;"><div class="card" style="padding:28px;"><h3>Login da operação parceira</h3><p class="text-gray">Credenciais são liberadas após homologação no painel administrativo.</p><div class="form-group"><label class="form-label" for="storeLogin">Login</label><input id="storeLogin" class="form-control" placeholder="lojista-sualoja"></div><div class="form-group"><label class="form-label" for="storePassword">Senha temporária</label><input id="storePassword" class="form-control" placeholder="Senha numérica"></div><button class="btn btn-primary btn-block" onclick="loginStorePortal()">Entrar no portal</button></div><div class="card" style="padding:28px;"><h3>Como funciona</h3><div class="step-list" style="margin-top:18px;"><div class="step-item"><strong class="text-yellow">1. Homologação</strong><p class="text-gray" style="margin:8px 0 0;">Loja aprovada pela operação central.</p></div><div class="step-item"><strong class="text-yellow">2. Acesso</strong><p class="text-gray" style="margin:8px 0 0;">Recebe login e senha temporária para visualizar pedidos.</p></div><div class="step-item"><strong class="text-yellow">3. Gestão</strong><p class="text-gray" style="margin:8px 0 0;">Confirma estoque, atualiza status e solicita novas linhas para cadastro.</p></div></div></div></div></div></section>`;
+        return `<section class="section"><div class="container"><span class="tag-badge">Portal do lojista</span><h1>Acesso do lojista</h1><div class="grid-2" style="align-items:start;"><div class="card" style="padding:28px;"><h3>Login da operação parceira</h3><p class="text-gray">Credenciais são liberadas após homologação no painel administrativo.</p><div class="form-group"><label class="form-label" for="storeLogin">Login</label><input id="storeLogin" class="form-control" placeholder="Seu e-mail de acesso" autocomplete="username"></div><div class="form-group"><label class="form-label" for="storePassword">Senha</label><input id="storePassword" type="password" autocomplete="current-password" class="form-control" placeholder="Sua senha"></div><button class="btn btn-primary btn-block" onclick="loginStorePortal()">Entrar no portal</button></div><div class="card" style="padding:28px;"><h3>Como funciona</h3><div class="step-list" style="margin-top:18px;"><div class="step-item"><strong class="text-yellow">1. Homologação</strong><p class="text-gray" style="margin:8px 0 0;">Loja aprovada pela operação central.</p></div><div class="step-item"><strong class="text-yellow">2. Acesso</strong><p class="text-gray" style="margin:8px 0 0;">Recebe login e senha temporária para visualizar pedidos.</p></div><div class="step-item"><strong class="text-yellow">3. Gestão</strong><p class="text-gray" style="margin:8px 0 0;">Confirma estoque, atualiza status e solicita novas linhas para cadastro.</p></div></div></div></div></div></section>`;
     }
     const store = getStoreById(session.storeId);
     const orders = loadOrders()
@@ -1948,15 +1151,9 @@ function renderStorePortal(){
         const updatedFull = formatOrderDate(order.updatedAt || order.createdAt);
         return `<details class="portal-order-card"><summary><div><strong>${order.id}</strong><span>${order.customer?.name || 'Cliente'} • ${money(order.subtotal || 0)}</span><small class="portal-order-date">Recebido: ${createdLabel}</small></div><em>${order.status}</em></summary><div class="portal-order-body"><p><strong>Recebido em:</strong> ${createdFull}</p><p><strong>Última atualização:</strong> ${updatedFull}</p><p><strong>Cliente:</strong> ${order.customer?.name || '-'} • ${order.customer?.phone || '-'}</p><p><strong>Cidade/UF:</strong> ${order.customer?.city || '-'}</p><p><strong>Pagamento:</strong> ${order.customer?.payment || '-'}</p><p><strong>Subtotal:</strong> ${money(order.subtotal || 0)}</p><div class="text-gray portal-items">${itens || 'Sem itens listados.'}</div><div class="portal-status-row"><label class="form-label">Alterar status</label><select class="form-control" onchange="changeOrderStatusFromSelect('${order.id}', this)"><option value="">Selecionar ação</option>${statusOptions.map(([value,label])=>`<option value="${value}">${label}</option>`).join('')}</select></div><div class="portal-quick-actions"><button class="btn btn-primary" onclick="changeOrderStatus('${order.id}','aprovado-para-pagamento','Estoque confirmado pela loja.')">Aprovar</button><button class="btn btn-secondary" onclick="changeOrderStatus('${order.id}','reprovado','Indisponibilidade informada pela loja.')">Reprovar</button><button class="btn btn-secondary" onclick="changeOrderStatus('${order.id}','concluido','Pedido concluído.')">Concluir</button></div></div></details>`;
     };
-    return `<section class="section portal-page"><div class="container"><div class="portal-header"><div><span class="tag-badge">Portal do lojista</span><h1>${store.nome}</h1><p class="text-gray">Pedidos centralizados, confirmação de estoque e solicitações de catálogo.</p></div><div class="portal-header-actions"><a class="btn btn-secondary" href="#/loja">Ver catálogo</a><button class="btn btn-primary" onclick="logoutStorePortal()">Sair</button></div></div><div class="portal-stats"><div class="card"><strong>Pedidos</strong><span>${orders.length}</span></div><div class="card"><strong>Aguardando</strong><span>${waitingOrders.length}</span></div><div class="card"><strong>Abertos</strong><span>${openOrders.length}</span></div></div><div class="portal-layout"><div class="card portal-orders-box"><div class="portal-section-title"><h3>Pedidos da loja</h3><span class="text-gray">${orders.length} registro(s)</span></div>${orders.length ? orders.map(orderCard).join('') : `<div class="empty-state"><h3>Nenhum pedido recebido</h3><p class="text-gray">Assim que um cliente criar pedidos para esta loja, eles aparecerão aqui.</p></div>`}</div><details class="card portal-request-panel"><summary>Solicitar inclusão/ajuste de produto</summary><div class="portal-request-body"><p class="text-gray">Use este formulário para pedir cadastro de novas linhas, ajustes de mix ou atualização de materiais visuais.</p><div class="form-group"><label class="form-label" for="requestProductName">Produto / linha</label><input id="requestProductName" class="form-control" placeholder="Ex.: Linha Vera Cruz 3000jds"></div><div class="form-group"><label class="form-label" for="requestType">Tipo de solicitação</label><select id="requestType" class="form-control"><option value="cadastro">Cadastrar nova linha</option><option value="ativacao">Ativar produto para minha loja</option><option value="ajuste">Solicitar ajuste comercial</option><option value="imagem">Enviar atualização visual</option></select></div><div class="form-group"><label class="form-label" for="requestPhoto">Foto do produto</label><input id="requestPhoto" class="form-control" type="file" accept="image/*"><p class="text-gray" style="margin-top:8px; font-size:0.88rem;">Envie JPG, PNG ou WEBP com até 2MB.</p></div><div class="form-group"><label class="form-label" for="requestDetails">Justificativa</label><textarea id="requestDetails" class="form-control" placeholder="Detalhe o que precisa ser ajustado e por quê."></textarea></div><button class="btn btn-primary btn-block" onclick="submitProductRequest()">Enviar solicitação</button>${requests.length ? `<div style="margin-top:18px;"><h4 style="font-size:1rem; color:var(--c-white);">Histórico recente</h4>${requests.slice(0,5).map(request=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${request.productName}</strong><p class="text-gray" style="margin:8px 0 0;">${request.requestType} • ${request.status}</p><p class="text-gray" style="margin:8px 0 0;">Foto enviada: ${request.photoName || 'não informada'}</p></div>`).join('')}</div>` : ''}</div></details></div></div></section>`;
+    return `<section class="section portal-page"><div class="container"><div class="portal-header"><div><span class="tag-badge">Portal do lojista</span><h1>${store.nome}</h1><p class="text-gray">Pedidos centralizados, confirmação de estoque e solicitações de catálogo.</p></div><div class="portal-header-actions"><a class="btn btn-secondary" href="#/loja">Ver catálogo</a><button class="btn btn-primary" onclick="logoutStorePortal()">Sair</button></div></div><div class="portal-stats"><div class="card"><strong>Pedidos</strong><span>${orders.length}</span></div><div class="card"><strong>Aguardando</strong><span>${waitingOrders.length}</span></div><div class="card"><strong>Abertos</strong><span>${openOrders.length}</span></div></div><div class="portal-layout"><div class="card portal-orders-box"><div class="portal-section-title"><h3>Pedidos da loja</h3><span class="text-gray">${orders.length} registro(s)</span></div>${orders.length ? orders.map(orderCard).join('') : `<div class="empty-state"><h3>Nenhum pedido recebido</h3><p class="text-gray">Assim que um cliente criar pedidos para esta loja, eles aparecerão aqui.</p></div>`}</div><details class="card portal-request-panel"><summary>Solicitar inclusão/ajuste de produto</summary><div class="portal-request-body"><p class="text-gray">Use este formulário para pedir cadastro de novas linhas, ajustes de mix ou atualização de materiais visuais.</p><div class="form-group"><label class="form-label" for="requestProductName">Produto / linha</label><input id="requestProductName" class="form-control" placeholder="Ex.: Linha Vera Cruz 3000jds"></div><div class="form-group"><label class="form-label" for="requestType">Tipo de solicitação</label><select id="requestType" class="form-control"><option value="cadastro">Cadastrar nova linha</option><option value="ativacao">Ativar produto para minha loja</option><option value="ajuste">Solicitar ajuste comercial</option><option value="imagem">Enviar atualização visual</option></select></div><div class="form-group"><label class="form-label" for="requestPhoto">Foto do produto</label><input id="requestPhoto" class="form-control" type="file" accept="image/jpeg,image/png,image/webp"><p class="text-gray" style="margin-top:8px; font-size:0.88rem;">Envie JPG, PNG ou WEBP com até 2MB.</p></div><div class="form-group"><label class="form-label" for="requestDetails">Justificativa</label><textarea id="requestDetails" class="form-control" placeholder="Detalhe o que precisa ser ajustado e por quê."></textarea></div><button class="btn btn-primary btn-block" onclick="submitProductRequest()">Enviar solicitação</button>${psbQueueMarkup('products')}${requests.length ? `<div style="margin-top:18px;"><h4 style="font-size:1rem; color:var(--c-white);">Histórico recente</h4>${requests.slice(0,5).map(request=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${request.productName}</strong><p class="text-gray" style="margin:8px 0 0;">${request.requestType} • ${request.status}</p><p class="text-gray" style="margin:8px 0 0;">Foto enviada: ${request.photoName || 'não informada'}</p></div>`).join('')}</div>` : ''}</div></details></div></div></section>`;
 }
-async function approvePartnerStoreAction(id){
-    const approved = approvePartnerStore(id);
-    if(!approved){ showToast('Loja pendente não encontrada.'); return; }
-    await upsertSellerToBackend(approved);
-    showToast(`Loja ${approved.nome} homologada com sucesso.`);
-    router();
-}
+
 async function provisionStoreAccessAction(id){
     const creds = generateStoreAccess(id);
     const store = getStoreById(id);
@@ -2111,7 +1308,7 @@ function renderAdminPortal(){
     if(!isAdminSessionActive()){
         return `<section class="section"><div class="container"><span class="tag-badge">Área administrativa</span><h1>Painel do marketplace</h1><div class="card" style="padding:28px; max-width:520px;"><h3>Acesso administrativo</h3><p class="text-gray">Acesso restrito à operação central para homologar lojas, editar cadastros, controlar acessos e acompanhar o fluxo operacional.</p><div class="form-group"><label class="form-label" for="adminPin">PIN administrativo</label><input id="adminPin" class="form-control" placeholder="PIN de acesso administrativo"></div><button class="btn btn-primary btn-block" onclick="loginAdminPortal()">Entrar no painel</button></div></div></section>`;
     }
-    const pendingHtml = pending.length ? pending.map(store=>`<div class="accordion-item active"><div class="accordion-header">${store.nome}<span style="font-size:0.8rem; color:var(--c-gray);">${store.cidade}</span></div><div class="accordion-body" style="padding:0 20px 20px; max-height:none; opacity:1;"><p><strong style="color:var(--c-white);">Responsável:</strong> ${store.responsavel}</p><p><strong style="color:var(--c-white);">CPF/CNPJ:</strong> ${store.cpfCnpj || 'Não informado'}</p><p><strong style="color:var(--c-white);">WhatsApp:</strong> ${store.phone}</p><p><strong style="color:var(--c-white);">Instagram:</strong> ${store.instagram || 'Não informado'}</p><p><strong style="color:var(--c-white);">Endereço comercial:</strong> ${store.enderecoComercial || 'Não informado'}</p><p><strong style="color:var(--c-white);">Categorias:</strong> ${store.categoriesRequested || 'A informar'}</p><p class="text-gray">${store.observacoes || 'Sem observações adicionais.'}</p><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;"><button class="btn btn-primary" onclick="approvePartnerStoreAction('${store.id}')">Homologar loja</button><button class="btn btn-secondary" onclick="rejectPartnerStoreAction('${store.id}')">Rejeitar</button></div></div></div>`).join('') : `<div class="empty-state"><h3>Fila vazia</h3><p class="text-gray">Nenhum cadastro aguardando aprovação.</p></div>`;
+    const pendingHtml = psbQueueMarkup('partners');
     const approvedHtml = managedStores.length ? managedStores.map(store=>{
         const isActive = store.status === 'approved';
         const core = isCoreStore(store.id);
@@ -2119,12 +1316,12 @@ function renderAdminPortal(){
         const statusClass = isActive ? 'text-yellow' : 'text-gray';
         return `<div class="step-item admin-store-card" style="margin-top:10px;"><div class="admin-store-card-head"><div><strong class="${statusClass}">${store.nome}</strong><p class="text-gray" style="margin:6px 0 0;">${store.cidade || 'Cidade não informada'} • ${store.label || 'Loja parceira'}</p></div><span class="admin-store-status ${isActive ? 'active' : 'inactive'}">${statusLabel}</span></div><p class="text-gray" style="margin:10px 0 0;">WhatsApp: <strong style="color:var(--c-white);">${store.phone || 'não informado'}</strong>${store.enderecoComercial ? `<br>Endereço: <strong style="color:var(--c-white);">${store.enderecoComercial}</strong>` : ''}</p><p class="text-gray" style="margin:8px 0 0;">Login: <strong style="color:var(--c-white);">${store.login || 'não gerado'}</strong><br>Senha temporária: <strong style="color:var(--c-white);">${store.password || 'não gerada'}</strong></p><div class="admin-store-actions"><button class="btn btn-secondary btn-sm" onclick="provisionStoreAccessAction('${store.id}')">Gerar ou regerar acesso</button>${isActive ? `<button class="btn btn-secondary btn-sm" onclick="setSellerActiveAction('${store.id}', false)">Desativar loja</button>` : `<button class="btn btn-primary btn-sm" onclick="setSellerActiveAction('${store.id}', true)">Reativar loja</button>`}${!core ? `<button class="btn btn-danger btn-sm" onclick="deleteSellerAction('${store.id}')">Excluir definitivamente</button>` : `<span class="admin-core-note">Loja estrutural: exclusão bloqueada</span>`}</div>${renderSellerProfileEditor(store)}${renderSellerCatalogControls(store)}</div>`;
     }).join('') : `<div class="empty-state"><h3>Nenhuma loja cadastrada</h3><p class="text-gray">As lojas homologadas aparecerão aqui para gestão administrativa.</p></div>`;
-    const requestHtml = requests.length ? requests.slice(0,8).map(request=>`<div class="step-item" style="margin-top:10px;"><strong class="text-yellow">${request.storeName}</strong><p class="text-gray" style="margin:8px 0 0;">${request.productName} • ${request.requestType}</p><p class="text-gray" style="margin:8px 0 0;">${request.details}</p><p class="text-gray" style="margin:8px 0 0;">Foto enviada: <strong style="color:var(--c-white);">${request.photoName || 'não informada'}</strong></p>${request.photoData ? `<div style="margin-top:12px;"><img src="${request.photoData}" alt="${request.productName}" style="width:100%; max-width:180px; border-radius:12px; border:1px solid var(--c-border); object-fit:cover;"></div>` : ''}</div>`).join('') : `<p class="text-gray" style="margin-top:10px;">Nenhuma solicitação recebida até agora.</p>`;
-    return `<section class="section"><div class="container"><div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;"><div><span class="tag-badge">Área administrativa</span><h1>Governança do marketplace</h1><p class="text-gray">Homologação, edição cadastral, ativação/desativação, exclusão de lojas, acessos e permissões de venda.</p></div><button class="btn btn-primary" onclick="logoutAdminPortal()">Sair</button></div><div class="grid-4" style="margin-top:28px;"><div class="card" style="padding:22px;"><h3>Pendências</h3><p class="text-gray">${pending.length} loja(s) aguardando análise.</p></div><div class="card" style="padding:22px;"><h3>Homologadas</h3><p class="text-gray">${approved.length} loja(s) ativas.</p></div><div class="card" style="padding:22px;"><h3>Desativadas</h3><p class="text-gray">${inactive.length} loja(s) temporariamente fora do marketplace.</p></div><div class="card" style="padding:22px;"><h3>Pedidos abertos</h3><p class="text-gray">${orders.filter(order => !['concluido','reprovado','cancelado'].includes(order.status)).length} pedido(s) ativos.</p></div></div><div class="grid-2" style="align-items:start; margin-top:34px;"><div class="card" style="padding:28px;"><h3>Cadastros pendentes</h3>${pendingHtml}</div><div class="card" style="padding:28px;"><h3>Gestão das lojas</h3><p class="text-gray">Edite dados comerciais, controle o status da loja e gerencie permissões sem alterar o histórico dos pedidos.</p>${approvedHtml}<div style="margin-top:22px;"><h4 style="font-size:1rem; color:var(--c-white);">Solicitações de catálogo</h4>${requestHtml}</div></div></div></div></section>`;
+    const requestHtml = psbQueueMarkup('products');
+    return `<section class="section"><div class="container"><div style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center;"><div><span class="tag-badge">Área administrativa</span><h1>Governança do marketplace</h1><p class="text-gray">Homologação, edição cadastral, ativação/desativação, exclusão de lojas, acessos e permissões de venda.</p></div><button class="btn btn-primary" onclick="logoutAdminPortal()">Sair</button></div><div class="grid-4" style="margin-top:28px;"><div class="card" style="padding:22px;"><h3>Pendências</h3><p class="text-gray">Consulte a fila de cadastros abaixo.</p></div><div class="card" style="padding:22px;"><h3>Homologadas</h3><p class="text-gray">${approved.length} loja(s) ativas.</p></div><div class="card" style="padding:22px;"><h3>Desativadas</h3><p class="text-gray">${inactive.length} loja(s) temporariamente fora do marketplace.</p></div><div class="card" style="padding:22px;"><h3>Pedidos abertos</h3><p class="text-gray">${orders.filter(order => !['concluido','reprovado','cancelado'].includes(order.status)).length} pedido(s) ativos.</p></div></div><div class="grid-2" style="align-items:start; margin-top:34px;"><div class="card" style="padding:28px;"><h3>Cadastros pendentes</h3>${pendingHtml}</div><div class="card" style="padding:28px;"><h3>Gestão das lojas</h3><p class="text-gray">Edite dados comerciais, controle o status da loja e gerencie permissões sem alterar o histórico dos pedidos.</p>${approvedHtml}<div style="margin-top:22px;"><h4 style="font-size:1rem; color:var(--c-white);">Solicitações de catálogo</h4>${requestHtml}</div></div></div></div></section>`;
 }
 
 function renderNotFound(){ return `<section class="section"><div class="container"><div class="empty-state"><h1>Página não encontrada</h1><p class="text-gray">A rota solicitada não existe ou ainda não está disponível.</p><a href="#/home" class="btn btn-primary">Voltar para Home</a></div></div></section>`; }
-function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; if(['home','loja','produto','carrinho','checkout'].includes(page)&&!window.__PSB_PRICE_TABLE_LOADED__){app.innerHTML=psbPriceLoadingMarkup();return;} const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'portal-lojista': renderStorePortal }; app.innerHTML = (['home','carrinho','checkout'].includes(page)?psbCheckoutReceiptMarkup()+psbCheckoutPendingMarkup():'')+(routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); applyFilters(); }  if(['portal-lojista','painel-marketplace'].includes(page)){ syncOrdersFromBackend({ rerender:true }); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
+function router(){ const raw=(location.hash || '#/home').replace('#/',''); const parts=raw.split('/'); const page=parts[0] || 'home'; const slug=parts[1] || ''; if(['home','loja','produto','carrinho','checkout'].includes(page)&&!window.__PSB_PRICE_TABLE_LOADED__){app.innerHTML=psbPriceLoadingMarkup();return;} const routes={ home: renderHome, loja: renderShop, produto: ()=>renderProduct(slug), carrinho: renderCart, checkout: renderCheckout, 'cao-de-caca': renderCao, aspiron: renderAspiron, eventos: renderEvents, galeria: renderGallery, blog: ()=> slug ? renderArticle(slug) : renderBlog(), contato: renderContact, faq: renderFaq, 'politica-entrega': renderDelivery, 'politica-troca': renderTrade, privacidade: renderPrivacy, 'seja-lojista': renderPartner, 'portal-lojista': renderStorePortal }; app.innerHTML = (['home','carrinho','checkout'].includes(page)?psbCheckoutReceiptMarkup()+psbCheckoutPendingMarkup():'')+(routes[page] || renderNotFound)(); document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active', a.dataset.route===page)); document.getElementById('navMenu').classList.remove('active-menu');document.querySelector('.menu-toggle')?.setAttribute('aria-expanded','false'); document.getElementById('waFab').href = getWaLink(STORE.waGeral, 'Olá! Quero atendimento da Pipas Store Brasil.'); fillFooterContact(); updateCartCount(); if(page==='loja'){ fillFamilyOptions(); if(window.psbNextCategory){document.getElementById('categoryFilter').value=window.psbNextCategory;window.psbNextCategory=null;fillFamilyOptions();} applyFilters(); }  if(['portal-lojista','painel-marketplace'].includes(page)){ syncOrdersFromBackend({ rerender:true }); } trackEvent('view_page',{page,slug}); window.scrollTo({top:0,behavior:'smooth'}); }
 window.addEventListener('hashchange', ()=>router());
 window.addEventListener('load',async function(){
     window.__PSB_PRICE_TABLE_LOADING__=true;
@@ -2445,7 +1642,7 @@ function productCard(p){
     const sellerCount = availableSellers.length || sellersForProduct(p.slug).length;
     const sellerBadge = sellerCount > 1 ? `${sellerCount} lojas` : psbProductAvailabilityBadge(p);
     return `<article class="card product-card premium-product-card">
-<a class="product-img" href="#/produto/${p.slug}" aria-label="Ver ${p.nome}"><span class="product-tag">${isPremium(p)?'Premium':'Catálogo real'}</span><img src="${mainImage}" alt="${p.nome}" loading="lazy" decoding="async" onerror="productImageFallback(this)"></a>
+<a class="product-img" href="#/produto/${p.slug}" aria-label="Ver ${p.nome}"><span class="product-tag">${catName(p.categoria)}</span><img src="${mainImage}" alt="${p.nome}" loading="lazy" decoding="async" onerror="productImageFallback(this)"></a>
 <div class="product-info"><div class="product-cat">${catName(p.categoria)}</div><h3 class="product-title">${p.nome}</h3><div class="product-meta-line"><span>${variationLabel}</span><span>${sellerBadge}</span></div><div class="product-price">${productPriceLabel(p)}</div><a class="btn btn-primary btn-block" href="#/produto/${p.slug}">Ver produto</a></div>
 </article>`;
 }
@@ -2491,7 +1688,7 @@ function renderProduct(slug){
     const sellerHtml = sellers.length > 1 ? `<div class="form-group product-seller-select"><label class="form-label" for="sellerSelect">Escolha a loja vendedora</label><select id="sellerSelect" class="form-control">${sellers.map(store=>`<option value="${store.id}" ${store.id === defaultSeller.id ? 'selected' : ''}>${store.nome} — ${store.label}</option>`).join('')}</select></div><p class="text-gray product-seller-note">${productSellerNote(p.slug)}</p>` : `<p class="text-gray product-seller-note"><strong style="color:var(--c-white);">${defaultSeller.nome}</strong> — ${defaultSeller.label}. ${productSellerNote(p.slug)}</p>`;
     const addDisabled = noDestination || noAvailable || !psbCatalogSyncedAt || !psbShippingSyncedAt;
     const ruleWarning = noDestination ? 'Informe seu CEP para liberar a compra e validar disponibilidade.' : (noAvailable ? 'Produto indisponível para envio ao CEP informado. Altere o CEP ou fale no WhatsApp.' : psbSellerProductAvailability(defaultSeller.id, p).reason);
-    return `<section class="section product-section"><div class="container"><div class="product-breadcrumb text-gray"><a href="#/home">Home</a> / <a href="#/loja">Loja</a> / ${p.nome}</div>${psbDestinationPanel('produto')}<div class="product-detail-grid product-detail-compact"><div class="product-gallery-panel"><div class="gallery-main" role="button" tabindex="0" aria-label="Ampliar foto do produto" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" onclick="openLightbox(this.querySelector('img').src)"><img data-product-main-image src="${mainImage}" alt="${p.nome}" onerror="productImageFallback(this)"></div><div class="gallery-thumbs" aria-label="Galeria do produto">${thumbsHtml}</div><p class="product-gallery-hint text-gray">Toque nas miniaturas para alternar a imagem. A primeira miniatura volta para a foto principal.</p></div><div class="product-buy-panel"><div class="tag-badge">${catName(p.categoria)}</div><h1 class="pd-title">${p.nome}</h1><p class="text-gray product-short-desc">${p.desc}</p><div class="card seller-card"><strong class="text-yellow">Loja vendedora</strong>${sellerHtml}<div class="marketplace-note product-rule-note"><strong>Disponibilidade para seu CEP</strong>${ruleWarning}</div></div><div class="product-price-row"><div id="pdPrice" class="pd-price">${money(p.variacoes[0].preco)}</div></div>${RABIOLA_SLUGS.includes(p.slug) ? `<p id="pdBulkNote" class="marketplace-note" style="margin:0 0 14px; padding:10px 12px; font-size:.86rem;">${productBulkNote(p, 1)}</p>` : ``}<div class="product-form-grid"><div class="form-group"><label class="form-label" for="variationSelect">Variação</label><select id="variationSelect" class="form-control" onchange="updatePrice()">${p.variacoes.map(v=>`<option value="${v.label}">${v.label} — ${money(v.preco)}</option>`).join('')}</select></div><div class="form-group"><label class="form-label" for="qtyInput">Quantidade</label><div class="qty-selector"><button class="qty-btn" onclick="document.getElementById('qtyInput').stepDown(); updatePrice();">-</button><input id="qtyInput" class="qty-input" type="number" min="1" value="1" oninput="updatePrice()" onchange="updatePrice()"><button class="qty-btn" onclick="document.getElementById('qtyInput').stepUp(); updatePrice();">+</button></div></div></div><div class="product-actions"><button class="btn btn-primary" ${addDisabled?'disabled':''} onclick="addToCart('${p.slug}')">${addDisabled?'Informe CEP':'Adicionar ao carrinho'}</button><button class="btn btn-success" onclick="openWhatsApp('produto','Olá! Vim do site Pipas Store Brasil e quero fazer um pedido de ${p.nome}. Pode me ajudar?','${availableSellers[0]?.phone || STORE.waGeral}')">Falar no WhatsApp</button></div><details class="card product-info-details"><summary>Informação importante</summary><p class="text-gray">${RABIOLA_SLUGS.includes(p.slug) ? 'Descontos por quantidade são aplicados automaticamente no carrinho conforme a faixa indicada no preço deste produto.' : 'A comercialização, posse e uso de determinados tipos de linha seguem regras específicas e devem observar cadastro, autorização, locais apropriados e legislação vigente.'}</p></details><div class="product-mobile-sticky"><strong id="pdStickyPrice">${money(p.variacoes[0].preco)}</strong><button class="btn btn-primary" ${addDisabled?'disabled':''} onclick="addToCart('${p.slug}')">${addDisabled?'CEP':'Adicionar'}</button></div></div></div>${related.length?`<div class="related-section"><h2>Produtos relacionados</h2><div class="grid-4 related-grid">${related.map(productCard).join('')}</div></div>`:''}</div></section>`;
+    return `<section class="section product-section"><div class="container"><div class="product-breadcrumb text-gray"><a href="#/home">Home</a> / <a href="#/loja">Loja</a> / ${p.nome}</div><div class="product-detail-grid product-detail-compact"><div class="product-gallery-panel"><div class="gallery-main" role="button" tabindex="0" aria-label="Ampliar foto do produto" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}" onclick="openLightbox(this.querySelector('img').src)"><img data-product-main-image src="${mainImage}" alt="${p.nome}" onerror="productImageFallback(this)"></div><div class="gallery-thumbs" aria-label="Galeria do produto">${thumbsHtml}</div><p class="product-gallery-hint text-gray">Toque nas miniaturas para alternar a imagem. A primeira miniatura volta para a foto principal.</p></div><div class="product-buy-panel"><div class="tag-badge">${catName(p.categoria)}</div><h1 class="pd-title">${p.nome}</h1><p class="text-gray product-short-desc">${p.desc}</p><div class="card seller-card"><strong class="text-yellow">Loja vendedora</strong>${sellerHtml}<div class="marketplace-note product-rule-note"><strong>Disponibilidade para seu CEP</strong>${ruleWarning}</div></div><div class="product-price-row"><div id="pdPrice" class="pd-price">${money(p.variacoes[0].preco)}</div></div>${RABIOLA_SLUGS.includes(p.slug) ? `<p id="pdBulkNote" class="marketplace-note" style="margin:0 0 14px; padding:10px 12px; font-size:.86rem;">${productBulkNote(p, 1)}</p>` : ``}<div class="product-form-grid"><div class="form-group"><label class="form-label" for="variationSelect">Variação</label><select id="variationSelect" class="form-control" onchange="updatePrice()">${p.variacoes.map(v=>`<option value="${v.label}">${v.label} — ${money(v.preco)}</option>`).join('')}</select></div><div class="form-group"><label class="form-label" for="qtyInput">Quantidade</label><div class="qty-selector"><button class="qty-btn" onclick="document.getElementById('qtyInput').stepDown(); updatePrice();">-</button><input id="qtyInput" class="qty-input" type="number" min="1" value="1" oninput="updatePrice()" onchange="updatePrice()"><button class="qty-btn" onclick="document.getElementById('qtyInput').stepUp(); updatePrice();">+</button></div></div></div>${psbDestinationPanel('produto')}<div class="product-actions"><button class="btn btn-primary" ${addDisabled?'disabled':''} onclick="addToCart('${p.slug}')">${addDisabled?'Informe CEP':'Adicionar ao carrinho'}</button><button class="btn btn-success" onclick="openWhatsApp('produto','Olá! Vim do site Pipas Store Brasil e quero fazer um pedido de ${p.nome}. Pode me ajudar?','${availableSellers[0]?.phone || STORE.waGeral}')">Falar no WhatsApp</button></div><details class="card product-info-details"><summary>Informação importante</summary><p class="text-gray">${RABIOLA_SLUGS.includes(p.slug) ? 'Descontos por quantidade são aplicados automaticamente no carrinho conforme a faixa indicada no preço deste produto.' : 'A comercialização, posse e uso de determinados tipos de linha seguem regras específicas e devem observar cadastro, autorização, locais apropriados e legislação vigente.'}</p></details><div class="product-mobile-sticky"><strong id="pdStickyPrice">${money(p.variacoes[0].preco)}</strong><button class="btn btn-primary" ${addDisabled?'disabled':''} onclick="addToCart('${p.slug}')">${addDisabled?'CEP':'Adicionar'}</button></div></div></div>${related.length?`<div class="related-section"><h2>Produtos relacionados</h2><div class="grid-4 related-grid">${related.map(productCard).join('')}</div></div>`:''}</div></section>`;
 }
 function addToCart(slug){
     const p=bySlug(slug);
@@ -2658,5 +1855,6 @@ window.addEventListener('unhandledrejection', function(e){
 <script src="/assets/data/auth.js"></script>
 <script src="/assets/data/checkout.js"></script>
 <script src="/assets/data/catalog-admin.js"></script>
+<script src="/assets/data/requests.js"></script>
 </body>
 </html>

@@ -36,6 +36,7 @@ async function psbSignIn(email,password) {
     }catch{return false;}
 }
 function psbClearAuth() {
+    if(typeof psbClearQueues==='function')psbClearQueues();
     psbAuthGeneration++;clearTimeout(psbRefreshTimer);
     __psbAuthToken=null;__psbAuthUser=null;
     for(const key of [PSB_AUTH_SESSION_KEY,'psb_marketplace_orders_23','psb_store_session_23','psb_admin_session_23'])localStorage.removeItem(key);
