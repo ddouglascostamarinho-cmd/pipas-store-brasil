@@ -1,0 +1,11 @@
+{
+  "name": "pipas-store-brasil",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/checkout.test.cjs && node tests/database.cjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8"
+  }
+}

@@ -1,42 +1,9 @@
-# Como editar a tabela de preços do site
+# Como atualizar preços
 
-Arquivo usado pelo site:
+A partir da versão de setembro de 2026, a fonte de preços é a tabela psb_catalog_products no Supabase. A vitrine e o registro do pedido usam os mesmos dados.
 
-`/assets/data/tabela-precos.csv`
+Entre no painel administrativo e abra **Preços do catálogo**. Escolha o produto, edite os valores e pressione **Salvar preços**. O painel confirma quando o banco gravou a alteração. Se outra sessão alterou o produto, recarregue antes de salvar. As faixas de rabiolas também são editáveis nesse painel.
 
-## Como editar
+O CSV assets/data/tabela-precos.csv fica preservado como referência da importação inicial. Alterá-lo sozinho não altera os preços publicados. Os 32 produtos/291 variações atuais foram importados junto com as faixas de quantidade já existentes.
 
-1. Abra o arquivo `tabela-precos.csv` no Excel, Google Sheets ou LibreOffice.
-2. Altere somente a coluna `preco`, sempre que possível.
-3. Mantenha as colunas `slug_produto`, `tipo_venda` e `label_site` sem alteração, pois o site usa esses campos para localizar o produto e montar as variações.
-4. Use preço sem "R$".
-
-Exemplos aceitos:
-
-`10,00`
-`15,50`
-`130,00`
-
-## Colunas principais
-
-- `categoria`: categoria do produto.
-- `produto`: nome exibido no site.
-- `slug_produto`: identificador técnico usado pelo site.
-- `variacao`: tamanho, jardas ou atributo.
-- `tipo_venda`: tipo da variação.
-- `label_site`: texto da variação exibido no site.
-- `unidade_preco`: unidade de venda.
-- `quantidade_pacote`: quantidade do pacote, quando aplicável.
-- `preco`: preço que será lido pelo site.
-- `ativo`: use `sim` para aparecer no site e `nao` para ocultar.
-- `observacao`: campo livre para observações internas.
-
-## Regra de cuidado
-
-Não renomeie as colunas.
-Não apague o cabeçalho.
-Não altere o separador `;` caso edite em editor de texto.
-
-## Fluxo recomendado
-
-Excel atualizado internamente → CSV atualizado → subir `tabela-precos.csv` no GitHub → site atualiza preços após deploy.
+Pedidos históricos mantêm seus valores originais. Novos pedidos têm produto, variação, vendedor, quantidade, preço e subtotal verificados pelo servidor.
