@@ -46,7 +46,7 @@ function psbChangePipaChoice(changed) {
 function psbProductDescription(product) {
   if(product.slug==='mucha') return 'Pipa Mucha. Escolha o tamanho e a apresentação: unidade ou pacote, conforme as opções disponíveis abaixo.';
   if(product.slug==='carretilhas-madeira') return 'Carretilhas de madeira em diferentes tamanhos. Escolha a medida abaixo e consulte a loja sobre as estampas disponíveis.';
-  if(product.categoria==='rabiolas') return psbDisplayEscape(product.nome)+'. Confira a apresentação e o desconto por quantidade abaixo.';
+  if(product.categoria==='rabiolas') return psbDisplayEscape(product.desc);
   if(product.desc==='Material de alta qualidade e performance, ideal para a prática da cultura pipeira.') return psbDisplayEscape(product.nome)+'. Compare as opções disponíveis abaixo e escolha a medida ou apresentação para seu pedido.';
   return psbDisplayEscape(product.desc);
 }
@@ -55,7 +55,7 @@ function psbPurchaseGuide() {
 }
 function psbProductInformation(product) {
   if(product.categoria==='linhas') return 'A comercialização, posse e uso de determinados tipos de linha seguem regras específicas e devem observar cadastro, autorização, locais apropriados e legislação vigente.';
-  if(product.categoria==='rabiolas') return 'A quantidade se refere à apresentação selecionada. Os descontos são calculados automaticamente conforme a quantidade e a tabela atual. Confirme a cor e o conteúdo do pacote com a loja antes do pagamento.';
+  if(product.categoria==='rabiolas') return 'A quantidade se refere ao número de pacotes da apresentação selecionada. '+(rabiolaTierFor(product.slug)?.bulkPrice < rabiolaTierFor(product.slug)?.base?'O desconto deste modelo é aplicado automaticamente conforme a faixa exibida. ':'Este modelo tem preço fixo por pacote, inclusive em grandes quantidades. ')+'Confirme a cor com a loja antes do pagamento.';
   if(product.categoria==='pipas') return 'Confira o tamanho e a apresentação selecionados. As opções de pacote indicam se incluem rabiola. Para a unidade, confirme os acessórios com a loja. Consulte a disponibilidade da estampa desejada antes do pagamento.';
   if(product.categoria==='carretilhas') return 'A foto apresenta modelos da coleção. Confira o tamanho selecionado e confirme a estampa e os acessórios incluídos com a loja antes do pagamento.';
   return 'Confira a medida e a apresentação selecionadas. A loja confirma disponibilidade, conteúdo do pedido, prazo e frete antes do pagamento.';
