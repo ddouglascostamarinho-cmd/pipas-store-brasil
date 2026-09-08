@@ -17,7 +17,7 @@ async function psbSaveCatalogPrice(slug,button){
   if(!res.ok)throw new Error('Falha de gravação');
   const rows=await res.json();if(rows.length!==1){showToast('O preço mudou em outra sessão. Recarregue o catálogo antes de salvar.');return;}
   product.variacoes=rows[0].variations;product.catalogUpdatedAt=rows[0].updated_at;
-  if(rows[0].tiers)RABIOLA_PRICE_TIERS[slug]=rows[0].tiers;
+  if(rows[0].tiers)RABIOLA_PRICE_TIERS[slug]=rows[0].tiers;else delete RABIOLA_PRICE_TIERS[slug];
   showToast('Preços confirmados no catálogo.');
  }catch{showToast('Não foi possível confirmar a gravação dos preços.');}
  finally{button.disabled=false;}

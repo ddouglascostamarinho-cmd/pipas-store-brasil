@@ -2,6 +2,22 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const {createApp}=require('./harness.cjs');
 const variants=[{label:'50cm - Unidade',preco:2.5},{label:'50cm - Pacote 25un sem rabiola',preco:40},{label:'50cm - Pacote 25un com rabiola',preco:60},{label:'55cm - Unidade',preco:3},{label:'55cm - Pacote 25un sem rabiola',preco:45}];
+test('rabiola price boundaries, fixed short packages, and price labels match the new table',()=>{
+ const app=createApp();
+ for(const slug of ['rabiola-cotoco-normal-20cm','rabiola-cotoco-normal-fita-10cm']){
+  app.context.slug=slug;
+  for(const qty of [1,6,99,100,101]){app.context.qty=qty;assert.equal(app.run('variationUnitPrice(bySlug(slug),bySlug(slug).variacoes[0],qty)'),qty>=100?34:35);}
+  assert.match(app.run('productPriceLabel(bySlug(slug))'),/100\+/);
+ }
+ for(const [slug,price] of [['rabiola-cotoco-curta-fita-10cm',50],['rabiola-cabelinho-anjo',50],['rabiola-cotoco-normal-10cm-75m',10],['rabiola-cotoco-normal-10cm-100m',14]]){
+  app.context.slug=slug;assert.equal(app.run('variationUnitPrice(bySlug(slug),bySlug(slug).variacoes[0],101)'),price);
+  assert.doesNotMatch(app.run('productPriceLabel(bySlug(slug))'),/\+|45,00/);
+  assert.match(app.run('productPriceLabel(bySlug(slug))'),/pacote/);
+ }
+ app.run("RABIOLA_PRICE_TIERS['rabiola-cabelinho-anjo']={base:50,bulkMinQty:1,bulkPrice:50}");
+ assert.doesNotMatch(app.run("productPriceLabel(bySlug('rabiola-cabelinho-anjo'))"),/\+/);
+ assert.match(app.run("rabiolaPricingNoteFor('rabiola-cabelinho-anjo',100)"),/Preço fixo/);
+});
 test('pipa choices retain exact catalog SKU labels; unfamiliar labels fall back',()=>{
  const app=createApp();app.context.sample={categoria:'pipas',variacoes:variants};
  assert.deepEqual(Array.from(app.run('psbPipaChoices(sample)').map(c=>c.label)),variants.map(v=>v.label));

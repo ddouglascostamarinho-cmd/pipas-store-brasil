@@ -747,7 +747,7 @@ const PRODUCT_PLACEHOLDER = `${PRODUCT_IMAGE_BASE}/placeholder.jpg`;
 const PRODUCT_PLACEHOLDER_SVG = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#171B22"/><stop offset="1" stop-color="#08090D"/></linearGradient><radialGradient id="r" cx="50%" cy="20%" r="75%"><stop stop-color="#FFD400" stop-opacity="0.22"/><stop offset="1" stop-color="#FFD400" stop-opacity="0"/></radialGradient></defs><rect width="900" height="650" fill="url(#g)"/><rect width="900" height="650" fill="url(#r)"/><path d="M180 398 L450 118 L720 398 Z" fill="none" stroke="#FFD400" stroke-width="20" stroke-linejoin="round"/><path d="M450 118 V398" stroke="#FFD400" stroke-width="12"/><path d="M180 398 H720" stroke="#2A3038" stroke-width="16"/><circle cx="450" cy="398" r="8" fill="#FFD400"/><text x="450" y="500" fill="#F5F7FA" font-size="44" font-family="Arial, sans-serif" font-weight="800" text-anchor="middle">PIPAS STORE</text><text x="450" y="550" fill="#A8B0BC" font-size="25" font-family="Arial, sans-serif" text-anchor="middle">imagem em breve</text></svg>');
 const PRODUCT_GALLERY_FILES = ['galeria-01.jpg', 'galeria-02.jpg', 'galeria-03.jpg'];
 function psbStudioImage(slug,card=false){return ['mucha','carretilhas-madeira','rabiola-cotoco-curta-fita-10cm'].includes(slug)?'/assets/studio/pilot/'+slug+(card?'.card':'')+'.webp':null;}
-function getProductMainImage(slug){ const path=`${PRODUCT_IMAGE_BASE}/${slug}/principal.jpg`;return window.PSB_IMAGES?.[path]?.src||path; }
+function getProductMainImage(slug){ if(['rabiola-cotoco-normal-10cm-75m','rabiola-cotoco-normal-10cm-100m'].includes(slug))return PRODUCT_PLACEHOLDER_SVG; const path=`${PRODUCT_IMAGE_BASE}/${slug}/principal.jpg`;return window.PSB_IMAGES?.[path]?.src||path; }
 function getProductGalleryImages(slug){ return PRODUCT_GALLERY_FILES.map(file=>window.PSB_IMAGES?.[`${PRODUCT_IMAGE_BASE}/${slug}/${file}`]?.src).filter(Boolean); }
 function productImageFallback(img){ if(!img) return; img.onerror = null; img.src = PRODUCT_PLACEHOLDER_SVG; img.classList.add('placeholder-img'); }
 function galleryThumbLoaded(img){ if(img) img.style.display = 'block'; }
@@ -755,12 +755,12 @@ function galleryThumbError(img){ if(img) img.remove(); }
 function setProductMainImage(src, thumb){ const main = document.querySelector('[data-product-main-image]'); if(!main) return; main.src = src; document.querySelectorAll('.gallery-thumb').forEach(t=>t.classList.remove('active')); if(thumb) thumb.classList.add('active'); }
 
 const PRICE_TABLE_URL = '/assets/data/tabela-precos.csv';
-const RABIOLA_SLUGS = ['rabiola-cotoco-normal-20cm', 'rabiola-cotoco-normal-fita-10cm', 'rabiola-cabelinho-anjo', 'rabiola-cotoco-curta-fita-10cm'];
+const RABIOLA_SLUGS = ['rabiola-cotoco-normal-20cm', 'rabiola-cotoco-normal-fita-10cm', 'rabiola-cabelinho-anjo', 'rabiola-cotoco-curta-fita-10cm', 'rabiola-cotoco-normal-10cm-75m', 'rabiola-cotoco-normal-10cm-100m'];
       const RABIOLA_PRICE_TIERS = {
-              'rabiola-cotoco-normal-20cm': { base: 40, bulkMinQty: 6, bulkPrice: 35, superBulkMinQty: 100, superBulkPrice: 34 },
-              'rabiola-cotoco-normal-fita-10cm': { base: 40, bulkMinQty: 6, bulkPrice: 35, superBulkMinQty: 100, superBulkPrice: 34 },
-              'rabiola-cabelinho-anjo': { base: 50, bulkMinQty: 6, bulkPrice: 45 },
-              'rabiola-cotoco-curta-fita-10cm': { base: 50, bulkMinQty: 6, bulkPrice: 45 }
+              'rabiola-cotoco-normal-20cm': { base: 35, bulkMinQty: 100, bulkPrice: 34 },
+              'rabiola-cotoco-normal-fita-10cm': { base: 35, bulkMinQty: 100, bulkPrice: 34 },
+              'rabiola-cabelinho-anjo': null,
+              'rabiola-cotoco-curta-fita-10cm': null
       };
       function rabiolaTierFor(slug){ return RABIOLA_PRICE_TIERS[slug] || null; }
       function rabiolaUnitPriceFor(slug, qty){
@@ -773,11 +773,11 @@ const RABIOLA_SLUGS = ['rabiola-cotoco-normal-20cm', 'rabiola-cotoco-normal-fita
       }
       function rabiolaPricingNoteFor(slug, qty){
               const tier = rabiolaTierFor(slug);
-              if(!tier) return '';
+              if(!tier || (tier.bulkPrice >= tier.base && !tier.superBulkMinQty)) return RABIOLA_SLUGS.includes(slug) ? 'Preço fixo por pacote, sem desconto por quantidade.' : '';
               const q = Number(qty || 0);
               if(tier.superBulkMinQty && q >= tier.superBulkMinQty) return `Preço de lojista aplicado: ${money(tier.superBulkPrice)} cada (${tier.superBulkMinQty}+ pacotes).`;
               if(q >= tier.bulkMinQty) return `Preço especial aplicado: ${money(tier.bulkPrice)} cada (${tier.bulkMinQty}+ pacotes).`;
-              return `Acima de ${tier.bulkMinQty}+ pacotes: ${money(tier.bulkPrice)} cada.`;
+              return `A partir de ${tier.bulkMinQty} pacotes deste modelo: ${money(tier.bulkPrice)} por pacote.`;
       }
 function splitCsvLine(line, delimiter = ';'){
     const result = [];
@@ -866,7 +866,7 @@ async function loadPriceTable(){
                 if(!row||!Array.isArray(row.variations)||!row.variations.length)throw new Error('Produto sem preço confirmado');
                 if(row.variations.some(v=>typeof v.preco!=='number'||!Number.isFinite(v.preco)||v.preco<0||!v.label))throw new Error('Preço inválido');
             }
-            for(const p of products){const row=rows.find(r=>r.slug===p.slug);p.nome=row.product_name;p.variacoes=row.variations;p.catalogUpdatedAt=row.updated_at;if(row.tiers)RABIOLA_PRICE_TIERS[p.slug]=row.tiers;}
+            for(const p of products){const row=rows.find(r=>r.slug===p.slug);p.nome=row.product_name;p.variacoes=row.variations;p.catalogUpdatedAt=row.updated_at;if(row.tiers)RABIOLA_PRICE_TIERS[p.slug]=row.tiers;else delete RABIOLA_PRICE_TIERS[p.slug];}
             cart=cart.map(i=>{const p=bySlug(i.slug),v=p?.variacoes.find(v=>v.label===i.variacao);return v?{...i,nome:p.nome,preco:v.preco}:i;});
             saveCart();window.__PSB_PRICE_TABLE_LOADED__=true;
         }catch{window.__PSB_PRICE_TABLE_LOADED__=false;}
@@ -995,11 +995,16 @@ const products = [
     ]),
 
     // Rabiolas
-    createProduct('rabiola-cotoco-normal-20cm', 'Rabiola Cotoco - Normal 20cm', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 40} ], 'Rabiola Cotoco modelo Normal, 20cm. Pedido de 6 a 99 pacotes: R$ 35,00 cada. A partir de 100 pacotes (lojista): R$ 34,00 cada.'),
-          createProduct('rabiola-cotoco-normal-fita-10cm', 'Rabiola Cotoco - Normal fita 10cm', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 40} ], 'Rabiola Cotoco modelo Normal, fita 10cm. Pedido de 6 a 99 pacotes: R$ 35,00 cada. A partir de 100 pacotes (lojista): R$ 34,00 cada.'),
-          createProduct('rabiola-cabelinho-anjo', 'Rabiola Cabelinho de Anjo', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 50} ], 'Rabiola Cabelinho de Anjo. Pedido a partir de 6 pacotes: R$ 45,00 cada.'),
-          createProduct('rabiola-cotoco-curta-fita-10cm', 'Rabiola Cotoco - Curta fita 10cm', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 50} ], 'Rabiola Cotoco modelo Curta, fita 10cm. Pedido a partir de 6 pacotes: R$ 45,00 cada.'),
+    createProduct('rabiola-cotoco-normal-20cm', 'Rabiola Cotoco - Normal 20cm', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 35} ], 'Rabiola Cotoco Normal, folhete de 20 cm e espaçamento de 25 cm. Confira abaixo o desconto por quantidade.'),
+          createProduct('rabiola-cotoco-normal-fita-10cm', 'Rabiola Cotoco - Normal fita 10cm', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 35} ], 'Rabiola Cotoco Normal, folhete de 10 cm e espaçamento de 15 cm. Confira abaixo o desconto por quantidade.'),
+          createProduct('rabiola-cabelinho-anjo', 'Rabiola Cabelinho de Anjo', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 50} ], 'Rabiola Cabelinho de Anjo, folhete de 30 cm e espaçamento de 30 a 35 cm. Preço por pacote.'),
+          createProduct('rabiola-cotoco-curta-fita-10cm', 'Rabiola Cotoco - Curta fita 10cm', 'rabiolas', ['complementos', 'reposicao'], REF.img2, [ {label: 'Pacote', preco: 50} ], 'Rabiola Cotoco Curta, folhete de 10 cm e espaçamento de 5 a 10 cm. Preço por pacote.'),
       ];
+
+products.push(
+    createProduct('rabiola-cotoco-normal-10cm-75m','Rabiola Cotoco - Normal 10cm - 75m','rabiolas',['complementos','reposicao'],PRODUCT_PLACEHOLDER_SVG,[{label:'Pacote de 75 m',preco:10}],'Rabiola Cotoco Normal de 75 m, folhete de 10 cm e espaçamento de 15 cm. Preço fixo por pacote.'),
+    createProduct('rabiola-cotoco-normal-10cm-100m','Rabiola Cotoco - Normal 10cm - 100m','rabiolas',['complementos','reposicao'],PRODUCT_PLACEHOLDER_SVG,[{label:'Pacote de 100 m',preco:14}],'Rabiola Cotoco Normal de 100 m, folhete de 10 cm e espaçamento de 15 cm. Preço fixo por pacote.')
+);
 
 const blogPosts = [
     { slug: 'historia-juninho-pipas', cat: 'marca', title: 'Como nasceu a Juninho Pipas', summary: 'Da varanda de casa até a loja física em Porto Velho, conheça a trajetória guiada por amor e paixão pela arte de soltar pipas.', img: REF.blogPlaceholder },
@@ -1027,7 +1032,8 @@ const priceFrom = p => {
       const moneyFrom = p => money(priceFrom(p));
       function productPriceLabel(p){
                 const tier = rabiolaTierFor(p.slug);
-                if(tier) return `${money(tier.base)} un. • ${tier.bulkMinQty}+ por ${money(tier.bulkPrice)}`;
+                if(tier && tier.bulkPrice < tier.base) return `${money(tier.base)} / pacote • ${tier.bulkMinQty}+ por ${money(tier.bulkPrice)}`;
+                if(p.categoria==='rabiolas' && p.variacoes.length===1) return `${money(p.variacoes[0].preco)} / pacote`;
                 return `A partir de ${moneyFrom(p)}`;
       }
       function variationUnitPrice(product, variation, qty = 1){
