@@ -11,6 +11,7 @@ function psbRoutePath() {
 function psbNavigate(path, replace=false) {
   const url=new URL(path.replace(/^#/,''),location.origin);
   if(url.origin!==location.origin)return;
+  if(typeof psbCloseCart==='function')psbCloseCart();
   history[replace?'replaceState':'pushState']({},'',url.pathname+url.search);
   if(typeof router==='function')router();
 }
@@ -22,7 +23,7 @@ document.addEventListener('click',event=>{
   if(!href?.startsWith('/') || href.startsWith('//') || href.startsWith('/assets/'))return;
   event.preventDefault();psbNavigate(href);
 });
-window.addEventListener('popstate',()=>router());
+window.addEventListener('popstate',()=>{if(typeof psbCloseCart==='function')psbCloseCart();router();});
 window.addEventListener('hashchange',()=>{
   if((location.hash||'').startsWith('#/'))psbNavigate(psbRoutePath(),true);
 });

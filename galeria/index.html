@@ -28,8 +28,9 @@
 <link rel="stylesheet" href="/assets/css/seamless.css">
 <link rel="stylesheet" href="/assets/css/catalog-refinement.css">
 <link rel="stylesheet" href="/assets/css/shopping.css">
+<link rel="stylesheet" href="/assets/css/experience.css">
 </head>
-<body>
+<body data-page="galeria">
 <a class="skip-link" href="#app">Ir para o conteúdo</a>
 
 <header>
@@ -37,9 +38,9 @@
         <a href="/" aria-label="Ir para Home" class="brand-link">
             <img src="/assets/brand/logo-pipas-store.webp" alt="Pipas Store Brasil" width="500" height="281" class="logo-img" fetchpriority="high">
         </a>
-        <nav class="nav-links" id="navMenu" aria-label="Navegação principal"><a href="/loja" data-route="loja">Loja</a><a href="/cao-de-caca" data-route="cao-de-caca">Cão de Caça</a><a href="/galeria" data-route="galeria">Cultura pipeira</a><a href="/seja-lojista" data-route="seja-lojista">Para lojistas</a><a href="/contato" data-route="contato">Contato</a></nav>
+        <nav class="nav-links" id="navMenu" aria-label="Navegação principal"><a href="/loja" data-route="loja">Loja</a><a href="/galeria" data-route="galeria">Nossa cultura</a><a href="/eventos" data-route="eventos">Encontros</a><a href="/para-marcas" data-route="para-marcas">Para marcas</a><a href="/contato" data-route="contato">Contato</a></nav>
         <div class="nav-actions">
-            <a href="/carrinho" class="cart-icon" aria-label="Acessar Carrinho">
+            <a href="/carrinho" class="cart-icon" aria-label="Acessar Carrinho" onclick="if(typeof psbOpenCart==='function' &amp;&amp; psbOpenCart())event.preventDefault()">
                 <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
                 <span class="cart-count" id="cartCount">0</span>
             </a>
@@ -48,7 +49,7 @@
     </div>
 </header>
 
-<main id="app" tabindex="-1" data-prerendered="/galeria"><section class="section"><div class="container"><h1>Galeria</h1><p class="text-gray">Seleção visual da loja, produtos, comunidade e eventos.</p><div class="grid-4"><a class="card product-img" onclick="openLightbox('/assets/institutional/fachada.webp')"><img src="/assets/institutional/fachada.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/institutional/loja-juninho.webp')"><img src="/assets/institutional/loja-juninho.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/gallery/galeria-1.webp')"><img src="/assets/gallery/galeria-1.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/gallery/galeria-2.webp')"><img src="/assets/gallery/galeria-2.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/gallery/galeria-3.webp')"><img src="/assets/gallery/galeria-3.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/gallery/galeria-4.webp')"><img src="/assets/gallery/galeria-4.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/gallery/galeria-5.webp')"><img src="/assets/gallery/galeria-5.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/gallery/galeria-6.webp')"><img src="/assets/gallery/galeria-6.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/events/evento-porto-velho.webp')"><img src="/assets/events/evento-porto-velho.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a><a class="card product-img" onclick="openLightbox('/assets/events/evento-usina.webp')"><img src="/assets/events/evento-usina.webp" alt="Galeria Pipas Store Brasil" loading="lazy" onerror="if(typeof productImageFallback==='function'){this.closest('a')?.remove()}"></a></div></div></section><noscript><p>Ative o JavaScript para consultar o CEP e registrar seu pedido. Você também pode falar com a loja pelo WhatsApp.</p></noscript></main>
+<main id="app" tabindex="-1" data-prerendered="/galeria"><section class="brand-gallery container"><div class="brand-page-heading"><p class="brand-eyebrow">Porto Velho / Cultura pipeira</p><h1>De perto.<br><em>De verdade.</em></h1><p>Registros da loja, dos encontros e de quem dá vida à cultura pipeira.</p></div><div class="brand-gallery-recent"><a href="https://www.instagram.com/juninho_pipas.ro/reel/Ddbqz6CzMNv/" target="_blank" rel="noopener noreferrer"><img src="/assets/stories/juninho-chile-trofeu-2026.jpg" alt="Juninho com o troféu no Chile" width="720" height="1280"><span><small>Chile / Setembro de 2026</small><strong>Uma nova história<br>para compartilhar.</strong><span>Assista ao registro no Instagram ↗</span></span></a></div><div class="brand-photo-stories"><figure data-reveal><button type="button" class="brand-photo-button" onclick="openLightbox('/assets/gallery/galeria-2.webp')" aria-label="Ampliar foto: Pipas ao pôr do sol em um encontro da comunidade"><img src="/assets/gallery/galeria-2.webp" alt="Pipas ao pôr do sol em um encontro da comunidade" loading="eager" decoding="async" width="900" height="1400"><span aria-hidden="true">Ampliar ↗</span></button><figcaption><small>01 / Nossa cultura</small><h2>Quando o céu vira encontro.</h2></figcaption></figure><figure data-reveal><button type="button" class="brand-photo-button" onclick="openLightbox('/assets/gallery/galeria-1.webp')" aria-label="Ampliar foto: Coleção de pipas e acessórios na loja"><img src="/assets/gallery/galeria-1.webp" alt="Coleção de pipas e acessórios na loja" loading="lazy" decoding="async" width="900" height="1400"><span aria-hidden="true">Ampliar ↗</span></button><figcaption><small>02 / Nossa cultura</small><h2>Cada escolha tem uma história.</h2></figcaption></figure><figure data-reveal><button type="button" class="brand-photo-button" onclick="openLightbox('/assets/gallery/galeria-3.webp')" aria-label="Ampliar foto: Pipeiro acompanhando seu voo"><img src="/assets/gallery/galeria-3.webp" alt="Pipeiro acompanhando seu voo" loading="lazy" decoding="async" width="900" height="1400"><span aria-hidden="true">Ampliar ↗</span></button><figcaption><small>03 / Nossa cultura</small><h2>O olhar de quem vive isso.</h2></figcaption></figure><figure data-reveal><button type="button" class="brand-photo-button" onclick="openLightbox('/assets/gallery/galeria-4.webp')" aria-label="Ampliar foto: Participantes reunidos em um encontro de pipas"><img src="/assets/gallery/galeria-4.webp" alt="Participantes reunidos em um encontro de pipas" loading="lazy" decoding="async" width="900" height="1400"><span aria-hidden="true">Ampliar ↗</span></button><figcaption><small>04 / Nossa cultura</small><h2>O nosso lugar é junto.</h2></figcaption></figure></div><div class="brand-gallery-end"><h2>A próxima história<br><em>pode ser com você.</em></h2><a class="brand-action" href="/para-marcas">Conheça as possibilidades<span aria-hidden="true">↗</span></a></div></section><noscript><p>Ative o JavaScript para consultar o CEP e registrar seu pedido. Você também pode falar com a loja pelo WhatsApp.</p></noscript></main>
 
 <footer>
     <div class="container">
@@ -66,6 +67,7 @@
                     <li><a href="/eventos">Agenda de Eventos</a></li>
                     <li><a href="/aspiron">ASPIRON</a></li>
                     <li><a href="/galeria">Galeria</a></li>
+                    <li><a href="/para-marcas">Marcas e projetos</a></li>
                 </ul>
             </div>
             <div>
@@ -94,6 +96,11 @@
 
 <div class="toast" id="toast">✅ Produto adicionado ao pedido.</div>
 
+<dialog id="cartDrawer" aria-labelledby="cartDrawerTitle">
+    <div class="drawer-header"><h2 id="cartDrawerTitle">Seu próximo voo</h2><button type="button" id="cartDrawerClose" onclick="psbCloseCart()" aria-label="Fechar carrinho">×</button></div>
+    <div id="cartDrawerBody"></div>
+</dialog>
+
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
     <button class="lightbox-close" onclick="closeLightbox(event)" aria-label="Fechar">×</button>
     <img id="lightbox-img" src="" alt="Ampliação" loading="lazy">
@@ -115,5 +122,6 @@
 <script src="/assets/data/shopping.js"></script>
 <script src="/assets/data/seo.js"></script>
 <script src="/assets/data/analytics.js"></script>
+<script src="/assets/data/experience.js"></script>
 </body>
 </html>

@@ -21,7 +21,7 @@ for(const route of routes){
  else if(page==='loja'){
    body=app.run('renderShop()').replace('<div class="grid-4" id="productGrid"></div>',`<div class="grid-4" id="productGrid">${app.run('products.filter(p=>!routeSlug||p.categoria===routeSlug).map(productCard).join("")')}</div>`);
  } else {
-  const render={'':'renderHome',home:'renderHome',contato:'renderContact',faq:'renderFaq','politica-entrega':'renderDelivery','politica-troca':'renderTrade',privacidade:'renderPrivacy',galeria:'renderGallery',eventos:'renderEvents',aspiron:'renderAspiron','cao-de-caca':'renderCao','seja-lojista':'renderPartner',blog:'renderBlog',carrinho:'renderCart',checkout:'renderCheckout','portal-lojista':'renderStorePortal','painel-marketplace':'renderNotFound'}[page];
+  const render={'':'renderHome',home:'renderHome',contato:'renderContact',faq:'renderFaq','politica-entrega':'renderDelivery','politica-troca':'renderTrade',privacidade:'renderPrivacy',galeria:'renderGallery',eventos:'renderEvents',aspiron:'renderAspiron','cao-de-caca':'renderCao','seja-lojista':'renderPartner','para-marcas':'renderBrandPartners',blog:'renderBlog',carrinho:'renderCart',checkout:'renderCheckout','portal-lojista':'renderStorePortal','painel-marketplace':'renderNotFound'}[page];
   if(render)body=app.run(render+'()');
  }
  // Initial markup supplies content, while live pricing remains a runtime responsibility.
@@ -30,12 +30,12 @@ for(const route of routes){
    .replace(/(<strong id="pdStickyPrice">)[\s\S]*?<\/strong>/,'$1Consultar</strong>')
    .replace(/(<p id="pdBulkNote"[^>]*>)[\s\S]*?<\/p>/,'$1Consultando condições de quantidade…</p>')
    .replace(/ — R\$[\s\u00a0]*[\d.,]+(?=<\/option>)/g,'')
-   .replace(/<(input|select|button|textarea)\b(?![^>]*\bdisabled\b)/g,'<$1 disabled')
    .replace(/onload="galleryThumbLoaded\(this\)"/g,'onload="if(typeof galleryThumbLoaded===\'function\')galleryThumbLoaded(this)"')
    .replace(/onerror="([^"]*)"/g,(_,code)=>'onerror="if(typeof productImageFallback===\'function\'){'+code+'}"');
+ if(['loja','produto','carrinho','checkout'].includes(page))body=body.replace(/<(input|select|button|textarea)\b(?![^>]*\bdisabled\b)/g,'<$1 disabled');
  // No account or order data can be part of the isolated build.
  if(['/checkout','/portal-lojista','/painel-marketplace','/carrinho'].includes(route))body='<section class="section"><div class="container"><h1>'+({'/checkout':'Finalizar pedido','/portal-lojista':'Portal do lojista','/painel-marketplace':'Administração','/carrinho':'Carrinho'}[route])+'</h1><p>Carregando…</p></div></section>';
- let html=template.replace(/<title>[\s\S]*?<\/title>/,'<title>'+escape(data.title)+'</title>')
+ let html=template.replace('<body>',`<body data-page="${page||'home'}">`).replace(/<title>[\s\S]*?<\/title>/,'<title>'+escape(data.title)+'</title>')
  .replace(/(<meta name="description" content=")[^"]*/,(_,prefix)=>prefix+escape(data.description))
  .replace(/(<meta name="robots" content=")[^"]*/,(_,prefix)=>prefix+data.robots)
  .replace(/(<link rel="canonical" href=")[^"]*/,(_,prefix)=>prefix+data.url)
