@@ -34,7 +34,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
     let adminVerified = false;
     let sellerVerifiedId = null;
 
-    const currentPage = () => ((location.hash || '#/home').replace('#/','').split('/')[0] || 'home');
+    const currentPage = () => psbRoute().page;
 
     function escapeHtmlValue(value){
       return String(value ?? '')
@@ -164,8 +164,8 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
         sellerVerifiedId = store.id;
         if(typeof setStoreSession === 'function') setStoreSession({ storeId:store.id, loginAt:new Date().toISOString() });
         if(typeof showToast === 'function') showToast(`Acesso autenticado para ${store.nome}.`);
-        if(location.hash === '#/portal-lojista') window.router();
-        else location.hash = '#/portal-lojista';
+        if(psbRoute().page === 'portal-lojista') window.router();
+        else psbNavigate('/portal-lojista');
       }catch(_){
         sellerVerifiedId = null;
         if(typeof psbClearAuth === 'function') psbClearAuth();
@@ -206,6 +206,7 @@ window.__PSB_ADMIN_PIN__ = "__DISABLED_USE_SUPABASE_AUTH__";
       const appEl = document.getElementById('app');
       if(!appEl) return;
       appEl.innerHTML = renderSecureAdmin();
+      if(typeof psbUpdateSeo === 'function') psbUpdateSeo('painel-marketplace','');
 
       document.querySelectorAll('[data-route]').forEach(a => a.classList.toggle('active', a.dataset.route === 'painel-marketplace'));
       const navMenu = document.getElementById('navMenu');

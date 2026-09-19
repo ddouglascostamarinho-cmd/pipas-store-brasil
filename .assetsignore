@@ -28,3 +28,9 @@ tests/
 package.json
 package-lock.json
 .gitignore
+
+scripts
+scripts/
+pnpm-lock.yaml
+README.md
+wrangler.jsonc
