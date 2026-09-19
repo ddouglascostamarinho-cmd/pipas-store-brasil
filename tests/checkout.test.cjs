@@ -26,3 +26,19 @@ test('falha de gravação não confirma status no cache',async()=>{const a=check
 test('nenhuma oferta válida não reabre vendedor por fallback',()=>{const a=checkout();a.run('saveSellerOffers([])');assert.equal(a.run("sellersForProduct('mucha').length"),0);});
 test('catálogo indisponível não habilita preços internos',async()=>{const a=checkout(async()=>({ok:false,status:503}));await a.run('loadPriceTable()');assert.equal(a.context.__PSB_PRICE_TABLE_LOADED__,false);});
 test('número de pedido não depende do relógio',()=>{const a=checkout();const ids=a.run('Array.from({length:1000},()=>createOrderId())');assert.equal(new Set(ids).size,1000);});
+
+test('entrega local não aceita pagamento exclusivo da retirada',async()=>{
+ let calls=0;const a=checkout(async()=>{calls++;});
+ a.fields.ckDelivery.value='Entrega local com taxa a consultar';a.fields.ckPayment.value='Dinheiro na retirada';
+ await a.run('sendOrderWhatsApp()');assert.equal(calls,0);
+});
+test('entrega local exige endereço e número antes de registrar',async()=>{
+ let calls=0;const a=checkout(async()=>{calls++;});
+ a.fields.ckDelivery.value='Entrega local com taxa a consultar';a.fields.ckNumber.value='';
+ await a.run('sendOrderWhatsApp()');assert.equal(calls,0);
+});
+test('destino nacional não aceita retirada mesmo com formulário adulterado',async()=>{
+ let calls=0;const a=checkout(async()=>{calls++;});
+ a.run("psbSaveDestination({cep:'01001000',city:'São Paulo',uf:'SP'})");a.fields.ckCep.value='01001-000';
+ await a.run('sendOrderWhatsApp()');assert.equal(calls,0);
+});

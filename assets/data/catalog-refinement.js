@@ -27,7 +27,7 @@ function psbVariationMarkup(product) {
   return `${choices?`<div id="pipaChoiceControls">${psbPipaControls(choices,choices[0])}</div>`:''}<label class="form-label ${choices?'sr-only':''}" for="variationSelect">${label}</label><select id="variationSelect" class="form-control" ${choices?'hidden':''} onchange="updatePrice()">${product.variacoes.map(v=>`<option value="${psbDisplayEscape(v.label)}">${psbDisplayEscape(v.label)} — ${money(v.preco)}</option>`).join('')}</select><p class="selected-option" id="selectedOption" aria-live="polite" ${choices?'': 'hidden'}>${psbDisplayEscape(product.variacoes[0].label)}</p>`;
 }
 function psbChangePipaChoice(changed) {
-  const product = bySlug(location.hash.split('/')[2] || '');
+  const product = bySlug(psbRoute().slug || '');
   const choices = product && psbPipaChoices(product);
   if (!choices) return;
   const size = document.getElementById('pipaSize').value;

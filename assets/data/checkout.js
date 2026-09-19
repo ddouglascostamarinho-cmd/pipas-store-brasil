@@ -39,6 +39,10 @@ async function sendOrderWhatsApp(sellerId = DEFAULT_SELLER_ID) {
     if(customer.destinationType==='external' && (!customer.address || !customer.number || !customer.district)) {
         showToast('Preencha endereço, número e bairro para o envio.'); return;
     }
+    const pickup=customer.delivery==='Retirada grátis na loja';
+    if(customer.destinationType==='external'&&pickup){showToast('Selecione o envio para o seu endereço.');return;}
+    if(!pickup&&(!customer.address||!customer.number||!customer.district)){showToast('Preencha endereço, número e bairro para a entrega.');return;}
+    if(!pickup&&/presencial|dinheiro na retirada/i.test(customer.payment)){showToast('Escolha uma forma de pagamento compatível com a entrega.');return;}
     const issues=psbCartIssuesForSeller(sellerId);
     if(issues.length) { showToast(issues[0]); return; }
     const payload=psbBuildOrderPayload(sellerId,customer);
