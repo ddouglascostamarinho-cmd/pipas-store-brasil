@@ -27,3 +27,11 @@ O destino determina disponibilidade, pedido mínimo por loja e meios de pagament
 ## Validação
 
 Os testes cobrem preços e quantidades, idempotência, formulários, meios de pagamento, pedido mínimo, rotas privadas, metadados, documentos publicados e eventos. Os testes SQL usam PGlite isolado e não gravam na produção. O fluxo visual foi conferido no computador e em viewport móvel de 390 px, até o checkout, sem registrar pedido de teste na produção.
+
+## Experiência visual e conteúdo da marca
+
+A apresentação em `assets/data/experience.js` e `assets/css/experience.css` inclui capítulos manuais na abertura, coleção assimétrica, histórias do Instagram, galeria e página `/para-marcas`. As fotografias recentes têm fontes documentadas em `docs/midia-instagram.md`; os vídeos abrem no Instagram, sem feed ou player externo carregado automaticamente.
+
+A home não depende da consulta de preços para funcionar. Animações de entrada são progressivas e respeitam a preferência por movimento reduzido. O carrinho usa um diálogo nativo com teclado/Escape, preserva o ponto da navegação e atualiza o checkout sem apagar os dados preenchidos.
+
+Validação desta versão: 29 testes da aplicação, 24 verificações de pedidos/banco e 16 de solicitações/permissões. Revisão visual em 1366, 390 e 320 px, troca de capítulos, menu, carrinho, variações e checkout, sem envio de pedido de teste.

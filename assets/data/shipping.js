@@ -378,6 +378,7 @@ function addToCart(slug){
     saveCart();
     showToast(availability.mode === 'quote_only' ? `Produto adicionado. Envio externo sob confirmação da loja ${seller.nome}.` : `Produto adicionado ao carrinho da loja ${seller.nome}.`);
     trackEvent('add_to_cart',{slug,variacao:label,qty,preco:variationUnitPrice(p,v,qty),seller:seller.id,destino:psbDestinationType(),regra:availability.mode});
+    if(typeof psbOpenCart==='function')psbOpenCart();
 }
 function renderCart(){
     if(!cart.length) return `<section class="section"><div class="container"><div class="empty-state"><h1>Seu carrinho está vazio</h1><p class="text-gray">Selecione os produtos, escolha as variações e monte seu pedido.</p><a href="/loja" class="btn btn-primary">Ir para a loja</a></div></div></section>`;

@@ -12,6 +12,7 @@ const PSB_PUBLIC_PAGES={
  aspiron:['ASPIRON e cultura pipeira em Rondônia | Pipas Store Brasil','Conheça a ASPIRON, associação que representa a cultura pipeira em Rondônia, e seus canais de contato.'],
  'cao-de-caca':['Cão de Caça | Pipas Store Brasil','Conheça a marca Cão de Caça e consulte a Juninho Pipas sobre produtos e disponibilidade.'],
  'seja-lojista':['Seja um lojista parceiro | Pipas Store Brasil','Conheça a parceria comercial e envie sua loja para análise na Pipas Store Brasil.'],
+ 'para-marcas':['Marcas, criadores e projetos | Pipas Store Brasil','Converse com a Juninho Pipas sobre conteúdo, encontros e projetos junto à cultura pipeira de Porto Velho, Rondônia.'],
  blog:['Conteúdo sobre cultura pipeira | Pipas Store Brasil','Conteúdos e informações sobre a cultura pipeira, produtos e comunidade.']
 };
 function psbSeoData(page,slug='') {
